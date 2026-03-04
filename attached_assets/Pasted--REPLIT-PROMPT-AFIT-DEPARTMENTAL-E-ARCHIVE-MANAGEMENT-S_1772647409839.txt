@@ -1,0 +1,528 @@
+# REPLIT PROMPT — AFIT DEPARTMENTAL E-ARCHIVE MANAGEMENT SYSTEM (FRONTEND)
+
+---
+
+## PROJECT OVERVIEW
+
+Build a complete, multi-page React.js frontend for the **Air Force Institute of Technology (AFIT), Kaduna** Departmental E-Archive Management System. This is an internal document management portal for an academic department at AFIT. The system must have three distinct user role experiences: **Administrator**, **Lecturer (Staff)**, and **Student**. Use dummy data for all interactions. No backend or API calls are needed. All state must be managed in React using useState and useContext.
+
+This is a production-quality, institutional web application. It must look serious, polished, and professional, fitting for a Nigerian Air Force university. Think of the UI standard of a premium university student portal redesigned with modern design principles applied thoughtfully.
+
+---
+
+## TECHNOLOGY STACK
+
+- React.js (with functional components and hooks only)
+- React Router v6 for all page navigation
+- Tailwind CSS for all styling (no inline styles, no CSS modules, no styled-components)
+- Lucide React for all icons
+- No emoji anywhere in the UI
+- No gradients anywhere in the UI
+- No external UI component libraries (no shadcn, no MUI, no Chakra)
+
+---
+
+## COLOR SYSTEM
+
+Extract and apply AFIT's institutional color identity consistently throughout the entire application. Every color decision must trace back to this palette. Do not introduce any color outside of this system.
+
+```
+Primary Navy:       #0A2240   (deep navy blue — primary background for headers, sidebars, key UI chrome)
+Secondary Navy:     #0D3060   (slightly lighter navy — hover states, card headers)
+Sky Blue:           #1A6BAF   (AFIT sky blue — active states, links, primary buttons)
+Sky Blue Light:     #2A85D0   (button hovers, highlighted borders)
+Gold Accent:        #C8A84B   (AFIT gold — badges, active indicators, rule lines, labels)
+Gold Light:         #E2C97E   (lighter gold for hover on gold elements)
+White:              #FFFFFF   (page backgrounds, card surfaces, text on dark)
+Off White:          #F4F6F9   (page body background)
+Light Gray:         #E8ECF1   (table row alternates, dividers, input borders)
+Mid Gray:           #8A97A8   (placeholder text, secondary labels)
+Dark Text:          #1A2332   (body text, headings on light backgrounds)
+Success Green:      #1A6B45   (approved status, success toasts)
+Warning Amber:      #B45309   (pending status, warning states)
+Danger Red:         #9B1C1C   (delete actions, error states, unapproved indicators)
+```
+
+---
+
+## TYPOGRAPHY
+
+- Font family: **Inter** (import from Google Fonts)
+- Page titles and section headers: font-weight 700, tracked slightly wide (tracking-wide)
+- Navigation items and labels: font-weight 500
+- Body text and table data: font-weight 400
+- All caps labels and category tags: font-weight 600, letter-spacing wide
+- Institution name in header: always render as **AIR FORCE INSTITUTE OF TECHNOLOGY** in all caps
+
+---
+
+## DUMMY DATA AND AUTHENTICATION
+
+### Login Credentials (hard-coded, no real auth)
+
+The login form asks for a **Unique Identifier** and a **Password**. Use the following credentials:
+
+```
+ADMINISTRATOR
+  Unique ID:  ADMIN-001
+  Password:   Admin@2024
+  Name:       Wg Cdr. Abubakar Yusuf
+  Role:       Administrator
+  Department: Computer Engineering
+
+LECTURER (Staff)
+  Unique ID:  SS/CE/0042
+  Password:   Staff@2024
+  Name:       Dr. Fatima Aliyu
+  Role:       Lecturer
+  Department: Computer Engineering
+
+STUDENT
+  Unique ID:  U21CE1089
+  Password:   Student@2024
+  Name:       Chukwuemeka Obi
+  Role:       Student
+  Department: Computer Engineering
+  Level:      400 Level
+```
+
+On login, match the unique ID and password. If either is wrong, show a clean inline error message: "Invalid identifier or password. Please check your credentials and try again." Never show which field is wrong specifically.
+
+After a successful login, redirect to the appropriate dashboard based on the role. Store the logged-in user in React context so all pages can access it.
+
+### Dummy Documents (use across all views)
+
+```
+1.  Title: "Final Year Project Format Guide 2024"
+    Category: Project Resources
+    Uploaded By: Dr. Fatima Aliyu
+    Date: 12 Jan 2025
+    File Type: PDF
+    Size: 1.2 MB
+    Status: Approved
+
+2.  Title: "Department Examination Timetable — Semester 1, 2024/2025"
+    Category: Examination Records
+    Uploaded By: Wg Cdr. Abubakar Yusuf
+    Date: 3 Feb 2025
+    File Type: PDF
+    Size: 340 KB
+    Status: Approved
+
+3.  Title: "Staff Meeting Minutes — October 2024"
+    Category: Administrative
+    Uploaded By: Wg Cdr. Abubakar Yusuf
+    Date: 28 Oct 2024
+    File Type: DOCX
+    Size: 218 KB
+    Status: Approved
+
+4.  Title: "Computer Engineering Curriculum Review 2023"
+    Category: Academic Policy
+    Uploaded By: Dr. Fatima Aliyu
+    Date: 5 Mar 2024
+    File Type: PDF
+    Size: 2.8 MB
+    Status: Approved
+
+5.  Title: "Laboratory Safety Guidelines"
+    Category: Administrative
+    Uploaded By: Dr. Fatima Aliyu
+    Date: 19 Sep 2024
+    File Type: PDF
+    Size: 890 KB
+    Status: Approved
+
+6.  Title: "HOD Circular — Student Industrial Training Placement 2025"
+    Category: Administrative
+    Uploaded By: Wg Cdr. Abubakar Yusuf
+    Date: 22 Jan 2025
+    File Type: PDF
+    Size: 156 KB
+    Status: Pending Approval
+
+7.  Title: "Research Output: Embedded Systems Applications in UAV Control"
+    Category: Research Output
+    Uploaded By: Dr. Fatima Aliyu
+    Date: 14 Nov 2024
+    File Type: PDF
+    Size: 4.1 MB
+    Status: Approved
+
+8.  Title: "Department Budget Proposal 2025"
+    Category: Administrative
+    Uploaded By: Wg Cdr. Abubakar Yusuf
+    Date: 7 Jan 2025
+    File Type: XLSX
+    Size: 512 KB
+    Status: Pending Approval
+```
+
+### Dummy Users (for Admin user management view)
+
+```
+1. Wg Cdr. Abubakar Yusuf — ADMIN-001 — Administrator — Active
+2. Dr. Fatima Aliyu       — SS/CE/0042 — Lecturer     — Active
+3. Engr. Musa Danladi     — SS/CE/0031 — Lecturer     — Active
+4. Dr. Ngozi Eze          — SS/CE/0055 — Lecturer     — Active
+5. Chukwuemeka Obi        — U21CE1089  — Student       — Active
+6. Aisha Mohammed         — U21CE1102  — Student       — Active
+7. Tunde Adeyemi          — U20CE0987  — Student       — Active
+8. Blessing Okoro         — U22CE1201  — Student       — Active
+```
+
+### Dummy Audit Log Entries
+
+```
+1. Wg Cdr. Abubakar Yusuf — Login — 4 Mar 2026, 09:14 AM
+2. Dr. Fatima Aliyu       — Uploaded "Research Output: Embedded Systems..." — 4 Mar 2026, 08:52 AM
+3. Chukwuemeka Obi        — Downloaded "Final Year Project Format Guide" — 3 Mar 2026, 03:41 PM
+4. Dr. Fatima Aliyu       — Uploaded "HOD Circular — IT Placement 2025" — 3 Mar 2026, 11:08 AM
+5. Wg Cdr. Abubakar Yusuf — Approved "Laboratory Safety Guidelines" — 2 Mar 2026, 02:30 PM
+6. Aisha Mohammed         — Downloaded "Department Examination Timetable" — 2 Mar 2026, 10:15 AM
+7. Engr. Musa Danladi     — Uploaded "Staff Meeting Minutes — October 2024" — 28 Oct 2024, 04:00 PM
+8. Wg Cdr. Abubakar Yusuf — Deleted document "Draft Policy v1" — 1 Mar 2026, 09:00 AM
+```
+
+---
+
+## PAGE STRUCTURE AND ROUTING
+
+```
+/login                         — Login page (public, unauthenticated only)
+/dashboard                     — Redirects to role-specific dashboard
+/admin/dashboard               — Administrator dashboard
+/admin/documents               — All documents view (admin)
+/admin/upload                  — Upload document (admin)
+/admin/users                   — User management (admin only)
+/admin/audit                   — Audit log (admin only)
+/lecturer/dashboard            — Lecturer dashboard
+/lecturer/documents            — Documents view (lecturer)
+/lecturer/upload               — Upload document (lecturer)
+/student/dashboard             — Student dashboard
+/student/documents             — Approved documents only (student)
+```
+
+All routes except /login must be protected. If a user accesses a protected route while not logged in, redirect to /login. If a logged-in user tries to access a route outside their role, redirect them to their own dashboard.
+
+---
+
+## LAYOUT AND SHELL
+
+### Application Shell (all authenticated pages)
+
+The shell has two parts: a fixed left sidebar and a main content area.
+
+**Left Sidebar:**
+- Width: 260px, fixed height full screen, does not scroll with content
+- Background: Primary Navy (#0A2240)
+- Top section: AFIT logo area — render the text "AFIT" in a bold navy badge on a gold (#C8A84B) square icon, followed by two lines of text: "E-Archive Portal" in white semi-bold, and "Dept. of Computer Engineering" in mid-gray small text
+- Below logo: A thin horizontal rule in gold (#C8A84B) at 40% opacity
+- Navigation links: Each link has an icon (Lucide) on the left, label on the right. Inactive state: white text at 70% opacity, no background. Active state: sky blue background (#1A6BAF) at 15% opacity, full white text, a 3px left border in gold (#C8A84B), and the icon in gold. Hover state: sky blue background at 10% opacity, white text at full opacity.
+- Navigation sections are grouped with small ALL CAPS section labels in mid-gray (#8A97A8)
+- Bottom of sidebar: User profile card — small avatar circle with user initials in navy on gold background, user full name in white, role badge in sky blue text on a navy-600 background, and a logout button as a text link with a LogOut icon
+
+**Top Header Bar:**
+- Height: 64px, background white, bottom border 1px Light Gray
+- Left: Page title (changes per route) in Dark Text, font-weight 700
+- Right: Date display ("Wednesday, 4 March 2026") in mid-gray, and a notification bell icon (Lucide) with a gold dot indicator
+
+**Main Content Area:**
+- Background: Off White (#F4F6F9)
+- Padding: 32px
+- Scrollable independently of the sidebar
+
+---
+
+## PAGE DESIGNS
+
+### 1. LOGIN PAGE
+
+Full-page layout. No sidebar, no header.
+
+Left half (60% width): A deep navy (#0A2240) panel with the following elements stacked vertically and centered:
+- AFIT logo text treatment: "AFIT" in large bold gold letters, below it "Air Force Institute of Technology" in white, below that "Kaduna, Nigeria" in mid-gray
+- A thin gold horizontal rule (width 80px, height 2px) centered
+- A short tagline: "Quest For Excellence" in italic white at medium size
+- Below the tagline at the bottom of the panel, a subtle geometric pattern of thin lines at 5% white opacity that suggest an aviation/grid motif (use CSS border patterns or SVG, no images required)
+
+Right half (40% width): White background, vertically centered form:
+- "Welcome Back" as the main heading in Dark Text, font-weight 700
+- "Sign in to access the departmental archive" as a subtitle in mid-gray
+- A thin gold rule below the subtitle (80px wide, centered)
+- **Unique Identifier field:** label above, input with a placeholder "e.g. ADMIN-001, SS/CE/0042, U21CE1089", left icon (User from Lucide), clean border in Light Gray, focus border in Sky Blue
+- **Password field:** label above, input with show/hide toggle (Eye / EyeOff icons from Lucide), left icon (Lock from Lucide), same border treatment
+- **Sign In button:** full width, background Sky Blue (#1A6BAF), white text, font-weight 600. Hover: Sky Blue Light (#2A85D0). No rounded corners — use rounded-sm only (2px). Height: 48px.
+- Error message area: only visible on failed login, background red-50, border red-200, text in Danger Red, with an AlertCircle icon from Lucide, slides in smoothly with a CSS transition
+- Below the button: "Having trouble signing in? Contact the department administrator." in mid-gray small text, centered
+- Bottom of the right panel: "Air Force Institute of Technology — Departmental E-Archive" in very small mid-gray text
+
+### 2. ADMINISTRATOR DASHBOARD (/admin/dashboard)
+
+**Stats Row (4 cards):**
+Each card: white background, 1px Light Gray border, left accent border 4px in different colors.
+- Total Documents: count 8, accent Sky Blue, icon FileText
+- Pending Approvals: count 2, accent Gold, icon Clock
+- Total Users: count 8, accent Primary Navy, icon Users
+- Recent Uploads (this month): count 3, accent Success Green, icon Upload
+Card layout: icon on the right in a soft colored square, number large and bold in Dark Text, label below in mid-gray, subtle "View details" link at the bottom in Sky Blue small text.
+
+**Two-column second row:**
+
+Left column (60%): "Recent Documents" — a clean table with columns: Document Title, Category, Uploaded By, Date, Status, Actions. Show 5 most recent documents. Status badges: "Approved" in Success Green background light, "Pending" in Warning Amber background light. Actions column: eye icon (view), download icon, and for admin only a checkmark icon (approve) and trash icon (delete) — each icon button with appropriate hover colors. Table rows alternate between white and Off White.
+
+Right column (40%): "Recent Activity" — a vertical timeline of the 5 most recent audit log entries. Each entry: a colored circle icon on the left (color based on action type: upload = sky blue, download = navy, delete = red, login = gold, approve = green), action description text, and timestamp in small mid-gray below. Title "Recent Activity" above with a "View all" link in Sky Blue.
+
+**Third row:** "Quick Actions" — 4 cards in a row, each with an icon, a label, and a short description. Cards: Upload New Document (Upload icon), Manage Users (UserCog icon), View Audit Log (ClipboardList icon), Approve Pending (CheckCircle icon). Each card: white background, border, icon in sky blue, hover lifts the card with a shadow transition.
+
+### 3. DOCUMENTS PAGE (Admin and Lecturer views — /admin/documents and /lecturer/documents)
+
+**Top bar:**
+- Page title left-aligned
+- Right side: Upload button (sky blue, with Plus icon) and a view toggle (grid / list) using LayoutGrid and List icons from Lucide
+
+**Filter and Search bar (full width below top bar):**
+- Search input (width 320px): magnifying glass icon left, placeholder "Search by title, category, or keyword...", Sky Blue focus border
+- Category dropdown filter: "All Categories", "Project Resources", "Examination Records", "Administrative", "Academic Policy", "Research Output"
+- Status filter dropdown: "All Status", "Approved", "Pending Approval"
+- Results count text: "Showing 8 of 8 documents" in mid-gray, right-aligned
+
+**List View (default):**
+A well-spaced table. Columns: checkbox (for bulk), File Icon + Title, Category, Uploaded By, Date, Size, Status, Actions.
+- File type icon: render a small colored square badge with the file extension text (PDF in red, DOCX in sky blue, XLSX in green) instead of generic icons
+- Category: small pill tag in Light Gray background, Dark Text
+- Status: pill badge — Approved in success green, Pending in warning amber
+- Actions (per row): View (Eye), Download (Download), and for Admin additionally Approve (CheckCircle) and Delete (Trash2) — all icon buttons, each with a tooltip on hover
+- Row hover: Light Gray background, smooth transition
+- Clicking a row title opens a Document Detail Drawer/Panel from the right side (a slide-in panel at 420px wide), not a new page
+
+**Document Detail Drawer:**
+Slides in from the right over the content with a dark overlay.
+Contains: document title large, category pill, status badge, uploaded by with their role, upload date, file size, file type.
+Below that: a "Document Description" section (use a short dummy description).
+Action buttons at the bottom of the drawer: a full-width Download button in Sky Blue, and for admin an Approve button in Success Green and a Delete button in Danger Red as outlined buttons below.
+A close button (X icon) top right of the drawer.
+
+**Grid View:**
+Cards in a 3-column grid. Each card: white background, border, subtle shadow. Top of card: a colored band (color based on file type) with the file type badge centered in it. Card body: document title (2 lines max, truncate with ellipsis), category pill, uploader name, date. Card footer with status badge and icon action buttons.
+
+### 4. UPLOAD DOCUMENT PAGE (/admin/upload and /lecturer/upload)
+
+Clean, centered form card (max-width 720px, centered in the content area).
+Card: white background, border, padding 40px.
+Title: "Upload New Document" with Upload icon.
+
+Fields (all with labels above and helper text below where needed):
+- Document Title: text input, required
+- Category: styled select dropdown with the 5 categories
+- Description: textarea, 4 rows, optional
+- File Upload Zone: a dashed border rectangle (border color Light Gray, dashes), centered content: Upload icon (sky blue, large), primary text "Drag and drop your file here", secondary text "or click to browse", accepted formats note "Accepted: PDF, DOCX, XLSX, JPEG, PNG — Max file size: 10MB". On hover: border turns Sky Blue, background turns a very faint sky blue tint. On file selected: show the file name, size, and a remove button instead of the upload prompt.
+- Keywords / Tags: text input with a tag input pattern — user types a word and presses Enter to add a tag, tags shown as removable pills in Light Gray
+
+Form footer: Cancel button (outlined, no fill) left-aligned, Submit button (Sky Blue filled) right-aligned.
+
+After "submitting" (it's dummy, no real upload), show a success toast notification from the top-right: green background, CheckCircle icon, "Document uploaded successfully. Pending administrator approval." — auto-dismisses after 4 seconds.
+
+### 5. USER MANAGEMENT PAGE (/admin/users) — ADMIN ONLY
+
+**Top bar:** "User Management" title, "Add New User" button right-aligned (Sky Blue with UserPlus icon).
+
+**Stats row (3 small inline cards):** Total Users: 8, Lecturers: 3, Students: 4. Compact horizontal cards.
+
+**User Table:**
+Columns: Avatar + Full Name, Unique ID, Role, Department, Status, Date Added, Actions
+- Avatar: circle with initials, background color varies by role (admin = gold on navy, lecturer = white on sky blue, student = white on navy)
+- Role badge: "Administrator" in navy background white text, "Lecturer" in sky blue background white text, "Student" in Light Gray background Dark Text
+- Status: green dot + "Active" text or red dot + "Inactive" text
+- Actions: Edit icon (pencil), and a toggle icon for activate/deactivate — admin cannot deactivate themselves (disable that row's toggle)
+
+**Add New User Modal:**
+Triggered by "Add New User" button. A centered modal overlay with a clean white card.
+Fields: Full Name, Unique Identifier (with helper: "For students: matric number e.g. U22CE1210. For staff: e.g. SS/CE/0061"), Role (dropdown), Department, Temporary Password, Confirm Temporary Password.
+Footer: Cancel and Create Account buttons.
+After "creating": show success toast "User account created. A temporary password has been assigned."
+
+### 6. AUDIT LOG PAGE (/admin/audit) — ADMIN ONLY
+
+**Top bar:** "Audit Log" title, Export button (outlined with Download icon).
+
+**Filter bar:**
+- Date range: two date inputs (From, To)
+- Action type filter: All Actions, Login, Upload, Download, Delete, Approve
+- User filter: dropdown of all users
+- Search input
+
+**Log Table:**
+Columns: User, Action, Document Affected, IP Address, Date and Time
+- Action column uses colored icon + text: Upload (sky blue), Download (navy), Delete (red), Login (gold), Approve (green)
+- IP Address: monospace font, mid-gray
+- Table is read-only, no action buttons per row
+- Alternating row colors
+
+**Pagination:** bottom of table, simple numbered pagination. Show "Showing 1-8 of 8 entries".
+
+### 7. LECTURER DASHBOARD (/lecturer/dashboard)
+
+**Stats Row (3 cards):**
+- My Uploads: count 3, Sky Blue accent, Upload icon
+- Approved Documents: count 7, Success Green accent, CheckCircle icon
+- Total Documents in Archive: count 8, Navy accent, Archive icon
+
+**Main area (two columns):**
+Left (65%): Recent Documents table — same as admin but without the Delete and Approve action columns. Lecturer sees all documents but can only act on their own uploads (download any, but upload button only on their own).
+Right (35%): "My Recent Uploads" — a vertical list of the lecturer's own uploaded documents with status badges and a small download icon per item.
+
+### 8. STUDENT DASHBOARD (/student/dashboard)
+
+**Stats Row (3 cards):**
+- Available Documents: count 6 (approved only), Sky Blue accent, FileText icon
+- Recently Added: count 2 (last 7 days), Gold accent, Clock icon
+- My Downloads: count 1 (session only, resets on login), Navy accent, Download icon
+
+**Main area:**
+Full-width: "Recently Available Documents" — a clean card list (not a dense table). Each item: file type badge colored square on the left, document title in Dark Text medium weight, category pill, uploader name and date in small mid-gray, and a Download button (outlined sky blue, small) on the far right. Only show approved documents to students. No upload button, no delete button, no approve button anywhere in the student interface.
+
+**Below that:** A "Document Categories" section — 5 rectangular cards in a row, one per category, each showing the category name and a count of available documents. Clicking a category card navigates to the documents page pre-filtered to that category.
+
+### 9. STUDENT DOCUMENTS PAGE (/student/documents)
+
+Same search and filter bar as the other documents pages.
+List view only (no grid toggle for students — keep it simple).
+Table columns: File Type, Title, Category, Uploaded By, Date, Size, Actions (Download only).
+No status column (students only see approved documents, so status is always approved — no need to show it).
+Document Detail Drawer still works on row click — but the drawer only shows public information (title, category, description, uploader, date) and a Download button. No admin actions.
+
+---
+
+## GLOBAL UI COMPONENTS
+
+### Navigation Items Per Role
+
+**Administrator sidebar nav:**
+- MAIN SECTION: Dashboard (LayoutDashboard icon), Documents (FolderOpen icon), Upload Document (Upload icon)
+- ADMINISTRATION SECTION: User Management (Users icon), Audit Log (ClipboardList icon)
+
+**Lecturer sidebar nav:**
+- MAIN SECTION: Dashboard (LayoutDashboard icon), Documents (FolderOpen icon), Upload Document (Upload icon)
+
+**Student sidebar nav:**
+- MAIN SECTION: Dashboard (LayoutDashboard icon), Browse Documents (FolderOpen icon)
+
+### Toast Notification System
+Build a simple toast system (no library). Toasts appear top-right. Types: success (green), error (red), warning (amber), info (sky blue). Each has an icon (CheckCircle, XCircle, AlertTriangle, Info from Lucide), a title, a message, and an X close button. Auto-dismiss after 4 seconds with a progress bar that depletes across the bottom of the toast.
+
+### Empty States
+Every table and list must have a designed empty state when there is no data (e.g., when search returns no results). Empty state: a centered icon (in light gray), a heading "No documents found", a subtext "Try adjusting your search or filters", and optionally an action button. Never show a blank white space.
+
+### Loading States
+For any action that would have a loading period (login button click, form submission, etc.), show a spinner inside the button and disable it during loading. Simulate a 1.2 second loading delay using setTimeout before resolving.
+
+### Confirmation Dialog
+Delete actions and deactivation actions must trigger a confirmation modal before executing. The modal: white card, centered, "Are you sure?" heading, description text, Cancel button (outlined) and Confirm Delete button (filled Danger Red). The modal has a dark overlay.
+
+---
+
+## INTERACTION DETAILS
+
+- All page transitions: use a simple fade-in (opacity 0 to 1, 200ms) when a new page mounts
+- All card hover states: translate-y -2px with a shadow increase, 150ms transition
+- All button hover states: 150ms color transition
+- Sidebar active state transition: 150ms background and border-left transition
+- Document drawer: slides in from right, 300ms ease-out. Overlay fades in separately.
+- All form inputs: smooth border-color transition on focus (150ms), never use outline — replace browser outline with a custom Sky Blue border-color
+- Table rows: background color transition on hover (100ms)
+- Status badge colors must never be just text — always a pill with background and text color
+- All action icon buttons must have a title attribute for tooltip accessibility
+
+---
+
+## RESPONSIVE BEHAVIOR
+
+Design primarily for desktop (1280px and above). At 1024px–1280px, reduce sidebar to 220px. Below 1024px, collapse the sidebar to icon-only mode (48px width) with tooltips on hover showing the label. Below 768px, stack the layout to a mobile hamburger menu. You do not need to design the mobile view in detail, just ensure it does not break.
+
+---
+
+## SPECIFIC THINGS TO AVOID
+
+- No emoji anywhere — use Lucide icons exclusively for all visual indicators
+- No gradients — use flat solid colors only
+- No border-radius above rounded-md (8px) on any element — this is an institutional system, not a consumer app
+- No shadows heavier than shadow-md
+- No animations that feel playful or bouncy — transitions must feel precise and professional
+- No lorem ipsum text — use realistic AFIT-appropriate placeholder text
+- No placeholder image tags — if an avatar or image is needed, render initials or icons instead
+- Do not use any color outside the defined color system
+- The word "portal" should never appear in the in-app UI text — use "archive", "system", or "repository" instead
+
+---
+
+## FILE STRUCTURE TO GENERATE
+
+```
+src/
+  context/
+    AuthContext.jsx          (user state, login/logout functions, role)
+  data/
+    dummyData.js             (all dummy documents, users, audit logs exported as constants)
+  hooks/
+    useRBAC.js               (can() and isRole() functions)
+  components/
+    layout/
+      AppShell.jsx           (sidebar + header + content area wrapper)
+      Sidebar.jsx            (navigation, user profile card)
+      Header.jsx             (top bar with title, date, notification bell)
+    common/
+      Button.jsx             (primary, secondary, danger, ghost variants)
+      Badge.jsx              (status badges, role badges, file type badges)
+      Modal.jsx              (reusable modal with overlay)
+      Toast.jsx              (toast notification component + ToastContainer)
+      ConfirmDialog.jsx      (confirmation modal for destructive actions)
+      EmptyState.jsx         (reusable empty state component)
+      DocumentDrawer.jsx     (right-side slide-in document detail panel)
+    documents/
+      DocumentTable.jsx      (reusable table with all document columns)
+      DocumentGrid.jsx       (card grid view)
+      SearchFilterBar.jsx    (search input + filter dropdowns)
+      UploadZone.jsx         (drag and drop file upload area)
+    users/
+      UserTable.jsx          (user management table)
+      AddUserModal.jsx       (add new user modal form)
+  pages/
+    Login.jsx
+    admin/
+      AdminDashboard.jsx
+      AdminDocuments.jsx
+      AdminUpload.jsx
+      AdminUsers.jsx
+      AdminAudit.jsx
+    lecturer/
+      LecturerDashboard.jsx
+      LecturerDocuments.jsx
+      LecturerUpload.jsx
+    student/
+      StudentDashboard.jsx
+      StudentDocuments.jsx
+  App.jsx                    (router setup, protected routes)
+  index.js
+```
+
+---
+
+## FINAL QUALITY CHECKLIST
+
+Before considering the build complete, verify the following:
+
+- Logging in with each of the three credential sets routes to the correct dashboard
+- Logging in with wrong credentials shows the error message without crashing
+- The logout button in the sidebar clears the session and redirects to /login
+- Navigating directly to /admin/users as a student or lecturer redirects to their dashboard
+- The document drawer opens and closes correctly with the overlay
+- The upload form shows the success toast after simulated submission
+- The delete confirmation dialog appears before any document or user is removed from dummy state
+- All tables show the empty state component when filtered results return nothing
+- The sidebar active state correctly highlights the current page
+- No console errors in the browser
+- The AFIT color palette is consistent across every page with no rogue colors
+- All icon buttons have title attributes
+- File type badges are colored correctly (PDF red, DOCX sky blue, XLSX green)
+- The student interface has absolutely no upload, delete, or approve functionality visible anywhere
