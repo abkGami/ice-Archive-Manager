@@ -1,0 +1,102 @@
+import { useState } from "react";
+import { useLogin } from "@/hooks/use-auth";
+import { useLocation } from "wouter";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/common/Button";
+import { Archive, AlertTriangle } from "lucide-react";
+
+export default function Login() {
+  const [uniqueId, setUniqueId] = useState("");
+  const [password, setPassword] = useState("");
+  const login = useLogin();
+  const [, setLocation] = useLocation();
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    login.mutate(
+      { uniqueId, password },
+      {
+        onSuccess: (user) => {
+          if (user.role === 'Administrator') setLocation("/admin/dashboard");
+          else if (user.role === 'Lecturer') setLocation("/lecturer/dashboard");
+          else setLocation("/student/dashboard");
+        },
+        onError: (err) => {
+          setError(err.message);
+        }
+      }
+    );
+  };
+
+  // AFIT backdrop - simple pattern or wash since we can't use images easily without external URLs
+  return (
+    <div className="min-h-screen bg-[#0A2240] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-1/2 h-1/2 rounded-full bg-[#1A6BAF] blur-[100px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-1/2 h-1/2 rounded-full bg-[#C8A84B] blur-[120px]"></div>
+      </div>
+
+      <div className="w-full max-w-md bg-card rounded-xl shadow-2xl p-8 relative z-10 border border-border/50">
+        <div className="flex flex-col items-center mb-8">
+          <div className="h-16 w-16 bg-[#0A2240] rounded-lg flex items-center justify-center mb-4 shadow-inner">
+            <Archive className="h-8 w-8 text-[#C8A84B]" />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground text-center">AFIT E-Archive System</h1>
+          <p className="text-muted-foreground mt-2 text-sm text-center">Sign in with your institutional credentials to access the repository.</p>
+        </div>
+
+        {error && (
+          <div className="mb-6 p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+            <p className="text-sm text-destructive font-medium leading-tight">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="uniqueId" className="text-foreground font-semibold">Unique ID / Matric Number</Label>
+            <Input 
+              id="uniqueId" 
+              placeholder="e.g. U22CE1210 or SS/CE/0061" 
+              value={uniqueId}
+              onChange={e => setUniqueId(e.target.value)}
+              className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-foreground font-semibold">Password</Label>
+              <a href="#" className="text-xs text-[#1A6BAF] hover:underline font-medium">Forgot password?</a>
+            </div>
+            <Input 
+              id="password" 
+              type="password"
+              placeholder="••••••••" 
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
+              required
+            />
+          </div>
+          
+          <Button 
+            type="submit" 
+            className="w-full h-11 text-base font-bold bg-[#1A6BAF] hover:bg-[#0D3060] text-white mt-4"
+            isLoading={login.isPending}
+          >
+            {login.isPending ? "Authenticating..." : "Sign In"}
+          </Button>
+        </form>
+
+        <div className="mt-8 text-center text-xs text-muted-foreground">
+          <p>&copy; {new Date().getFullYear()} Air Force Institute of Technology. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
