@@ -1,52 +1,80 @@
-import { pgTable, text, serial, timestamp, integer } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  uniqueId: text("unique_id").notNull().unique(),
-  password: text("password").notNull(),
-  name: text("name").notNull(),
-  role: text("role").notNull(), // Administrator, Lecturer, Student
-  department: text("department").notNull(),
-  level: text("level"),
-  status: text("status").notNull().default('Active'),
-  createdAt: timestamp("created_at").defaultNow(),
+export const userSchema = z.object({
+  id: z.number(),
+  authUserId: z.string().nullable(),
+  uniqueId: z.string(),
+  password: z.string(),
+  name: z.string(),
+  role: z.string(),
+  department: z.string(),
+  level: z.string().nullable(),
+  idCardImage: z.string().nullable(),
+  status: z.string(),
+  createdAt: z.date().nullable(),
 });
 
-export const documents = pgTable("documents", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  category: text("category").notNull(),
-  uploadedBy: integer("uploaded_by").notNull(),
-  uploadedByName: text("uploaded_by_name").notNull(),
-  date: timestamp("date").defaultNow(),
-  fileType: text("file_type").notNull(),
-  size: text("size").notNull(),
-  status: text("status").notNull(), // Approved, Pending Approval
-  description: text("description"),
+export const documentSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  category: z.string(),
+  uploadedBy: z.number(),
+  uploadedByName: z.string(),
+  date: z.date().nullable(),
+  fileType: z.string(),
+  size: z.string(),
+  status: z.string(),
+  description: z.string().nullable(),
 });
 
-export const auditLogs = pgTable("audit_logs", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
-  userName: text("user_name").notNull(),
-  action: text("action").notNull(),
-  documentId: integer("document_id"),
-  documentTitle: text("document_title"),
-  ipAddress: text("ip_address"),
-  date: timestamp("date").defaultNow(),
+export const auditLogSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  userName: z.string(),
+  action: z.string(),
+  documentId: z.number().nullable(),
+  documentTitle: z.string().nullable(),
+  ipAddress: z.string().nullable(),
+  date: z.date().nullable(),
 });
 
-export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
-export const insertDocumentSchema = createInsertSchema(documents).omit({ id: true });
-export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true });
+export const insertUserSchema = z.object({
+  authUserId: z.string().nullable().optional(),
+  uniqueId: z.string(),
+  password: z.string(),
+  name: z.string(),
+  role: z.string(),
+  department: z.string(),
+  level: z.string().nullable().optional(),
+  idCardImage: z.string().nullable().optional(),
+  status: z.string().optional(),
+});
 
-export type User = typeof users.$inferSelect;
+export const insertDocumentSchema = z.object({
+  title: z.string(),
+  category: z.string(),
+  uploadedBy: z.number(),
+  uploadedByName: z.string(),
+  fileType: z.string(),
+  size: z.string(),
+  status: z.string(),
+  description: z.string().nullable().optional(),
+});
+
+export const insertAuditLogSchema = z.object({
+  userId: z.number(),
+  userName: z.string(),
+  action: z.string(),
+  documentId: z.number().nullable().optional(),
+  documentTitle: z.string().nullable().optional(),
+  ipAddress: z.string().nullable().optional(),
+});
+
+export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
-export type Document = typeof documents.$inferSelect;
+export type Document = z.infer<typeof documentSchema>;
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 
-export type AuditLog = typeof auditLogs.$inferSelect;
+export type AuditLog = z.infer<typeof auditLogSchema>;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;

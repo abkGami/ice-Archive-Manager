@@ -3,9 +3,9 @@ import {
   insertUserSchema,
   insertDocumentSchema,
   insertAuditLogSchema,
-  users,
-  documents,
-  auditLogs,
+  type User,
+  type Document,
+  type AuditLog,
 } from "./schema";
 
 export const errorSchemas = {
@@ -34,8 +34,38 @@ export const api = {
         password: z.string(),
       }),
       responses: {
-        200: z.custom<typeof users.$inferSelect>(),
+        200: z.custom<User>(),
         401: errorSchemas.unauthorized,
+      },
+    },
+    signup: {
+      method: "POST" as const,
+      path: "/api/auth/signup" as const,
+      input: z
+        .object({
+          uniqueId: z.string().min(1, "Staff ID or matric number is required"),
+          password: z.string().min(1, "Preferred password is required"),
+          name: z.string().min(1, "Full name is required"),
+          accountType: z.enum(["Student", "Staff"]),
+          level: z.string().optional(),
+          idCardImage: z.string().min(1, "ID card image is required"),
+        })
+        .superRefine((val, ctx) => {
+          if (
+            val.accountType === "Student" &&
+            (!val.level || val.level.trim().length === 0)
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Current level is required for student accounts",
+              path: ["level"],
+            });
+          }
+        }),
+      responses: {
+        201: z.custom<User>(),
+        400: errorSchemas.validation,
+        409: errorSchemas.validation,
       },
     },
     logout: {
@@ -49,7 +79,7 @@ export const api = {
       method: "GET" as const,
       path: "/api/auth/me" as const,
       responses: {
-        200: z.custom<typeof users.$inferSelect>(),
+        200: z.custom<User>(),
         401: errorSchemas.unauthorized,
       },
     },
@@ -66,14 +96,14 @@ export const api = {
         })
         .optional(),
       responses: {
-        200: z.array(z.custom<typeof documents.$inferSelect>()),
+        200: z.array(z.custom<Document>()),
       },
     },
     get: {
       method: "GET" as const,
       path: "/api/documents/:id" as const,
       responses: {
-        200: z.custom<typeof documents.$inferSelect>(),
+        200: z.custom<Document>(),
         404: errorSchemas.notFound,
       },
     },
@@ -82,7 +112,7 @@ export const api = {
       path: "/api/documents" as const,
       input: insertDocumentSchema,
       responses: {
-        201: z.custom<typeof documents.$inferSelect>(),
+        201: z.custom<Document>(),
         400: errorSchemas.validation,
       },
     },
@@ -91,7 +121,7 @@ export const api = {
       path: "/api/documents/:id" as const,
       input: insertDocumentSchema.partial(),
       responses: {
-        200: z.custom<typeof documents.$inferSelect>(),
+        200: z.custom<Document>(),
         400: errorSchemas.validation,
         404: errorSchemas.notFound,
       },
@@ -108,7 +138,7 @@ export const api = {
       method: "POST" as const,
       path: "/api/documents/:id/approve" as const,
       responses: {
-        200: z.custom<typeof documents.$inferSelect>(),
+        200: z.custom<Document>(),
         404: errorSchemas.notFound,
       },
     },
@@ -118,7 +148,7 @@ export const api = {
       method: "GET" as const,
       path: "/api/users" as const,
       responses: {
-        200: z.array(z.custom<typeof users.$inferSelect>()),
+        200: z.array(z.custom<User>()),
       },
     },
     create: {
@@ -126,8 +156,17 @@ export const api = {
       path: "/api/users" as const,
       input: insertUserSchema,
       responses: {
-        201: z.custom<typeof users.$inferSelect>(),
+        201: z.custom<User>(),
         400: errorSchemas.validation,
+      },
+    },
+    idCardUrl: {
+      method: "GET" as const,
+      path: "/api/users/:id/id-card-url" as const,
+      responses: {
+        200: z.object({ url: z.string().url() }),
+        401: errorSchemas.unauthorized,
+        404: errorSchemas.notFound,
       },
     },
     update: {
@@ -135,7 +174,7 @@ export const api = {
       path: "/api/users/:id" as const,
       input: insertUserSchema.partial(),
       responses: {
-        200: z.custom<typeof users.$inferSelect>(),
+        200: z.custom<User>(),
         400: errorSchemas.validation,
         404: errorSchemas.notFound,
       },
@@ -146,7 +185,7 @@ export const api = {
       method: "GET" as const,
       path: "/api/audit-logs" as const,
       responses: {
-        200: z.array(z.custom<typeof auditLogs.$inferSelect>()),
+        200: z.array(z.custom<AuditLog>()),
       },
     },
   },
@@ -190,7 +229,7 @@ export const api = {
 
 export function buildUrl(
   path: string,
-  params?: Record<string, string | number>
+  params?: Record<string, string | number>,
 ): string {
   let url = path;
   if (params) {
@@ -204,5 +243,6 @@ export function buildUrl(
 }
 
 export type LoginInput = z.infer<typeof api.auth.login.input>;
+export type SignupInput = z.infer<typeof api.auth.signup.input>;
 export type DocumentInput = z.infer<typeof api.documents.create.input>;
 export type UserInput = z.infer<typeof api.users.create.input>;

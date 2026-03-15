@@ -20,14 +20,14 @@ export default function Login() {
       { uniqueId, password },
       {
         onSuccess: (user) => {
-          if (user.role === 'Administrator') setLocation("/admin/dashboard");
-          else if (user.role === 'Lecturer') setLocation("/lecturer/dashboard");
+          if (user.role === "Administrator") setLocation("/admin/dashboard");
+          else if (user.role === "Lecturer") setLocation("/lecturer/dashboard");
           else setLocation("/student/dashboard");
         },
         onError: (err) => {
           setError(err.message);
-        }
-      }
+        },
+      },
     );
   };
 
@@ -45,56 +45,88 @@ export default function Login() {
           <div className="h-16 w-16 bg-[#0A2240] rounded-lg flex items-center justify-center mb-4 shadow-inner">
             <Archive className="h-8 w-8 text-[#C8A84B]" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground text-center">AFIT E-Archive System</h1>
-          <p className="text-muted-foreground mt-2 text-sm text-center">Sign in with your institutional credentials to access the repository.</p>
+          <h1 className="text-2xl font-bold text-foreground text-center">
+            ICT Department E-Archive
+          </h1>
+          <p className="text-muted-foreground mt-2 text-sm text-center">
+            Sign in with your institutional credentials to gain access
+          </p>
         </div>
 
         {error && (
           <div className="mb-6 p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-            <p className="text-sm text-destructive font-medium leading-tight">{error}</p>
+            <p className="text-sm text-destructive font-medium leading-tight">
+              {error}
+            </p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="uniqueId" className="text-foreground font-semibold">Unique ID / Matric Number</Label>
-            <Input 
-              id="uniqueId" 
-              placeholder="e.g. U22CE1210 or SS/CE/0061" 
+            <Label htmlFor="uniqueId" className="text-foreground font-semibold">
+              Unique ID / Matric Number
+            </Label>
+            <Input
+              id="uniqueId"
+              placeholder="e.g. U22CE1210 or SS/CE/0061"
               value={uniqueId}
-              onChange={e => setUniqueId(e.target.value)}
+              onChange={(e) => setUniqueId(e.target.value)}
               className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
               required
             />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="text-foreground font-semibold">Password</Label>
-              <a href="#" className="text-xs text-[#1A6BAF] hover:underline font-medium">Forgot password?</a>
+              <Label
+                htmlFor="password"
+                className="text-foreground font-semibold"
+              >
+                Password
+              </Label>
+              <a
+                href="#"
+                className="text-xs text-[#1A6BAF] hover:underline font-medium"
+              >
+                Forgot password?
+              </a>
             </div>
-            <Input 
-              id="password" 
+            <Input
+              id="password"
               type="password"
-              placeholder="••••••••" 
+              placeholder="••••••••"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
               required
             />
           </div>
-          
-          <Button 
-            type="submit" 
+
+          <Button
+            type="submit"
             className="w-full h-11 text-base font-bold bg-[#1A6BAF] hover:bg-[#0D3060] text-white mt-4"
             isLoading={login.isPending}
           >
             {login.isPending ? "Authenticating..." : "Sign In"}
           </Button>
+
+          <p className="text-sm text-center text-muted-foreground">
+            No account yet?{" "}
+            <button
+              type="button"
+              onClick={() => setLocation("/signup")}
+              className="text-[#1A6BAF] hover:underline font-semibold"
+            >
+              Create account
+            </button>
+          </p>
         </form>
 
         <div className="mt-8 text-center text-xs text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Air Force Institute of Technology. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Air Force Institute of Technology.
+            All rights reserved.
+          </p>
         </div>
       </div>
     </div>

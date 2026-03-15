@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, type LoginInput } from "@shared/routes";
+import { api, type LoginInput, type SignupInput } from "@shared/routes";
 
 export function useUser() {
   return useQuery({
@@ -16,7 +16,7 @@ export function useUser() {
 
 export function useLogin() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: LoginInput) => {
       const res = await fetch(api.auth.login.path, {
@@ -25,7 +25,7 @@ export function useLogin() {
         body: JSON.stringify(data),
         credentials: "include",
       });
-      
+
       if (!res.ok) {
         if (res.status === 401) {
           const error = api.auth.login.responses[401].parse(await res.json());
@@ -43,7 +43,7 @@ export function useLogin() {
 
 export function useLogout() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async () => {
       const res = await fetch(api.auth.logout.path, {
@@ -56,6 +56,33 @@ export function useLogout() {
     onSuccess: () => {
       queryClient.setQueryData([api.auth.me.path], null);
       queryClient.clear();
+    },
+  });
+}
+
+export function useSignup() {
+  return useMutation({
+    mutationFn: async (data: SignupInput) => {
+      const res = await fetch(api.auth.signup.path, {
+        method: api.auth.signup.method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        if (res.status === 400) {
+          const error = api.auth.signup.responses[400].parse(await res.json());
+          throw new Error(error.message);
+        }
+        if (res.status === 409) {
+          const error = api.auth.signup.responses[409].parse(await res.json());
+          throw new Error(error.message);
+        }
+        throw new Error("Signup failed");
+      }
+
+      return api.auth.signup.responses[201].parse(await res.json());
     },
   });
 }
