@@ -14,7 +14,7 @@ export function useUsers() {
 
 export function useCreateUser() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: UserInput) => {
       const res = await fetch(api.users.create.path, {
@@ -23,7 +23,7 @@ export function useCreateUser() {
         body: JSON.stringify(data),
         credentials: "include",
       });
-      
+
       if (!res.ok) {
         if (res.status === 400) {
           const error = api.users.create.responses[400].parse(await res.json());
@@ -42,7 +42,7 @@ export function useCreateUser() {
 
 export function useToggleUserStatus() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
       const url = buildUrl(api.users.update.path, { id });
@@ -52,7 +52,7 @@ export function useToggleUserStatus() {
         body: JSON.stringify({ status }),
         credentials: "include",
       });
-      
+
       if (!res.ok) throw new Error("Failed to update user status");
       return api.users.update.responses[200].parse(await res.json());
     },
@@ -66,7 +66,9 @@ export function usePendingUsers() {
   return useQuery({
     queryKey: [api.users.pending.path],
     queryFn: async () => {
-      const res = await fetch(api.users.pending.path, { credentials: "include" });
+      const res = await fetch(api.users.pending.path, {
+        credentials: "include",
+      });
       if (!res.ok) throw new Error("Failed to fetch pending users");
       return api.users.pending.responses[200].parse(await res.json());
     },
@@ -86,7 +88,9 @@ export function useApproveUser() {
 
       if (!res.ok) {
         if (res.status === 404) {
-          const error = api.users.approve.responses[404].parse(await res.json());
+          const error = api.users.approve.responses[404].parse(
+            await res.json(),
+          );
           throw new Error(error.message);
         }
         throw new Error("Failed to approve user");

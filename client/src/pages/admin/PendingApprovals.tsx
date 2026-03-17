@@ -95,7 +95,9 @@ export default function PendingApprovalsPage() {
           <Card className="border-border">
             <CardContent className="p-10 text-center">
               <ShieldAlert className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-              <p className="font-semibold text-foreground">No pending approvals</p>
+              <p className="font-semibold text-foreground">
+                No pending approvals
+              </p>
               <p className="text-sm text-muted-foreground mt-1">
                 All account requests are currently reviewed.
               </p>
@@ -121,10 +123,14 @@ export default function PendingApprovalsPage() {
                   <div className="text-sm space-y-1">
                     <p>
                       <span className="text-muted-foreground">ID: </span>
-                      <span className="font-medium text-foreground">{user.uniqueId}</span>
+                      <span className="font-medium text-foreground">
+                        {user.uniqueId}
+                      </span>
                     </p>
                     <p>
-                      <span className="text-muted-foreground">Current Level: </span>
+                      <span className="text-muted-foreground">
+                        Current Level:{" "}
+                      </span>
                       <span className="font-medium text-foreground">
                         {user.level || "N/A"}
                       </span>

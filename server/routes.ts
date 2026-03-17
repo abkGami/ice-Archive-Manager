@@ -373,11 +373,9 @@ export async function registerRoutes(
     }
 
     if (currentUser.role === "Student" && doc.status !== "Approved") {
-      return res
-        .status(401)
-        .json({
-          message: "You do not have permission to download this document.",
-        });
+      return res.status(401).json({
+        message: "You do not have permission to download this document.",
+      });
     }
 
     if (!doc.filePath) {
