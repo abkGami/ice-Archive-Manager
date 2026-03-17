@@ -5,3 +5,5 @@ server/public
 vite.config.ts.*
 *.tar.gz
 .env
+supabase/migrations/0001_initial.sql
+supabase/migrations/0002_policies.sql

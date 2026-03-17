@@ -11,7 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/common/Button";
-import { Archive, AlertTriangle } from "lucide-react";
+import { Archive, AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const levelOptions = [
   "100 Level",
@@ -25,16 +26,20 @@ const levelOptions = [
 export default function Signup() {
   const signup = useSignup();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const [formData, setFormData] = useState({
     uniqueId: "",
     password: "",
+    confirmPassword: "",
     name: "",
     accountType: "Student" as "Student" | "Staff",
     level: "",
     idCardImage: "",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,14 +74,35 @@ export default function Signup() {
       return;
     }
 
-    signup.mutate(formData, {
-      onSuccess: () => {
-        setLocation("/login");
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match. Please confirm your password.");
+      return;
+    }
+
+    signup.mutate(
+      {
+        uniqueId: formData.uniqueId,
+        password: formData.password,
+        name: formData.name,
+        accountType: formData.accountType,
+        level: formData.level,
+        idCardImage: formData.idCardImage,
       },
-      onError: (err) => {
-        setError(err.message);
+      {
+        onSuccess: () => {
+          toast({
+            title: "Request submitted",
+            description:
+              "Your account creation is pending admin approval. You can sign in after approval.",
+            className: "bg-[#1A6BAF] text-white border-transparent",
+          });
+          setLocation("/login");
+        },
+        onError: (err) => {
+          setError(err.message);
+        },
       },
-    });
+    );
   };
 
   return (
@@ -160,17 +186,72 @@ export default function Signup() {
             <Label htmlFor="password" className="text-foreground font-semibold">
               Preferred Password
             </Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, password: e.target.value }))
-              }
-              className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
-              required
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, password: e.target.value }))
+                }
+                className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-foreground font-semibold"
+            >
+              Confirm Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    confirmPassword: e.target.value,
+                  }))
+                }
+                className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-2">

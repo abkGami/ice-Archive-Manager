@@ -24,6 +24,10 @@ insert into storage.buckets (id, name, public)
 values ('id-card-images', 'id-card-images', false)
 on conflict (id) do nothing;
 
+insert into storage.buckets (id, name, public)
+values ('documents', 'documents', false)
+on conflict (id) do nothing;
+
 drop policy if exists id_cards_service_role_upload on storage.objects;
 create policy id_cards_service_role_upload on storage.objects
 for insert to authenticated
@@ -33,3 +37,13 @@ drop policy if exists id_cards_service_role_select on storage.objects;
 create policy id_cards_service_role_select on storage.objects
 for select to authenticated
 using (bucket_id = 'id-card-images');
+
+drop policy if exists documents_service_role_upload on storage.objects;
+create policy documents_service_role_upload on storage.objects
+for insert to authenticated
+with check (bucket_id = 'documents');
+
+drop policy if exists documents_service_role_select on storage.objects;
+create policy documents_service_role_select on storage.objects
+for select to authenticated
+using (bucket_id = 'documents');

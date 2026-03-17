@@ -11,6 +11,7 @@ const envSchema = z.object({
     .string()
     .min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
   SUPABASE_ID_CARD_BUCKET: z.string().default("id-card-images"),
+  SUPABASE_DOCUMENT_BUCKET: z.string().default("documents"),
 });
 
 export const env = envSchema.parse(process.env);

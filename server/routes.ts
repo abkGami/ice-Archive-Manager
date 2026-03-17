@@ -17,6 +17,10 @@ import {
   uniqueIdToSupabaseEmail,
 } from "./supabase-client";
 
+function sanitizeFileName(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, "_");
+}
+
 async function getAuthenticatedUser(req: any, res: any) {
   const accessToken = getAccessTokenFromRequest(req);
   const refreshToken = getRefreshTokenFromRequest(req);
@@ -117,6 +121,15 @@ export async function registerRoutes(
           .json({ message: "Invalid identifier or password." });
       }
 
+      if (user.status !== "Active") {
+        await supabase.auth.signOut();
+        clearAuthCookies(res);
+        return res.status(403).json({
+          message:
+            "Your account creation is pending admin approval. You will be able to sign in once approved.",
+        });
+      }
+
       setAuthCookies(res, data.session);
 
       await storage.createAuditLog({
@@ -142,12 +155,10 @@ export async function registerRoutes(
       const role = input.accountType === "Staff" ? "Lecturer" : "Student";
 
       if (existingUser) {
-        return res
-          .status(409)
-          .json({
-            message:
-              "This staff ID or matric number already exists on the platform.",
-          });
+        return res.status(409).json({
+          message:
+            "This staff ID or matric number already exists on the platform.",
+        });
       }
 
       const supabaseEmail = uniqueIdToSupabaseEmail(normalizedUniqueId);
@@ -196,7 +207,7 @@ export async function registerRoutes(
         department: "ICT Engineering",
         level: role === "Student" ? (input.level ?? null) : null,
         idCardImage: imagePath,
-        status: "Active",
+        status: "Pending Approval",
       });
 
       await storage.createAuditLog({
@@ -291,7 +302,55 @@ export async function registerRoutes(
       if (!currentUser) return;
 
       const input = api.documents.create.input.parse(req.body);
-      const doc = await storage.createDocument(input);
+      if (!input.fileData || !input.fileName) {
+        return res.status(400).json({
+          message: "Document file is required for upload.",
+          field: "fileData",
+        });
+      }
+
+      const { mime, buffer } = parseBase64Image(input.fileData);
+      const extension =
+        input.fileName.split(".").pop()?.toLowerCase() ||
+        fileExtensionFromMime(mime);
+      const safeFileName = sanitizeFileName(input.fileName);
+      const docPath = `documents/${currentUser.id}/${Date.now()}-${safeFileName}`;
+
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from(env.SUPABASE_DOCUMENT_BUCKET)
+        .upload(docPath, buffer, {
+          contentType: mime,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        return res.status(400).json({
+          message: "Unable to upload document file.",
+          field: "fileData",
+        });
+      }
+
+      const doc = await storage.createDocument({
+        title: input.title,
+        category: input.category,
+        uploadedBy: input.uploadedBy,
+        uploadedByName: input.uploadedByName,
+        fileType: input.fileType || extension,
+        fileName: input.fileName,
+        filePath: docPath,
+        size: input.size,
+        status: input.status,
+        description: input.description ?? null,
+      });
+
+      await storage.createAuditLog({
+        userId: currentUser.id,
+        userName: currentUser.name,
+        action: "Upload",
+        documentId: doc.id,
+        documentTitle: doc.title,
+      });
+
       res.status(201).json(doc);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -302,6 +361,53 @@ export async function registerRoutes(
       }
       res.status(500).json({ message: "Internal server error" });
     }
+  });
+
+  app.get(api.documents.downloadUrl.path, async (req, res) => {
+    const currentUser = await requireAuth(req, res);
+    if (!currentUser) return;
+
+    const doc = await storage.getDocument(Number(req.params.id));
+    if (!doc) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    if (currentUser.role === "Student" && doc.status !== "Approved") {
+      return res
+        .status(401)
+        .json({
+          message: "You do not have permission to download this document.",
+        });
+    }
+
+    if (!doc.filePath) {
+      return res
+        .status(404)
+        .json({ message: "No file available for this document." });
+    }
+
+    const { data, error } = await supabaseAdmin.storage
+      .from(env.SUPABASE_DOCUMENT_BUCKET)
+      .createSignedUrl(doc.filePath, 60 * 10);
+
+    if (error || !data?.signedUrl) {
+      return res
+        .status(500)
+        .json({ message: "Unable to generate download URL" });
+    }
+
+    await storage.createAuditLog({
+      userId: currentUser.id,
+      userName: currentUser.name,
+      action: "Download",
+      documentId: doc.id,
+      documentTitle: doc.title,
+    });
+
+    res.status(200).json({
+      url: data.signedUrl,
+      fileName: doc.fileName || `${doc.title}.${doc.fileType}`,
+    });
   });
 
   app.put(api.documents.update.path, async (req, res) => {
@@ -426,6 +532,66 @@ export async function registerRoutes(
     }
 
     res.status(200).json({ url: data.signedUrl });
+  });
+
+  app.get(api.users.pending.path, async (req, res) => {
+    const currentUser = await requireRole(req, res, ["Administrator"]);
+    if (!currentUser) return;
+
+    const users = await storage.getUsers();
+    const pending = users.filter(
+      (u) =>
+        u.status === "Pending Approval" &&
+        (u.role === "Student" || u.role === "Lecturer"),
+    );
+    res.status(200).json(pending);
+  });
+
+  app.post(api.users.approve.path, async (req, res) => {
+    const currentUser = await requireRole(req, res, ["Administrator"]);
+    if (!currentUser) return;
+
+    const user = await storage.getUser(Number(req.params.id));
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const updated = await storage.updateUser(user.id, { status: "Active" });
+
+    await storage.createAuditLog({
+      userId: currentUser.id,
+      userName: currentUser.name,
+      action: "Approve User",
+      documentTitle: updated.name,
+    });
+
+    res.status(200).json(updated);
+  });
+
+  app.get(api.users.idCardPreview.path, async (req, res) => {
+    const currentUser = await requireRole(req, res, ["Administrator"]);
+    if (!currentUser) return;
+
+    const user = await storage.getUser(Number(req.params.id));
+    if (!user?.idCardImage) {
+      return res.status(404).json({ message: "ID card image not found" });
+    }
+
+    const { data, error } = await supabaseAdmin.storage
+      .from(env.SUPABASE_ID_CARD_BUCKET)
+      .download(user.idCardImage);
+
+    if (error || !data) {
+      return res.status(404).json({ message: "ID card image not found" });
+    }
+
+    const arrayBuffer = await data.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    res.setHeader("Content-Type", data.type || "application/octet-stream");
+    res.setHeader("Cache-Control", "no-store, private");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Content-Disposition", "inline");
+    res.status(200).send(buffer);
   });
 
   app.put(api.users.update.path, async (req, res) => {
@@ -629,7 +795,7 @@ async function seedDatabase() {
     password: "Admin@2024",
     name: "Wg Cdr. Abubakar Yusuf",
     role: "Administrator",
-    department: "Computer Engineering",
+    department: "ICT Engineering",
   });
 
   const fatima = await ensureSeedUser({
@@ -637,7 +803,7 @@ async function seedDatabase() {
     password: "Staff@2024",
     name: "Dr. Fatima Aliyu",
     role: "Lecturer",
-    department: "Computer Engineering",
+    department: "ICT Engineering",
   });
 
   await ensureSeedUser({
@@ -645,7 +811,7 @@ async function seedDatabase() {
     password: "Staff@2024",
     name: "Engr. Musa Danladi",
     role: "Lecturer",
-    department: "Computer Engineering",
+    department: "ICT Engineering",
   });
 
   await ensureSeedUser({
@@ -653,7 +819,7 @@ async function seedDatabase() {
     password: "Staff@2024",
     name: "Dr. Ngozi Eze",
     role: "Lecturer",
-    department: "Computer Engineering",
+    department: "ICT Engineering",
   });
 
   const yahaya = await ensureSeedUser({
@@ -670,7 +836,7 @@ async function seedDatabase() {
     password: "Student@2024",
     name: "Aisha Mohammed",
     role: "Student",
-    department: "Computer Engineering",
+    department: "ICT Engineering",
     level: "400 Level",
   });
 
@@ -708,7 +874,7 @@ async function seedDatabase() {
   });
 
   await storage.createDocument({
-    title: "Computer Engineering Curriculum Review 2023",
+    title: "ICT Engineering Curriculum Review 2023",
     category: "Academic Policy",
     uploadedBy: fatima.id,
     uploadedByName: fatima.name,

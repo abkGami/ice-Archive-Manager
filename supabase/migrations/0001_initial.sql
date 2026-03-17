@@ -20,6 +20,8 @@ create table if not exists public.documents (
   uploaded_by_name text not null,
   date timestamptz default now(),
   file_type text not null,
+  file_name text,
+  file_path text,
   size text not null,
   status text not null,
   description text
@@ -40,3 +42,6 @@ create index if not exists idx_users_unique_id on public.users (unique_id);
 create index if not exists idx_users_auth_user_id on public.users (auth_user_id);
 create index if not exists idx_documents_status on public.documents (status);
 create index if not exists idx_audit_logs_date on public.audit_logs (date desc);
+
+alter table public.documents add column if not exists file_name text;
+alter table public.documents add column if not exists file_path text;

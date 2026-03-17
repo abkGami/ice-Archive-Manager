@@ -36,6 +36,7 @@ export const api = {
       responses: {
         200: z.custom<User>(),
         401: errorSchemas.unauthorized,
+        403: errorSchemas.unauthorized,
       },
     },
     signup: {
@@ -142,6 +143,18 @@ export const api = {
         404: errorSchemas.notFound,
       },
     },
+    downloadUrl: {
+      method: "GET" as const,
+      path: "/api/documents/:id/download-url" as const,
+      responses: {
+        200: z.object({
+          url: z.string().url(),
+          fileName: z.string(),
+        }),
+        401: errorSchemas.unauthorized,
+        404: errorSchemas.notFound,
+      },
+    },
   },
   users: {
     list: {
@@ -165,6 +178,31 @@ export const api = {
       path: "/api/users/:id/id-card-url" as const,
       responses: {
         200: z.object({ url: z.string().url() }),
+        401: errorSchemas.unauthorized,
+        404: errorSchemas.notFound,
+      },
+    },
+    pending: {
+      method: "GET" as const,
+      path: "/api/users/pending" as const,
+      responses: {
+        200: z.array(z.custom<User>()),
+        401: errorSchemas.unauthorized,
+      },
+    },
+    approve: {
+      method: "POST" as const,
+      path: "/api/users/:id/approve" as const,
+      responses: {
+        200: z.custom<User>(),
+        401: errorSchemas.unauthorized,
+        404: errorSchemas.notFound,
+      },
+    },
+    idCardPreview: {
+      method: "GET" as const,
+      path: "/api/users/:id/id-card-preview" as const,
+      responses: {
         401: errorSchemas.unauthorized,
         404: errorSchemas.notFound,
       },

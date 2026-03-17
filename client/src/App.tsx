@@ -13,6 +13,7 @@ import AdminDocuments from "@/pages/admin/Documents";
 import AdminUpload from "@/pages/admin/Upload";
 import AdminUsers from "@/pages/admin/Users";
 import AdminAudit from "@/pages/admin/Audit";
+import PendingApprovalsPage from "@/pages/admin/PendingApprovals";
 
 import LecturerDashboard from "@/pages/lecturer/Dashboard";
 import StudentDashboard from "@/pages/student/Dashboard";
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/admin/documents" component={AdminDocuments} />
       <Route path="/admin/upload" component={AdminUpload} />
       <Route path="/admin/users" component={AdminUsers} />
+      <Route path="/admin/approvals" component={PendingApprovalsPage} />
       <Route path="/admin/audit" component={AdminAudit} />
       {/* Lecturer Routes - Reusing admin views but AppShell protects role */}
       <Route path="/lecturer/dashboard" component={LecturerDashboard} />

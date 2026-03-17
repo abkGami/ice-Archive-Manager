@@ -4,6 +4,7 @@ import {
   Upload, 
   Users, 
   ClipboardList, 
+  UserCheck,
   LogOut,
   Archive
 } from "lucide-react";
@@ -42,6 +43,7 @@ export function AppSidebar() {
   }
 
   const adminLinks = user.role === 'Administrator' ? [
+    { title: "Pending Approvals", url: "/admin/approvals", icon: UserCheck },
     { title: "User Management", url: "/admin/users", icon: Users },
     { title: "Audit Log", url: "/admin/audit", icon: ClipboardList },
   ] : [];

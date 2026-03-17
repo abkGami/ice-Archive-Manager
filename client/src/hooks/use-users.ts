@@ -61,3 +61,43 @@ export function useToggleUserStatus() {
     },
   });
 }
+
+export function usePendingUsers() {
+  return useQuery({
+    queryKey: [api.users.pending.path],
+    queryFn: async () => {
+      const res = await fetch(api.users.pending.path, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch pending users");
+      return api.users.pending.responses[200].parse(await res.json());
+    },
+  });
+}
+
+export function useApproveUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const url = buildUrl(api.users.approve.path, { id });
+      const res = await fetch(url, {
+        method: api.users.approve.method,
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        if (res.status === 404) {
+          const error = api.users.approve.responses[404].parse(await res.json());
+          throw new Error(error.message);
+        }
+        throw new Error("Failed to approve user");
+      }
+
+      return api.users.approve.responses[200].parse(await res.json());
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.users.pending.path] });
+      queryClient.invalidateQueries({ queryKey: [api.users.list.path] });
+      queryClient.invalidateQueries({ queryKey: [api.stats.admin.path] });
+    },
+  });
+}

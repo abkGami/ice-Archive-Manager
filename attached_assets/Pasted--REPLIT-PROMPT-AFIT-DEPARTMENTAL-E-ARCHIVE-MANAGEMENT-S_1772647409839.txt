@@ -65,24 +65,24 @@ The login form asks for a **Unique Identifier** and a **Password**. Use the foll
 ```
 ADMINISTRATOR
   Unique ID:  ADMIN-001
-  Password:   Admin@2024
+  Password:   Admin@2026
   Name:       Wg Cdr. Abubakar Yusuf
   Role:       Administrator
-  Department: Computer Engineering
+  Department: ICT Engineering
 
 LECTURER (Staff)
   Unique ID:  SS/CE/0042
   Password:   Staff@2024
   Name:       Dr. Fatima Aliyu
   Role:       Lecturer
-  Department: Computer Engineering
+  Department: ICT Engineering
 
 STUDENT
   Unique ID:  U21CE1089
   Password:   Student@2024
   Name:       Chukwuemeka Obi
   Role:       Student
-  Department: Computer Engineering
+  Department: ICT Engineering
   Level:      400 Level
 ```
 
@@ -117,7 +117,7 @@ After a successful login, redirect to the appropriate dashboard based on the rol
     Size: 218 KB
     Status: Approved
 
-4.  Title: "Computer Engineering Curriculum Review 2023"
+4.  Title: "ICT Engineering Curriculum Review 2023"
     Category: Academic Policy
     Uploaded By: Dr. Fatima Aliyu
     Date: 5 Mar 2024
@@ -216,7 +216,7 @@ The shell has two parts: a fixed left sidebar and a main content area.
 **Left Sidebar:**
 - Width: 260px, fixed height full screen, does not scroll with content
 - Background: Primary Navy (#0A2240)
-- Top section: AFIT logo area — render the text "AFIT" in a bold navy badge on a gold (#C8A84B) square icon, followed by two lines of text: "E-Archive Portal" in white semi-bold, and "Dept. of Computer Engineering" in mid-gray small text
+- Top section: AFIT logo area — render the text "AFIT" in a bold navy badge on a gold (#C8A84B) square icon, followed by two lines of text: "E-Archive Portal" in white semi-bold, and "Dept. of ICT Engineering" in mid-gray small text
 - Below logo: A thin horizontal rule in gold (#C8A84B) at 40% opacity
 - Navigation links: Each link has an icon (Lucide) on the left, label on the right. Inactive state: white text at 70% opacity, no background. Active state: sky blue background (#1A6BAF) at 15% opacity, full white text, a 3px left border in gold (#C8A84B), and the icon in gold. Hover state: sky blue background at 10% opacity, white text at full opacity.
 - Navigation sections are grouped with small ALL CAPS section labels in mid-gray (#8A97A8)

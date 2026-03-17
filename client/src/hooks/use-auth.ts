@@ -31,6 +31,10 @@ export function useLogin() {
           const error = api.auth.login.responses[401].parse(await res.json());
           throw new Error(error.message);
         }
+        if (res.status === 403) {
+          const error = api.auth.login.responses[403].parse(await res.json());
+          throw new Error(error.message);
+        }
         throw new Error("Login failed");
       }
       return api.auth.login.responses[200].parse(await res.json());

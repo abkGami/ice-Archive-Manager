@@ -79,6 +79,8 @@ export class MockStorage implements IStorage {
     const newDoc: Document = {
       id: nextDocumentId++,
       ...doc,
+      fileName: doc.fileName ?? null,
+      filePath: doc.filePath ?? null,
       description: doc.description ?? null,
       date: new Date(),
     };

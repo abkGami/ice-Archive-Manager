@@ -54,6 +54,8 @@ type DbDocumentRow = {
   uploaded_by_name: string;
   date: string | null;
   file_type: string;
+  file_name?: string | null;
+  file_path?: string | null;
   size: string;
   status: string;
   description: string | null;
@@ -95,6 +97,8 @@ function toDocument(row: DbDocumentRow): Document {
     uploadedByName: row.uploaded_by_name,
     date: row.date ? new Date(row.date) : null,
     fileType: row.file_type,
+    fileName: row.file_name ?? null,
+    filePath: row.file_path ?? null,
     size: row.size,
     status: row.status,
     description: row.description,
@@ -302,6 +306,8 @@ export class SupabaseStorage implements IStorage {
       uploaded_by: doc.uploadedBy,
       uploaded_by_name: doc.uploadedByName,
       file_type: doc.fileType,
+      file_name: doc.fileName ?? null,
+      file_path: doc.filePath ?? null,
       size: doc.size,
       status: doc.status,
       description: doc.description ?? null,
@@ -331,6 +337,10 @@ export class SupabaseStorage implements IStorage {
       payload.uploaded_by_name = updates.uploadedByName;
     if (typeof updates.fileType !== "undefined")
       payload.file_type = updates.fileType;
+    if (typeof updates.fileName !== "undefined")
+      payload.file_name = updates.fileName;
+    if (typeof updates.filePath !== "undefined")
+      payload.file_path = updates.filePath;
     if (typeof updates.size !== "undefined") payload.size = updates.size;
     if (typeof updates.status !== "undefined") payload.status = updates.status;
     if (typeof updates.description !== "undefined")
