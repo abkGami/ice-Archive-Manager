@@ -62,7 +62,7 @@ export function useToggleUserStatus() {
   });
 }
 
-export function usePendingUsers() {
+export function usePendingUsers(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [api.users.pending.path],
     queryFn: async () => {
@@ -72,6 +72,8 @@ export function usePendingUsers() {
       if (!res.ok) throw new Error("Failed to fetch pending users");
       return api.users.pending.responses[200].parse(await res.json());
     },
+    enabled: options?.enabled ?? true,
+    refetchInterval: 30000,
   });
 }
 

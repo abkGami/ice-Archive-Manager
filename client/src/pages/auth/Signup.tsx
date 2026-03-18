@@ -34,6 +34,19 @@ export default function Signup() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [shakePasswordInputs, setShakePasswordInputs] = useState(false);
+
+  const passwordsMismatch =
+    formData.confirmPassword.length > 0 &&
+    formData.password !== formData.confirmPassword;
+
+  const triggerPasswordMismatchAnimation = () => {
+    setShakePasswordInputs(false);
+    window.requestAnimationFrame(() => {
+      setShakePasswordInputs(true);
+      window.setTimeout(() => setShakePasswordInputs(false), 400);
+    });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,13 +78,14 @@ export default function Signup() {
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match. Please confirm your password.");
+      triggerPasswordMismatchAnimation();
       return;
     }
 
     signup.mutate(
       {
         uniqueId: toUpperInput(formData.uniqueId),
-        password: toUpperInput(formData.password),
+        password: formData.password,
         name: toUpperInput(formData.name),
         accountType: formData.accountType,
         idCardImage: formData.idCardImage,
@@ -185,10 +199,14 @@ export default function Signup() {
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    password: toUpperInput(e.target.value),
+                    password: e.target.value,
                   }))
                 }
-                className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background pr-10"
+                className={`h-11 bg-background pr-10 ${
+                  passwordsMismatch
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : "border-border focus-visible:ring-[#1A6BAF]"
+                } ${shakePasswordInputs ? "animate-input-shake" : ""}`}
                 required
               />
               <button
@@ -222,10 +240,14 @@ export default function Signup() {
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    confirmPassword: toUpperInput(e.target.value),
+                      confirmPassword: e.target.value,
                   }))
                 }
-                className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background pr-10"
+                className={`h-11 bg-background pr-10 ${
+                  passwordsMismatch
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : "border-border focus-visible:ring-[#1A6BAF]"
+                } ${shakePasswordInputs ? "animate-input-shake" : ""}`}
                 required
               />
               <button

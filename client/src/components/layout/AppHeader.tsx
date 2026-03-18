@@ -12,12 +12,69 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
+import { useAuditLogs } from "@/hooks/use-audit";
+import { usePendingUsers } from "@/hooks/use-users";
+import { useDocuments } from "@/hooks/use-documents";
+
+type HeaderNotification = {
+  id: string;
+  title: string;
+  detail: string;
+  time?: Date;
+};
 
 export function AppHeader() {
   const { data: user } = useUser();
   const logout = useLogout();
 
+  const isAdmin = user?.role === "Administrator";
+
+  const { data: pendingUsers = [] } = usePendingUsers({
+    enabled: !!user && isAdmin,
+  });
+  const { data: pendingDocuments = [] } = useDocuments(
+    { status: "Pending Approval" },
+    { enabled: !!user && isAdmin },
+  );
+  const { data: auditLogs = [] } = useAuditLogs({
+    enabled: !!user && isAdmin,
+  });
+  const { data: approvedDocuments = [] } = useDocuments(
+    { status: "Approved" },
+    { enabled: !!user && !isAdmin },
+  );
+
   if (!user) return null;
+
+  const notifications: HeaderNotification[] = isAdmin
+    ? [
+        {
+          id: "pending-users",
+          title: "Pending Account Approvals",
+          detail: `${pendingUsers.length} account request(s) awaiting review`,
+        },
+        {
+          id: "pending-documents",
+          title: "Pending Document Approvals",
+          detail: `${pendingDocuments.length} document(s) awaiting approval`,
+        },
+        ...auditLogs.slice(0, 5).map((log) => ({
+          id: `audit-${log.id}`,
+          title: `${log.action} Activity`,
+          detail: `${log.userName} ${log.action.toLowerCase()}${log.documentTitle ? `: ${log.documentTitle}` : ""}`,
+          time: log.date ?? undefined,
+        })),
+      ]
+    : approvedDocuments.slice(0, 5).map((doc) => ({
+        id: `doc-${doc.id}`,
+        title: "New Approved Document",
+        detail: doc.title,
+        time: doc.date ?? undefined,
+      }));
+
+  const unreadCount = isAdmin
+    ? pendingUsers.length + pendingDocuments.length
+    : notifications.length;
 
   const initials = user.name
     .split(" ")
@@ -52,15 +109,50 @@ export function AppHeader() {
       </div>
 
       <div className="flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-muted-foreground relative"
-          title="Notifications"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive border border-card"></span>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground relative"
+              title="Notifications"
+            >
+              <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] px-1 flex items-center justify-center border border-card">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {notifications.length === 0 ? (
+              <DropdownMenuItem className="text-muted-foreground">
+                No new notifications
+              </DropdownMenuItem>
+            ) : (
+              notifications.slice(0, 8).map((item) => (
+                <DropdownMenuItem key={item.id} className="py-2">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-sm font-medium text-foreground">
+                      {item.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {item.detail}
+                    </span>
+                    {item.time && (
+                      <span className="text-[10px] text-muted-foreground">
+                        {format(new Date(item.time), "MMM d, h:mm a")}
+                      </span>
+                    )}
+                  </div>
+                </DropdownMenuItem>
+              ))
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <div className="h-8 w-px bg-border mx-1"></div>
 

@@ -98,9 +98,32 @@
     @apply focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-strict;
   }
 
+  .animate-input-shake {
+    animation: input-shake 0.35s ease-in-out;
+  }
+
   /* File type badge colors */
   .bg-file-pdf { @apply bg-destructive text-white; }
   .bg-file-docx { @apply bg-accent text-white; }
   .bg-file-xlsx { @apply bg-[#1A6B45] text-white; }
   .bg-file-other { @apply bg-secondary text-white; }
+}
+
+@keyframes input-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
 }

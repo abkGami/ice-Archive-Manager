@@ -664,12 +664,20 @@ export async function registerRoutes(
 
     const docs = await storage.getDocuments();
     const users = await storage.getUsers();
+    const now = Date.now();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    const recentUploads = docs.filter((d) => {
+      if (!d.date) return false;
+      const uploadedAt = new Date(d.date).getTime();
+      return now - uploadedAt <= sevenDaysMs;
+    }).length;
+
     res.json({
       totalDocuments: docs.length,
       pendingApprovals: docs.filter((d) => d.status === "Pending Approval")
         .length,
       totalUsers: users.length,
-      recentUploads: docs.length > 0 ? 3 : 0, // Mock
+      recentUploads,
     });
   });
 

@@ -5,7 +5,7 @@ export function useDocuments(params?: {
   category?: string;
   status?: string;
   search?: string;
-}) {
+}, options?: { enabled?: boolean }) {
   const queryParams = new URLSearchParams();
   if (params?.category) queryParams.set("category", params.category);
   if (params?.status) queryParams.set("status", params.status);
@@ -21,6 +21,8 @@ export function useDocuments(params?: {
       if (!res.ok) throw new Error("Failed to fetch documents");
       return api.documents.list.responses[200].parse(await res.json());
     },
+    enabled: options?.enabled ?? true,
+    refetchInterval: 30000,
   });
 }
 
