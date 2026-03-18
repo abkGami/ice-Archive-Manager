@@ -15,6 +15,7 @@ export interface IStorage {
   getUserByUniqueId(uniqueId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
+  deleteUser(id: number): Promise<void>;
   getUsers(): Promise<User[]>;
 
   // Documents
@@ -265,6 +266,21 @@ export class SupabaseStorage implements IStorage {
 
     if (error) throw new Error(`Failed to fetch users: ${error.message}`);
     return (data ?? []).map(toUser);
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    const { error: auditError } = await supabaseAdmin
+      .from("audit_logs")
+      .delete()
+      .eq("user_id", id);
+    if (auditError) {
+      throw new Error(
+        `Failed to delete user audit logs: ${auditError.message}`,
+      );
+    }
+
+    const { error } = await supabaseAdmin.from("users").delete().eq("id", id);
+    if (error) throw new Error(`Failed to delete user: ${error.message}`);
   }
 
   async getDocuments(filters?: {

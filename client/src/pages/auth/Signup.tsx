@@ -14,14 +14,9 @@ import { Button } from "@/components/common/Button";
 import { Archive, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const levelOptions = [
-  "100 Level",
-  "200 Level",
-  "300 Level",
-  "400 Level",
-  "500 Level",
-  "Postgraduate",
-];
+function toUpperInput(value: string) {
+  return value.toUpperCase();
+}
 
 export default function Signup() {
   const signup = useSignup();
@@ -34,7 +29,6 @@ export default function Signup() {
     confirmPassword: "",
     name: "",
     accountType: "Student" as "Student" | "Staff",
-    level: "",
     idCardImage: "",
   });
   const [error, setError] = useState("");
@@ -62,11 +56,6 @@ export default function Signup() {
     e.preventDefault();
     setError("");
 
-    if (formData.accountType === "Student" && !formData.level.trim()) {
-      setError("Please provide your current level for a student account.");
-      return;
-    }
-
     if (!formData.idCardImage) {
       setError(
         "Please upload a valid ID card image before creating your account.",
@@ -81,11 +70,10 @@ export default function Signup() {
 
     signup.mutate(
       {
-        uniqueId: formData.uniqueId,
-        password: formData.password,
-        name: formData.name,
+        uniqueId: toUpperInput(formData.uniqueId),
+        password: toUpperInput(formData.password),
+        name: toUpperInput(formData.name),
         accountType: formData.accountType,
-        level: formData.level,
         idCardImage: formData.idCardImage,
       },
       {
@@ -146,7 +134,6 @@ export default function Signup() {
                 setFormData((prev) => ({
                   ...prev,
                   accountType: value,
-                  level: value === "Staff" ? "" : prev.level,
                 }))
               }
             >
@@ -175,7 +162,10 @@ export default function Signup() {
               }
               value={formData.uniqueId}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, uniqueId: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  uniqueId: toUpperInput(e.target.value),
+                }))
               }
               className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
               required
@@ -193,7 +183,10 @@ export default function Signup() {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, password: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    password: toUpperInput(e.target.value),
+                  }))
                 }
                 className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background pr-10"
                 required
@@ -229,7 +222,7 @@ export default function Signup() {
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    confirmPassword: e.target.value,
+                    confirmPassword: toUpperInput(e.target.value),
                   }))
                 }
                 className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background pr-10"
@@ -263,39 +256,14 @@ export default function Signup() {
               placeholder="Your full legal name"
               value={formData.name}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, name: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  name: toUpperInput(e.target.value),
+                }))
               }
               className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
               required
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="level" className="text-foreground font-semibold">
-              Current Level{" "}
-              {formData.accountType === "Staff" ? "(students only)" : ""}
-            </Label>
-            <Input
-              id="level"
-              list="level-options"
-              placeholder={
-                formData.accountType === "Staff"
-                  ? "Not required for staff accounts"
-                  : "Select or type your current level"
-              }
-              value={formData.level}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, level: e.target.value }))
-              }
-              className="h-11 border-border focus-visible:ring-[#1A6BAF] bg-background"
-              required={formData.accountType === "Student"}
-              disabled={formData.accountType === "Staff"}
-            />
-            <datalist id="level-options">
-              {levelOptions.map((level) => (
-                <option key={level} value={level} />
-              ))}
-            </datalist>
           </div>
 
           <div className="space-y-2">

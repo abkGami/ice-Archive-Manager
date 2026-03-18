@@ -205,7 +205,7 @@ export async function registerRoutes(
         name: input.name,
         role,
         department: "ICT Engineering",
-        level: role === "Student" ? (input.level ?? null) : null,
+        level: null,
         idCardImage: imagePath,
         status: "Pending Approval",
       });
@@ -609,6 +609,43 @@ export async function registerRoutes(
       }
       res.status(500).json({ message: "Internal server error" });
     }
+  });
+
+  app.delete(api.users.delete.path, async (req, res) => {
+    const currentUser = await requireRole(req, res, ["Administrator"]);
+    if (!currentUser) return;
+
+    const userId = Number(req.params.id);
+    const user = await storage.getUser(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.id === currentUser.id) {
+      return res
+        .status(400)
+        .json({ message: "Administrators cannot delete their own account." });
+    }
+
+    await storage.deleteUser(user.id);
+
+    if (user.authUserId) {
+      const { error } = await supabaseAdmin.auth.admin.deleteUser(
+        user.authUserId,
+      );
+      if (error) {
+        console.error("Failed to delete auth user:", error.message);
+      }
+    }
+
+    await storage.createAuditLog({
+      userId: currentUser.id,
+      userName: currentUser.name,
+      action: "Delete User",
+      documentTitle: user.name,
+    });
+
+    res.status(204).end();
   });
 
   // Audit Logs

@@ -124,15 +124,7 @@ export default function PendingApprovalsPage() {
                     <p>
                       <span className="text-muted-foreground">ID: </span>
                       <span className="font-medium text-foreground">
-                        {user.uniqueId}
-                      </span>
-                    </p>
-                    <p>
-                      <span className="text-muted-foreground">
-                        Current Level:{" "}
-                      </span>
-                      <span className="font-medium text-foreground">
-                        {user.level || "N/A"}
+                        {user.uniqueId.toUpperCase()}
                       </span>
                     </p>
                   </div>

@@ -55,6 +55,11 @@ export class MockStorage implements IStorage {
     return [...users];
   }
 
+  async deleteUser(id: number): Promise<void> {
+    auditLogs = auditLogs.filter((log) => log.userId !== id);
+    users = users.filter((u) => u.id !== id);
+  }
+
   async getDocuments(filters?: {
     category?: string;
     status?: string;

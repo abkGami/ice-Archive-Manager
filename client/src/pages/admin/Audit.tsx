@@ -24,12 +24,11 @@ export default function AdminAudit() {
   );
 
   const handleExport = () => {
-    const header = ["User", "Action", "Document", "IP Address", "Date"];
+    const header = ["User", "Action", "Document", "Date"];
     const rows = filteredLogs.map((log) => [
       log.userName || "",
       log.action || "",
       log.documentTitle || "",
-      log.ipAddress || "",
       log.date ? format(new Date(log.date), "yyyy-MM-dd HH:mm:ss") : "",
     ]);
 
@@ -87,9 +86,6 @@ export default function AdminAudit() {
                 <th className="px-4 py-4 border-b border-border">
                   Document Affected
                 </th>
-                <th className="px-4 py-4 border-b border-border font-mono">
-                  IP Address
-                </th>
                 <th className="px-4 py-4 border-b border-border text-right">
                   Date & Time
                 </th>
@@ -127,9 +123,6 @@ export default function AdminAudit() {
                   >
                     {log.documentTitle || "-"}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                    {log.ipAddress || "192.168.x.x"}
-                  </td>
                   <td className="px-4 py-3 text-right text-muted-foreground whitespace-nowrap">
                     {log.date
                       ? format(new Date(log.date), "MMM d, yyyy HH:mm:ss")
@@ -140,7 +133,7 @@ export default function AdminAudit() {
               {filteredLogs.length === 0 && (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={4}
                     className="p-8 text-center text-muted-foreground"
                   >
                     No audit logs matching criteria.

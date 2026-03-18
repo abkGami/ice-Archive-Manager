@@ -75,6 +75,74 @@ export function usePendingUsers() {
   });
 }
 
+export function useUpdateUserDetails() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: number;
+      updates: Record<string, unknown>;
+    }) => {
+      const url = buildUrl(api.users.update.path, { id });
+      const res = await fetch(url, {
+        method: api.users.update.method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        if (res.status === 400) {
+          const error = api.users.update.responses[400].parse(await res.json());
+          throw new Error(error.message);
+        }
+        if (res.status === 404) {
+          const error = api.users.update.responses[404].parse(await res.json());
+          throw new Error(error.message);
+        }
+        throw new Error("Failed to update user details");
+      }
+
+      return api.users.update.responses[200].parse(await res.json());
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.users.list.path] });
+      queryClient.invalidateQueries({ queryKey: [api.users.pending.path] });
+    },
+  });
+}
+
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const url = buildUrl(api.users.delete.path, { id });
+      const res = await fetch(url, {
+        method: api.users.delete.method,
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        if (res.status === 404) {
+          const error = api.users.delete.responses[404].parse(await res.json());
+          throw new Error(error.message);
+        }
+        const payload = await res.json().catch(() => null);
+        throw new Error(payload?.message || "Failed to delete user");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.users.list.path] });
+      queryClient.invalidateQueries({ queryKey: [api.users.pending.path] });
+      queryClient.invalidateQueries({ queryKey: [api.stats.admin.path] });
+    },
+  });
+}
+
 export function useApproveUser() {
   const queryClient = useQueryClient();
 

@@ -42,27 +42,13 @@ export const api = {
     signup: {
       method: "POST" as const,
       path: "/api/auth/signup" as const,
-      input: z
-        .object({
-          uniqueId: z.string().min(1, "Staff ID or matric number is required"),
-          password: z.string().min(1, "Preferred password is required"),
-          name: z.string().min(1, "Full name is required"),
-          accountType: z.enum(["Student", "Staff"]),
-          level: z.string().optional(),
-          idCardImage: z.string().min(1, "ID card image is required"),
-        })
-        .superRefine((val, ctx) => {
-          if (
-            val.accountType === "Student" &&
-            (!val.level || val.level.trim().length === 0)
-          ) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: "Current level is required for student accounts",
-              path: ["level"],
-            });
-          }
-        }),
+      input: z.object({
+        uniqueId: z.string().min(1, "Staff ID or matric number is required"),
+        password: z.string().min(1, "Preferred password is required"),
+        name: z.string().min(1, "Full name is required"),
+        accountType: z.enum(["Student", "Staff"]),
+        idCardImage: z.string().min(1, "ID card image is required"),
+      }),
       responses: {
         201: z.custom<User>(),
         400: errorSchemas.validation,
@@ -214,6 +200,15 @@ export const api = {
       responses: {
         200: z.custom<User>(),
         400: errorSchemas.validation,
+        404: errorSchemas.notFound,
+      },
+    },
+    delete: {
+      method: "DELETE" as const,
+      path: "/api/users/:id" as const,
+      responses: {
+        204: z.void(),
+        401: errorSchemas.unauthorized,
         404: errorSchemas.notFound,
       },
     },
