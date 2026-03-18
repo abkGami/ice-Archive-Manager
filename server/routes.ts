@@ -618,7 +618,25 @@ export async function registerRoutes(
       return res.status(404).json({ message: "User not found" });
     }
 
-    const updated = await storage.updateUser(user.id, { status: "Active" });
+    if (user.idCardImage) {
+      const { error: removeError } = await supabaseAdmin.storage
+        .from(env.SUPABASE_ID_CARD_BUCKET)
+        .remove([user.idCardImage]);
+
+      if (
+        removeError &&
+        !removeError.message.toLowerCase().includes("not found")
+      ) {
+        return res.status(500).json({
+          message: "Unable to remove ID card image during approval.",
+        });
+      }
+    }
+
+    const updated = await storage.updateUser(user.id, {
+      status: "Active",
+      idCardImage: null,
+    });
 
     await storage.createAuditLog({
       userId: currentUser.id,
