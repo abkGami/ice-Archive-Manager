@@ -86,6 +86,8 @@ export class MockStorage implements IStorage {
       ...doc,
       fileName: doc.fileName ?? null,
       filePath: doc.filePath ?? null,
+      allowStaffAccess: doc.allowStaffAccess ?? true,
+      allowStudentAccess: doc.allowStudentAccess ?? true,
       description: doc.description ?? null,
       date: new Date(),
     };

@@ -21,6 +21,17 @@ function sanitizeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
+function canAccessDocument(user: any, doc: any) {
+  if (user.role === "Administrator") return true;
+  if (user.role === "Lecturer") {
+    return doc.uploadedBy === user.id || doc.allowStaffAccess;
+  }
+  if (user.role === "Student") {
+    return doc.status === "Approved" && doc.allowStudentAccess;
+  }
+  return false;
+}
+
 async function getAuthenticatedUser(req: any, res: any) {
   const accessToken = getAccessTokenFromRequest(req);
   const refreshToken = getRefreshTokenFromRequest(req);
@@ -264,10 +275,7 @@ export async function registerRoutes(
         status: req.query.status as string,
       });
 
-      const visibleDocs =
-        currentUser.role === "Administrator" || currentUser.role === "Lecturer"
-          ? docs
-          : docs.filter((d) => d.status === "Approved");
+      const visibleDocs = docs.filter((d) => canAccessDocument(currentUser, d));
 
       res.json(visibleDocs);
     } catch (error) {
@@ -284,7 +292,7 @@ export async function registerRoutes(
       return res.status(404).json({ message: "Document not found" });
     }
 
-    if (currentUser.role === "Student" && doc.status !== "Approved") {
+    if (!canAccessDocument(currentUser, doc)) {
       return res
         .status(401)
         .json({ message: "You do not have permission to view this document." });
@@ -338,6 +346,8 @@ export async function registerRoutes(
         fileType: input.fileType || extension,
         fileName: input.fileName,
         filePath: docPath,
+        allowStaffAccess: input.allowStaffAccess ?? true,
+        allowStudentAccess: input.allowStudentAccess ?? true,
         size: input.size,
         status: input.status,
         description: input.description ?? null,
@@ -372,7 +382,7 @@ export async function registerRoutes(
       return res.status(404).json({ message: "Document not found" });
     }
 
-    if (currentUser.role === "Student" && doc.status !== "Approved") {
+    if (!canAccessDocument(currentUser, doc)) {
       return res.status(401).json({
         message: "You do not have permission to download this document.",
       });
@@ -398,6 +408,49 @@ export async function registerRoutes(
       userId: currentUser.id,
       userName: currentUser.name,
       action: "Download",
+      documentId: doc.id,
+      documentTitle: doc.title,
+    });
+
+    res.status(200).json({
+      url: data.signedUrl,
+      fileName: doc.fileName || `${doc.title}.${doc.fileType}`,
+    });
+  });
+
+  app.get(api.documents.viewUrl.path, async (req, res) => {
+    const currentUser = await requireAuth(req, res);
+    if (!currentUser) return;
+
+    const doc = await storage.getDocument(Number(req.params.id));
+    if (!doc) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    if (!canAccessDocument(currentUser, doc)) {
+      return res.status(401).json({
+        message: "You do not have permission to view this document.",
+      });
+    }
+
+    if (!doc.filePath) {
+      return res
+        .status(404)
+        .json({ message: "No file available for this document." });
+    }
+
+    const { data, error } = await supabaseAdmin.storage
+      .from(env.SUPABASE_DOCUMENT_BUCKET)
+      .createSignedUrl(doc.filePath, 60 * 10);
+
+    if (error || !data?.signedUrl) {
+      return res.status(500).json({ message: "Unable to generate view URL" });
+    }
+
+    await storage.createAuditLog({
+      userId: currentUser.id,
+      userName: currentUser.name,
+      action: "View",
       documentId: doc.id,
       documentTitle: doc.title,
     });
@@ -437,7 +490,18 @@ export async function registerRoutes(
     ]);
     if (!currentUser) return;
 
-    await storage.deleteDocument(Number(req.params.id));
+    const doc = await storage.getDocument(Number(req.params.id));
+    if (!doc) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    if (currentUser.role === "Lecturer" && doc.uploadedBy !== currentUser.id) {
+      return res.status(401).json({
+        message: "You can only delete documents uploaded by your account.",
+      });
+    }
+
+    await storage.deleteDocument(doc.id);
     res.status(204).end();
   });
 

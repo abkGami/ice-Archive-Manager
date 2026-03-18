@@ -1,11 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl, type DocumentInput } from "@shared/routes";
 
-export function useDocuments(params?: {
-  category?: string;
-  status?: string;
-  search?: string;
-}, options?: { enabled?: boolean }) {
+export function useDocuments(
+  params?: {
+    category?: string;
+    status?: string;
+    search?: string;
+  },
+  options?: { enabled?: boolean },
+) {
   const queryParams = new URLSearchParams();
   if (params?.category) queryParams.set("category", params.category);
   if (params?.status) queryParams.set("status", params.status);
@@ -142,6 +145,29 @@ export function useDownloadDocument() {
       anchor.click();
       document.body.removeChild(anchor);
 
+      return payload;
+    },
+  });
+}
+
+export function useViewDocument() {
+  return useMutation({
+    mutationFn: async (doc: { id: number; fallbackName?: string }) => {
+      const url = buildUrl(api.documents.viewUrl.path, { id: doc.id });
+      const res = await fetch(url, { credentials: "include" });
+
+      if (res.status === 404) {
+        throw new Error("No viewable file found for this document.");
+      }
+      if (!res.ok) {
+        throw new Error("Failed to open document");
+      }
+
+      const payload = api.documents.viewUrl.responses[200].parse(
+        await res.json(),
+      );
+
+      window.open(payload.url, "_blank", "noopener,noreferrer");
       return payload;
     },
   });

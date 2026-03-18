@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,40 +6,40 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter', sans-serif;
-    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-sans: "Inter", sans-serif;
+    --font-display: "Plus Jakarta Sans", sans-serif;
 
     /* AFIT Institutional Theme Colors */
     --background: 210 20% 98%; /* #F8F9FA - Off White */
     --foreground: 215 28% 17%; /* #1F2937 - Dark Text */
-    
+
     --card: 0 0% 100%; /* #FFFFFF */
     --card-foreground: 215 28% 17%;
-    
+
     --popover: 0 0% 100%;
     --popover-foreground: 215 28% 17%;
-    
+
     /* Primary Navy: #0A2240 */
-    --primary: 212 73% 15%; 
+    --primary: 212 73% 15%;
     --primary-foreground: 0 0% 100%;
-    
+
     /* Secondary Navy: #0D3060 */
-    --secondary: 215 76% 21%; 
+    --secondary: 215 76% 21%;
     --secondary-foreground: 0 0% 100%;
-    
+
     /* Light Gray: #E5E7EB */
-    --muted: 220 14% 96%; 
+    --muted: 220 14% 96%;
     /* Mid Gray: #6B7280 */
-    --muted-foreground: 215 16% 47%; 
-    
+    --muted-foreground: 215 16% 47%;
+
     /* Sky Blue: #1A6BAF */
-    --accent: 207 74% 39%; 
+    --accent: 207 74% 39%;
     --accent-foreground: 0 0% 100%;
-    
+
     /* Danger Red: #9B1C1C */
-    --destructive: 0 69% 36%; 
+    --destructive: 0 69% 36%;
     --destructive-foreground: 0 0% 100%;
-    
+
     /* Success Green: #1A6B45 */
     --success: 152 61% 26%;
     --success-foreground: 0 0% 100%;
@@ -56,7 +56,7 @@
     --ring: 207 74% 39%; /* Sky Blue focus ring */
 
     /* Max border radius md (8px) as per institutional requirements */
-    --radius: 0.5rem; 
+    --radius: 0.5rem;
 
     /* Sidebar Variables matching standard Shadcn but tailored to AFIT */
     --sidebar-background: 0 0% 100%;
@@ -78,7 +78,12 @@
     font-family: var(--font-sans);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     @apply font-semibold tracking-tight text-primary;
   }
@@ -89,7 +94,7 @@
   .transition-strict {
     @apply transition-all duration-150 ease-in-out;
   }
-  
+
   .hover-lift {
     @apply transition-strict hover:-translate-y-[2px] hover:shadow-md;
   }
@@ -103,10 +108,18 @@
   }
 
   /* File type badge colors */
-  .bg-file-pdf { @apply bg-destructive text-white; }
-  .bg-file-docx { @apply bg-accent text-white; }
-  .bg-file-xlsx { @apply bg-[#1A6B45] text-white; }
-  .bg-file-other { @apply bg-secondary text-white; }
+  .bg-file-pdf {
+    @apply bg-destructive text-white;
+  }
+  .bg-file-docx {
+    @apply bg-accent text-white;
+  }
+  .bg-file-xlsx {
+    @apply bg-[#1A6B45] text-white;
+  }
+  .bg-file-other {
+    @apply bg-secondary text-white;
+  }
 }
 
 @keyframes input-shake {

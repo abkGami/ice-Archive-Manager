@@ -22,6 +22,8 @@ create table if not exists public.documents (
   file_type text not null,
   file_name text,
   file_path text,
+  allow_staff_access boolean not null default true,
+  allow_student_access boolean not null default true,
   size text not null,
   status text not null,
   description text
@@ -45,3 +47,5 @@ create index if not exists idx_audit_logs_date on public.audit_logs (date desc);
 
 alter table public.documents add column if not exists file_name text;
 alter table public.documents add column if not exists file_path text;
+alter table public.documents add column if not exists allow_staff_access boolean not null default true;
+alter table public.documents add column if not exists allow_student_access boolean not null default true;

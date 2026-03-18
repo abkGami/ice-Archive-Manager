@@ -8,6 +8,16 @@ import { useUser } from "@/hooks/use-auth";
 import { useDownloadDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
 
+function formatDisplaySize(size: string) {
+  const match = size.match(/([\d.]+)\s*([a-zA-Z]+)/);
+  if (!match) return size;
+
+  const value = Number(match[1]);
+  if (Number.isNaN(value)) return size;
+
+  return `${value.toFixed(3)} ${match[2].toUpperCase()}`;
+}
+
 interface DocumentTableProps {
   documents: Document[];
   onRowClick: (doc: Document) => void;
@@ -81,7 +91,7 @@ export function DocumentTable({
                     {doc.title}
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5">
-                    {doc.size}
+                    {formatDisplaySize(doc.size)}
                   </div>
                 </td>
                 <td className="px-4 py-3 align-middle">

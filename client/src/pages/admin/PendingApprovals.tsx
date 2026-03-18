@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/common/Button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useApproveUser, usePendingUsers } from "@/hooks/use-users";
 import { useToast } from "@/hooks/use-toast";
 import { api, buildUrl } from "@shared/routes";
@@ -12,6 +13,10 @@ export default function PendingApprovalsPage() {
   const approveMutation = useApproveUser();
   const { toast } = useToast();
   const [idCardUrls, setIdCardUrls] = useState<Record<number, string>>({});
+  const [fullscreenCard, setFullscreenCard] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
 
   useEffect(() => {
     const controllers: AbortController[] = [];
@@ -137,9 +142,15 @@ export default function PendingApprovalsPage() {
                       <img
                         src={idCardUrls[user.id]}
                         alt={`${user.name} ID card`}
-                        className="w-full h-44 object-cover rounded-md border border-border"
+                        className="w-full h-44 object-cover rounded-md border border-border cursor-zoom-in"
                         onContextMenu={(e) => e.preventDefault()}
                         draggable={false}
+                        onClick={() =>
+                          setFullscreenCard({
+                            url: idCardUrls[user.id],
+                            name: user.name,
+                          })
+                        }
                       />
                     ) : (
                       <div className="w-full h-44 rounded-md border border-border bg-muted/40 flex items-center justify-center text-sm text-muted-foreground">
@@ -161,6 +172,28 @@ export default function PendingApprovalsPage() {
           </div>
         )}
       </div>
+
+      <Dialog
+        open={!!fullscreenCard}
+        onOpenChange={(open) => !open && setFullscreenCard(null)}
+      >
+        <DialogContent className="max-w-6xl w-[95vw] h-[92vh] p-3 bg-black/95 border-border">
+          <DialogTitle className="sr-only">
+            ID card fullscreen preview
+          </DialogTitle>
+          {fullscreenCard && (
+            <div className="w-full h-full flex items-center justify-center">
+              <img
+                src={fullscreenCard.url}
+                alt={`${fullscreenCard.name} ID card fullscreen`}
+                className="max-w-full max-h-full object-contain rounded-md"
+                onContextMenu={(e) => e.preventDefault()}
+                draggable={false}
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
 }

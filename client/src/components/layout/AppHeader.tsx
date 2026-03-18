@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import { useAuditLogs } from "@/hooks/use-audit";
 import { usePendingUsers } from "@/hooks/use-users";
 import { useDocuments } from "@/hooks/use-documents";
 
@@ -20,7 +19,6 @@ type HeaderNotification = {
   id: string;
   title: string;
   detail: string;
-  time?: Date;
 };
 
 export function AppHeader() {
@@ -35,13 +33,6 @@ export function AppHeader() {
   const { data: pendingDocuments = [] } = useDocuments(
     { status: "Pending Approval" },
     { enabled: !!user && isAdmin },
-  );
-  const { data: auditLogs = [] } = useAuditLogs({
-    enabled: !!user && isAdmin,
-  });
-  const { data: approvedDocuments = [] } = useDocuments(
-    { status: "Approved" },
-    { enabled: !!user && !isAdmin },
   );
 
   if (!user) return null;
@@ -58,23 +49,12 @@ export function AppHeader() {
           title: "Pending Document Approvals",
           detail: `${pendingDocuments.length} document(s) awaiting approval`,
         },
-        ...auditLogs.slice(0, 5).map((log) => ({
-          id: `audit-${log.id}`,
-          title: `${log.action} Activity`,
-          detail: `${log.userName} ${log.action.toLowerCase()}${log.documentTitle ? `: ${log.documentTitle}` : ""}`,
-          time: log.date ?? undefined,
-        })),
       ]
-    : approvedDocuments.slice(0, 5).map((doc) => ({
-        id: `doc-${doc.id}`,
-        title: "New Approved Document",
-        detail: doc.title,
-        time: doc.date ?? undefined,
-      }));
+    : [];
 
   const unreadCount = isAdmin
     ? pendingUsers.length + pendingDocuments.length
-    : notifications.length;
+    : 0;
 
   const initials = user.name
     .split(" ")
@@ -142,11 +122,6 @@ export function AppHeader() {
                     <span className="text-xs text-muted-foreground">
                       {item.detail}
                     </span>
-                    {item.time && (
-                      <span className="text-[10px] text-muted-foreground">
-                        {format(new Date(item.time), "MMM d, h:mm a")}
-                      </span>
-                    )}
                   </div>
                 </DropdownMenuItem>
               ))

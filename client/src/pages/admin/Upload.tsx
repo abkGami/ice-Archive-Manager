@@ -16,6 +16,7 @@ import { useCreateDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { useUser } from "@/hooks/use-auth";
+import { Switch } from "@/components/ui/switch";
 
 async function fileToDataUrl(file: File): Promise<string> {
   return await new Promise((resolve, reject) => {
@@ -31,6 +32,8 @@ export default function UploadPage() {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [allowStaffAccess, setAllowStaffAccess] = useState(true);
+  const [allowStudentAccess, setAllowStudentAccess] = useState(true);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const createMutation = useCreateDocument();
@@ -79,7 +82,9 @@ export default function UploadPage() {
         fileType: ext,
         fileName: file.name,
         fileData,
-        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+        allowStaffAccess,
+        allowStudentAccess,
+        size: `${(file.size / (1024 * 1024)).toFixed(3)} MB`,
         uploadedBy: user?.id || 1,
         uploadedByName: user?.name || "Unknown",
         status:
@@ -178,6 +183,42 @@ export default function UploadPage() {
               />
             </div>
 
+            <div className="space-y-3 rounded-xl border border-border p-4 bg-muted/20">
+              <p className="text-sm font-semibold text-foreground">
+                Access Control
+              </p>
+              <p className="text-xs text-muted-foreground">
+                By default, uploaded documents are visible to staff and students
+                (when approved).
+              </p>
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="allowStaffAccess"
+                  className="text-sm text-foreground"
+                >
+                  Allow other staff to view and download
+                </Label>
+                <Switch
+                  id="allowStaffAccess"
+                  checked={allowStaffAccess}
+                  onCheckedChange={setAllowStaffAccess}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="allowStudentAccess"
+                  className="text-sm text-foreground"
+                >
+                  Allow students to view and download
+                </Label>
+                <Switch
+                  id="allowStudentAccess"
+                  checked={allowStudentAccess}
+                  onCheckedChange={setAllowStudentAccess}
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label className="text-sm font-semibold text-foreground">
                 File <span className="text-destructive">*</span>
@@ -219,7 +260,7 @@ export default function UploadPage() {
                         {file.name}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                        {(file.size / 1024 / 1024).toFixed(3)} MB
                       </p>
                     </div>
                   </div>

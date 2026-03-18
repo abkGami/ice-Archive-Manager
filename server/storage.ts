@@ -57,6 +57,8 @@ type DbDocumentRow = {
   file_type: string;
   file_name?: string | null;
   file_path?: string | null;
+  allow_staff_access?: boolean | null;
+  allow_student_access?: boolean | null;
   size: string;
   status: string;
   description: string | null;
@@ -100,6 +102,8 @@ function toDocument(row: DbDocumentRow): Document {
     fileType: row.file_type,
     fileName: row.file_name ?? null,
     filePath: row.file_path ?? null,
+    allowStaffAccess: row.allow_staff_access ?? true,
+    allowStudentAccess: row.allow_student_access ?? true,
     size: row.size,
     status: row.status,
     description: row.description,
@@ -324,6 +328,8 @@ export class SupabaseStorage implements IStorage {
       file_type: doc.fileType,
       file_name: doc.fileName ?? null,
       file_path: doc.filePath ?? null,
+      allow_staff_access: doc.allowStaffAccess ?? true,
+      allow_student_access: doc.allowStudentAccess ?? true,
       size: doc.size,
       status: doc.status,
       description: doc.description ?? null,
@@ -357,6 +363,12 @@ export class SupabaseStorage implements IStorage {
       payload.file_name = updates.fileName;
     if (typeof updates.filePath !== "undefined")
       payload.file_path = updates.filePath;
+    if (typeof updates.allowStaffAccess !== "undefined") {
+      payload.allow_staff_access = updates.allowStaffAccess;
+    }
+    if (typeof updates.allowStudentAccess !== "undefined") {
+      payload.allow_student_access = updates.allowStudentAccess;
+    }
     if (typeof updates.size !== "undefined") payload.size = updates.size;
     if (typeof updates.status !== "undefined") payload.status = updates.status;
     if (typeof updates.description !== "undefined")

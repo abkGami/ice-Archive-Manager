@@ -240,7 +240,7 @@ export default function Signup() {
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                      confirmPassword: e.target.value,
+                    confirmPassword: e.target.value,
                   }))
                 }
                 className={`h-11 bg-background pr-10 ${

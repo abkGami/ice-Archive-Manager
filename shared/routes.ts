@@ -141,6 +141,18 @@ export const api = {
         404: errorSchemas.notFound,
       },
     },
+    viewUrl: {
+      method: "GET" as const,
+      path: "/api/documents/:id/view-url" as const,
+      responses: {
+        200: z.object({
+          url: z.string().url(),
+          fileName: z.string(),
+        }),
+        401: errorSchemas.unauthorized,
+        404: errorSchemas.notFound,
+      },
+    },
   },
   users: {
     list: {

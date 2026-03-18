@@ -10,6 +10,7 @@ import { Document } from "@shared/schema";
 import { FileBadge, StatusBadge } from "../common/Badges";
 import { Button } from "../common/Button";
 import {
+  Eye,
   Download,
   CheckCircle,
   Trash2,
@@ -19,8 +20,18 @@ import {
   Tag,
 } from "lucide-react";
 import { useUser } from "@/hooks/use-auth";
-import { useDownloadDocument } from "@/hooks/use-documents";
+import { useDownloadDocument, useViewDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
+
+function formatDisplaySize(size: string) {
+  const match = size.match(/([\d.]+)\s*([a-zA-Z]+)/);
+  if (!match) return size;
+
+  const value = Number(match[1]);
+  if (Number.isNaN(value)) return size;
+
+  return `${value.toFixed(3)} ${match[2].toUpperCase()}`;
+}
 
 interface DocumentDrawerProps {
   document: Document | null;
@@ -39,10 +50,14 @@ export function DocumentDrawer({
 }: DocumentDrawerProps) {
   const { data: user } = useUser();
   const downloadMutation = useDownloadDocument();
+  const viewMutation = useViewDocument();
   const { toast } = useToast();
   const isAdmin = user?.role === "Administrator";
 
   if (!document) return null;
+
+  const canViewDocument =
+    document.fileType.replace(".", "").toLowerCase() === "pdf";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -98,7 +113,7 @@ export function DocumentDrawer({
                     <HardDrive className="w-3.5 h-3.5" /> File Size
                   </div>
                   <div className="font-medium text-foreground">
-                    {document.size}
+                    {formatDisplaySize(document.size)}
                   </div>
                 </div>
                 <div className="space-y-1">
@@ -125,10 +140,35 @@ export function DocumentDrawer({
         </div>
 
         <div className="p-6 border-t border-border bg-card space-y-3">
+          {canViewDocument && (
+            <Button
+              className="w-full"
+              size="lg"
+              variant="outline"
+              disabled={viewMutation.isPending}
+              onClick={async () => {
+                try {
+                  await viewMutation.mutateAsync({
+                    id: document.id,
+                    fallbackName: document.fileName || document.title,
+                  });
+                } catch (error: any) {
+                  toast({
+                    title: "View failed",
+                    description: error?.message || "Could not open the file.",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <Eye className="mr-2 h-5 w-5" /> View Document
+            </Button>
+          )}
+
           <Button
             className="w-full"
             size="lg"
-            disabled={downloadMutation.isPending}
+            disabled={downloadMutation.isPending || viewMutation.isPending}
             onClick={async () => {
               try {
                 await downloadMutation.mutateAsync({
