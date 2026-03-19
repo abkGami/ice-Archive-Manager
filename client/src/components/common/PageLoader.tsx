@@ -4,9 +4,7 @@ type PageLoaderProps = {
   message?: string;
 };
 
-export function PageLoader({
-  message = "Loading data...",
-}: PageLoaderProps) {
+export function PageLoader({ message = "Loading data..." }: PageLoaderProps) {
   return (
     <div className="min-h-[300px] w-full flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">

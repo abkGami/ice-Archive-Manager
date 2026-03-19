@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSignup } from "@/hooks/use-auth";
+import { useCallback, useEffect, useState } from "react";
+import { useSignup, useUser } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/common/Button";
 import { Archive, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { PageLoader } from "@/components/common/PageLoader";
 
 function toUpperInput(value: string) {
   return value.toUpperCase();
@@ -22,6 +23,8 @@ export default function Signup() {
   const signup = useSignup();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [isRouting, setIsRouting] = useState(false);
+  const { data: user, isLoading: isAuthLoading } = useUser();
 
   const [formData, setFormData] = useState({
     uniqueId: "",
@@ -35,6 +38,26 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [shakePasswordInputs, setShakePasswordInputs] = useState(false);
+
+  const navigateWithLoader = useCallback(
+    (path: string) => {
+      setIsRouting(true);
+      window.setTimeout(() => setLocation(path), 150);
+    },
+    [setLocation],
+  );
+
+  useEffect(() => {
+    if (isAuthLoading || !user) return;
+
+    const redirectPath =
+      user.role === "Administrator"
+        ? "/admin/dashboard"
+        : user.role === "Lecturer"
+          ? "/lecturer/dashboard"
+          : "/student/dashboard";
+    navigateWithLoader(redirectPath);
+  }, [isAuthLoading, navigateWithLoader, user]);
 
   const passwordsMismatch =
     formData.confirmPassword.length > 0 &&
@@ -98,7 +121,7 @@ export default function Signup() {
               "Your account creation is pending admin approval. You can sign in after approval.",
             className: "bg-[#1A6BAF] text-white border-transparent",
           });
-          setLocation("/login");
+          navigateWithLoader("/login");
         },
         onError: (err) => {
           setError(err.message);
@@ -106,6 +129,14 @@ export default function Signup() {
       },
     );
   };
+
+  if (isAuthLoading || isRouting) {
+    return (
+      <div className="min-h-screen bg-[#0A2240] flex items-center justify-center p-4">
+        <PageLoader message="Preparing secure signup..." />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0A2240] flex items-center justify-center p-4 relative overflow-hidden">
@@ -308,7 +339,7 @@ export default function Signup() {
           <Button
             type="submit"
             className="w-full h-11 text-base font-bold bg-[#1A6BAF] hover:bg-[#0D3060] text-white mt-4"
-            isLoading={signup.isPending}
+            isLoading={signup.isPending || isRouting}
           >
             {signup.isPending ? "Creating Account..." : "Create Account"}
           </Button>
@@ -317,7 +348,7 @@ export default function Signup() {
             Already registered with this ID number?{" "}
             <button
               type="button"
-              onClick={() => setLocation("/login")}
+              onClick={() => navigateWithLoader("/login")}
               className="text-[#1A6BAF] hover:underline font-semibold"
             >
               Sign in

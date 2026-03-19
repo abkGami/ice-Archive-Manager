@@ -16,7 +16,9 @@ import { PageLoader } from "@/components/common/PageLoader";
 export default function StudentDashboard() {
   const { data: stats, isLoading: isStatsLoading } = useStudentStats();
   // Students only see approved documents
-  const { data: documents = [], isLoading: isDocumentsLoading } = useDocuments({ status: "Approved" });
+  const { data: documents = [], isLoading: isDocumentsLoading } = useDocuments({
+    status: "Approved",
+  });
   const downloadMutation = useDownloadDocument();
   const { toast } = useToast();
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);

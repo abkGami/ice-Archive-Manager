@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { useLogin } from "@/hooks/use-auth";
+import { useCallback, useEffect, useState } from "react";
+import { useLogin, useUser } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/common/Button";
 import { Archive, AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function Login() {
   const [uniqueId, setUniqueId] = useState("");
@@ -13,6 +14,28 @@ export default function Login() {
   const login = useLogin();
   const [, setLocation] = useLocation();
   const [error, setError] = useState("");
+  const [isRouting, setIsRouting] = useState(false);
+  const { data: user, isLoading: isAuthLoading } = useUser();
+
+  const navigateWithLoader = useCallback(
+    (path: string) => {
+      setIsRouting(true);
+      window.setTimeout(() => setLocation(path), 150);
+    },
+    [setLocation],
+  );
+
+  useEffect(() => {
+    if (isAuthLoading || !user) return;
+
+    const redirectPath =
+      user.role === "Administrator"
+        ? "/admin/dashboard"
+        : user.role === "Lecturer"
+          ? "/lecturer/dashboard"
+          : "/student/dashboard";
+    navigateWithLoader(redirectPath);
+  }, [isAuthLoading, navigateWithLoader, user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,9 +44,13 @@ export default function Login() {
       { uniqueId, password },
       {
         onSuccess: (user) => {
-          if (user.role === "Administrator") setLocation("/admin/dashboard");
-          else if (user.role === "Lecturer") setLocation("/lecturer/dashboard");
-          else setLocation("/student/dashboard");
+          if (user.role === "Administrator") {
+            navigateWithLoader("/admin/dashboard");
+          } else if (user.role === "Lecturer") {
+            navigateWithLoader("/lecturer/dashboard");
+          } else {
+            navigateWithLoader("/student/dashboard");
+          }
         },
         onError: (err) => {
           setError(err.message);
@@ -31,6 +58,14 @@ export default function Login() {
       },
     );
   };
+
+  if (isAuthLoading || isRouting) {
+    return (
+      <div className="min-h-screen bg-[#0A2240] flex items-center justify-center p-4">
+        <PageLoader message="Preparing secure sign-in..." />
+      </div>
+    );
+  }
 
   // AFIT backdrop - simple pattern or wash since we can't use images easily without external URLs
   return (
@@ -120,7 +155,7 @@ export default function Login() {
           <Button
             type="submit"
             className="w-full h-11 text-base font-bold bg-[#1A6BAF] hover:bg-[#0D3060] text-white mt-4"
-            isLoading={login.isPending}
+            isLoading={login.isPending || isRouting}
           >
             {login.isPending ? "Authenticating..." : "Sign In"}
           </Button>
@@ -129,7 +164,7 @@ export default function Login() {
             No account yet?{" "}
             <button
               type="button"
-              onClick={() => setLocation("/signup")}
+              onClick={() => navigateWithLoader("/signup")}
               className="text-[#1A6BAF] hover:underline font-semibold"
             >
               Create account
