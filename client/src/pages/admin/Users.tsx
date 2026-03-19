@@ -195,9 +195,9 @@ export default function AdminUsers() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="bg-card p-4 rounded-lg border border-border shadow-sm flex items-center justify-between">
-            <span className="text-muted-foreground font-medium">
+            <span className="text-muted-foreground font-medium text-sm sm:text-base">
               Total Users
             </span>
             <span className="text-2xl font-bold text-foreground">
@@ -205,13 +205,13 @@ export default function AdminUsers() {
             </span>
           </div>
           <div className="bg-card p-4 rounded-lg border border-border shadow-sm flex items-center justify-between">
-            <span className="text-muted-foreground font-medium">Lecturers</span>
+            <span className="text-muted-foreground font-medium text-sm sm:text-base">Lecturers</span>
             <span className="text-2xl font-bold text-accent">
               {users.filter((u) => u.role === "Lecturer").length}
             </span>
           </div>
           <div className="bg-card p-4 rounded-lg border border-border shadow-sm flex items-center justify-between">
-            <span className="text-muted-foreground font-medium">Students</span>
+            <span className="text-muted-foreground font-medium text-sm sm:text-base">Students</span>
             <span className="text-2xl font-bold text-primary">
               {users.filter((u) => u.role === "Student").length}
             </span>
@@ -219,7 +219,8 @@ export default function AdminUsers() {
         </div>
 
         <div className="rounded-md border border-border bg-card overflow-hidden">
-          <table className="w-full text-sm text-left">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px] text-sm text-left">
             <thead className="bg-muted text-muted-foreground uppercase text-xs font-semibold tracking-wider">
               <tr>
                 <th className="px-4 py-4 border-b border-border">User</th>
@@ -235,18 +236,18 @@ export default function AdminUsers() {
               {users.map((u) => (
                 <tr key={u.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       <Avatar className="h-8 w-8">
                         <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">
                           {u.name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium text-foreground">
+                      <span className="font-medium text-foreground truncate max-w-[210px]">
                         {u.name}
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
                     {u.uniqueId.toUpperCase()}
                   </td>
                   <td className="px-4 py-3">
@@ -299,6 +300,7 @@ export default function AdminUsers() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
 
@@ -318,7 +320,7 @@ export default function AdminUsers() {
                 }
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Unique ID</Label>
                 <Input
@@ -406,7 +408,7 @@ export default function AdminUsers() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Unique ID</Label>
                 <Input

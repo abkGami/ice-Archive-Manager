@@ -69,7 +69,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-border bg-sidebar">
       <div className="flex h-16 items-center px-6 border-b border-border">
-        <Archive className="h-6 w-6 text-accent mr-3" />
+        <Archive className="h-5 w-5 sm:h-6 sm:w-6 text-accent mr-3 shrink-0" />
         <span className="text-lg font-bold text-primary font-display truncate">
           E-Archive
         </span>
@@ -93,10 +93,11 @@ export function AppSidebar() {
                     >
                       <Link
                         href={item.url}
+                        title={item.title}
                         className={
                           isActive
-                            ? "text-accent font-medium bg-sidebar-accent border-l-2 border-accent"
-                            : "text-sidebar-foreground hover:text-accent transition-colors"
+                            ? "text-accent font-medium bg-sidebar-accent border-l-2 border-accent min-w-0"
+                            : "text-sidebar-foreground hover:text-accent transition-colors min-w-0"
                         }
                       >
                         <item.icon
@@ -104,7 +105,7 @@ export function AppSidebar() {
                             isActive ? "text-accent" : "text-muted-foreground"
                           }
                         />
-                        <span>{item.title}</span>
+                        <span className="truncate">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -132,10 +133,11 @@ export function AppSidebar() {
                       >
                         <Link
                           href={item.url}
+                          title={item.title}
                           className={
                             isActive
-                              ? "text-accent font-medium bg-sidebar-accent border-l-2 border-accent"
-                              : "text-sidebar-foreground hover:text-accent transition-colors"
+                              ? "text-accent font-medium bg-sidebar-accent border-l-2 border-accent min-w-0"
+                              : "text-sidebar-foreground hover:text-accent transition-colors min-w-0"
                           }
                         >
                           <item.icon
@@ -143,7 +145,7 @@ export function AppSidebar() {
                               isActive ? "text-accent" : "text-muted-foreground"
                             }
                           />
-                          <span>{item.title}</span>
+                          <span className="truncate">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

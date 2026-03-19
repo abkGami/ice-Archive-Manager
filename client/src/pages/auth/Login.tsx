@@ -72,16 +72,16 @@ export default function Login() {
     <div className="min-h-screen bg-[#0A2240] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-1/2 h-1/2 rounded-full bg-[#1A6BAF] blur-[100px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-1/2 h-1/2 rounded-full bg-[#C8A84B] blur-[120px]"></div>
+        <div className="absolute top-[-8%] left-[-18%] w-[65vw] h-[65vw] sm:w-1/2 sm:h-1/2 rounded-full bg-[#1A6BAF] blur-[70px] sm:blur-[100px]"></div>
+        <div className="absolute bottom-[-12%] right-[-18%] w-[68vw] h-[68vw] sm:w-1/2 sm:h-1/2 rounded-full bg-[#C8A84B] blur-[80px] sm:blur-[120px]"></div>
       </div>
 
-      <div className="w-full max-w-md bg-card rounded-xl shadow-2xl p-8 relative z-10 border border-border/50">
-        <div className="flex flex-col items-center mb-8">
+      <div className="w-full max-w-md bg-card rounded-xl shadow-2xl p-5 sm:p-8 relative z-10 border border-border/50">
+        <div className="flex flex-col items-center mb-6 sm:mb-8">
           <div className="h-16 w-16 bg-[#0A2240] rounded-lg flex items-center justify-center mb-4 shadow-inner">
             <Archive className="h-8 w-8 text-[#C8A84B]" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground text-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">
             ICT Department E-Archive
           </h1>
           <p className="text-muted-foreground mt-2 text-sm text-center">
@@ -172,7 +172,7 @@ export default function Login() {
           </p>
         </form>
 
-        <div className="mt-8 text-center text-xs text-muted-foreground">
+        <div className="mt-6 sm:mt-8 text-center text-xs text-muted-foreground">
           <p>
             &copy; {new Date().getFullYear()} Air Force Institute of Technology.
             All rights reserved.

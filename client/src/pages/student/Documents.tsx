@@ -69,13 +69,14 @@ export default function StudentDocuments() {
     <AppShell requiredRole="Student">
       <div className="space-y-6 flex flex-col h-full">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <h1 className="text-2xl md:text-3xl font-bold text-primary">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">
             Browse Documents
           </h1>
           <Button
             variant="outline"
             disabled={!selectedDoc || downloadMutation.isPending}
             onClick={() => selectedDoc && handleDownload(selectedDoc)}
+            className="w-full md:w-auto"
           >
             <Download className="mr-2 h-4 w-4" />
             Download Selected
@@ -117,7 +118,7 @@ export default function StudentDocuments() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {quickCards.map((doc) => (
               <Card key={doc.id} className="border-border">
-                <CardContent className="p-4 flex items-start justify-between gap-3">
+                <CardContent className="p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-semibold text-foreground truncate">
                       {doc.title}
@@ -131,6 +132,7 @@ export default function StudentDocuments() {
                     variant="secondary"
                     disabled={downloadMutation.isPending}
                     onClick={() => handleDownload(doc)}
+                    className="w-full sm:w-auto"
                   >
                     <FileText className="h-4 w-4 mr-2" />
                     Download

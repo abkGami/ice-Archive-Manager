@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { usePendingUsers } from "@/hooks/use-users";
 import { useDocuments } from "@/hooks/use-documents";
+import { useEffect, useState } from "react";
 
 type HeaderNotification = {
   id: string;
@@ -24,6 +25,7 @@ type HeaderNotification = {
 export function AppHeader() {
   const { data: user } = useUser();
   const logout = useLogout();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const isAdmin = user?.role === "Administrator";
 
@@ -74,13 +76,62 @@ export function AppHeader() {
     }
   };
 
+  useEffect(() => {
+    let ticking = false;
+
+    const getScrollTop = () => {
+      const container = document.getElementById("app-scroll-container");
+      if (container) {
+        return container.scrollTop;
+      }
+      return window.scrollY;
+    };
+
+    const updateScrollState = () => {
+      setIsScrolled(getScrollTop() > 10);
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateScrollState);
+    };
+
+    const container = document.getElementById("app-scroll-container");
+    if (container) {
+      container.addEventListener("scroll", onScroll, { passive: true });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    updateScrollState();
+
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", onScroll);
+      }
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
-      <div className="flex items-center gap-4">
+    <header
+      className={`relative h-16 border-b flex items-center justify-between px-3 sm:px-4 lg:px-6 sticky top-0 z-30 transition-[background-color,backdrop-filter,box-shadow] duration-300 ease-out ${
+        isScrolled
+          ? "bg-card/85 backdrop-blur-md border-border/80 shadow-[0_8px_30px_-20px_rgba(10,34,64,0.55)]"
+          : "bg-card border-border"
+      }`}
+    >
+      {isScrolled && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent animate-header-glow" />
+      )}
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
         <SidebarTrigger className="lg:hidden text-muted-foreground hover:text-foreground" />
-        <div>
-          <h2 className="text-lg font-bold text-primary hidden sm:block">
+        <div className="min-w-0">
+          <h2 className="text-lg font-bold text-primary hidden sm:block truncate">
             ICT Department Archive System
+          </h2>
+          <h2 className="text-sm font-bold text-primary sm:hidden truncate max-w-[42vw]">
+            ICT E-Archive
           </h2>
           <p className="text-xs text-muted-foreground hidden sm:block">
             {format(new Date(), "EEEE, MMMM do, yyyy")}
@@ -88,7 +139,7 @@ export function AppHeader() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -105,7 +156,7 @@ export function AppHeader() {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
+          <DropdownMenuContent align="end" className="w-[min(20rem,90vw)]">
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {notifications.length === 0 ? (
@@ -115,11 +166,11 @@ export function AppHeader() {
             ) : (
               notifications.slice(0, 8).map((item) => (
                 <DropdownMenuItem key={item.id} className="py-2">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-sm font-medium text-foreground">
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <span className="text-sm font-medium text-foreground truncate">
                       {item.title}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground truncate">
                       {item.detail}
                     </span>
                   </div>
@@ -137,8 +188,8 @@ export function AppHeader() {
               variant="ghost"
               className="pl-2 pr-0 gap-2 hover:bg-transparent flex items-center"
             >
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-semibold text-foreground leading-tight">
+              <div className="text-right hidden md:block min-w-0 max-w-[220px]">
+                <p className="text-sm font-semibold text-foreground leading-tight truncate">
                   {user.name}
                 </p>
                 <p className="text-xs text-muted-foreground">{user.role}</p>
@@ -152,11 +203,11 @@ export function AppHeader() {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent align="end" className="w-[min(14rem,90vw)]">
             <DropdownMenuLabel>
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user.name}</p>
-                <p className="text-xs leading-none text-muted-foreground">
+              <div className="flex flex-col space-y-1 min-w-0">
+                <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                <p className="text-xs leading-none text-muted-foreground truncate">
                   ID: {user.uniqueId.toUpperCase()}
                 </p>
               </div>

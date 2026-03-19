@@ -39,11 +39,14 @@ export function AppShell({ children, requiredRole }: { children: ReactNode, requ
 
   return (
     <SidebarProvider style={style}>
-      <div className="flex min-h-screen w-full bg-background overflow-hidden animate-in fade-in duration-300">
+      <div className="flex h-screen w-full bg-background overflow-hidden animate-in fade-in duration-300">
         <AppSidebar />
-        <div className="flex flex-col flex-1 min-w-0">
+        <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
           <AppHeader />
-          <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+          <main
+            id="app-scroll-container"
+            className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8"
+          >
             <div className="max-w-7xl mx-auto h-full">
               {children}
             </div>

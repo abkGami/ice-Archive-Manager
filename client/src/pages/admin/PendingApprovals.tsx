@@ -85,7 +85,7 @@ export default function PendingApprovalsPage() {
     <AppShell requiredRole="Administrator">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-primary">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">
             Pending Account Approvals
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -97,8 +97,8 @@ export default function PendingApprovalsPage() {
           <PageLoader message="Loading pending approvals..." />
         ) : pendingUsers.length === 0 ? (
           <Card className="border-border">
-            <CardContent className="p-10 text-center">
-              <ShieldAlert className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+            <CardContent className="p-6 sm:p-10 text-center">
+              <ShieldAlert className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mx-auto mb-3" />
               <p className="font-semibold text-foreground">
                 No pending approvals
               </p>
@@ -113,11 +113,11 @@ export default function PendingApprovalsPage() {
               <Card key={user.id} className="border-border">
                 <CardContent className="p-5 space-y-4">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-xs uppercase tracking-wide text-muted-foreground">
                         {user.role}
                       </p>
-                      <h3 className="font-bold text-foreground">{user.name}</h3>
+                      <h3 className="font-bold text-foreground truncate max-w-[220px]" title={user.name}>{user.name}</h3>
                     </div>
                     <span className="px-2 py-1 rounded text-xs font-semibold bg-[#C8A84B]/15 text-[#7a621d]">
                       Pending
@@ -128,7 +128,7 @@ export default function PendingApprovalsPage() {
                     <p>
                       <span className="text-muted-foreground">ID: </span>
                       <span className="font-medium text-foreground">
-                        {user.uniqueId.toUpperCase()}
+                        <span className="block max-w-[210px] truncate" title={user.uniqueId.toUpperCase()}>{user.uniqueId.toUpperCase()}</span>
                       </span>
                     </p>
                   </div>
@@ -141,7 +141,7 @@ export default function PendingApprovalsPage() {
                       <img
                         src={idCardUrls[user.id]}
                         alt={`${user.name} ID card`}
-                        className="w-full h-44 object-cover rounded-md border border-border cursor-zoom-in"
+                        className="w-full h-36 sm:h-44 object-cover rounded-md border border-border cursor-zoom-in"
                         onContextMenu={(e) => e.preventDefault()}
                         draggable={false}
                         onClick={() =>
@@ -152,7 +152,7 @@ export default function PendingApprovalsPage() {
                         }
                       />
                     ) : (
-                      <div className="w-full h-44 rounded-md border border-border bg-muted/40 flex items-center justify-center text-sm text-muted-foreground">
+                      <div className="w-full h-36 sm:h-44 rounded-md border border-border bg-muted/40 flex items-center justify-center text-sm text-muted-foreground">
                         ID card not available
                       </div>
                     )}

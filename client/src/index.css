@@ -76,6 +76,14 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
   }
 
   h1,
@@ -105,6 +113,10 @@
 
   .animate-input-shake {
     animation: input-shake 0.35s ease-in-out;
+  }
+
+  .animate-header-glow {
+    animation: header-glow 2.8s ease-in-out infinite;
   }
 
   /* File type badge colors */
@@ -138,5 +150,15 @@
   }
   80% {
     transform: translateX(3px);
+  }
+}
+
+@keyframes header-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
   }
 }

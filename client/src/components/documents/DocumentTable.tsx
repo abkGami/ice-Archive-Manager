@@ -41,8 +41,8 @@ export function DocumentTable({
     return (
       <EmptyState
         icon={FolderOpen} // Oops, need to import it. Let's just use generic SVG or pass from parent. Using inline here is fine but wait, better pass it.
-        title="No documents found"
-        description="Try adjusting your search or filters to find what you're looking for."
+        title="No recent documents found"
+        description="No recent uploads"
       />
     );
   }
@@ -50,14 +50,14 @@ export function DocumentTable({
   return (
     <div className="rounded-md border border-border bg-card overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
+        <table className="w-full min-w-[760px] text-sm text-left">
           <thead className="bg-muted text-muted-foreground uppercase text-xs font-semibold tracking-wider">
             <tr>
               <th className="px-4 py-4 font-medium border-b border-border w-10"></th>
               <th className="px-4 py-4 font-medium border-b border-border min-w-[200px]">
                 Document Title
               </th>
-              <th className="px-4 py-4 font-medium border-b border-border">
+              <th className="px-4 py-4 font-medium border-b border-border min-w-[120px]">
                 Category
               </th>
               <th className="px-4 py-4 font-medium border-b border-border hidden md:table-cell">
@@ -87,7 +87,7 @@ export function DocumentTable({
                   <FileBadge type={doc.fileType} />
                 </td>
                 <td className="px-4 py-3 align-middle">
-                  <div className="font-semibold text-foreground truncate max-w-[250px] md:max-w-[300px]">
+                  <div className="font-semibold text-foreground truncate max-w-[180px] sm:max-w-[240px] md:max-w-[300px]">
                     {doc.title}
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5">
@@ -95,7 +95,7 @@ export function DocumentTable({
                   </div>
                 </td>
                 <td className="px-4 py-3 align-middle">
-                  <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-foreground whitespace-nowrap">
+                  <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-foreground max-w-[160px] truncate">
                     {doc.category}
                   </span>
                 </td>
@@ -112,7 +112,7 @@ export function DocumentTable({
                 )}
                 <td className="px-4 py-3 align-middle text-right">
                   <div
-                    className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Button

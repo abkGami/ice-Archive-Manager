@@ -119,13 +119,13 @@ export default function UploadPage() {
     <AppShell requiredRole="any">
       {" "}
       {/* Both admin and lecturer use this */}
-      <div className="max-w-2xl mx-auto py-8">
-        <div className="bg-card border border-border shadow-sm rounded-xl p-8">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border">
+      <div className="max-w-2xl mx-auto py-4 sm:py-8">
+        <div className="bg-card border border-border shadow-sm rounded-xl p-4 sm:p-8">
+          <div className="flex items-center gap-3 mb-6 sm:mb-8 pb-4 border-b border-border min-w-0">
             <div className="bg-accent/10 p-2 rounded-lg">
               <UploadCloud className="h-6 w-6 text-accent" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
               Upload New Document
             </h1>
           </div>
@@ -191,10 +191,10 @@ export default function UploadPage() {
                 By default, uploaded documents are visible to staff and students
                 (when approved).
               </p>
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-3">
                 <Label
                   htmlFor="allowStaffAccess"
-                  className="text-sm text-foreground"
+                  className="text-sm text-foreground leading-snug"
                 >
                   Allow other staff to view and download
                 </Label>
@@ -204,10 +204,10 @@ export default function UploadPage() {
                   onCheckedChange={setAllowStaffAccess}
                 />
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-3">
                 <Label
                   htmlFor="allowStudentAccess"
-                  className="text-sm text-foreground"
+                  className="text-sm text-foreground leading-snug"
                 >
                   Allow students to view and download
                 </Label>
@@ -226,7 +226,7 @@ export default function UploadPage() {
 
               {!file ? (
                 <div
-                  className="border-2 border-dashed border-border rounded-xl p-10 text-center hover:bg-accent/5 hover:border-accent transition-colors cursor-pointer group"
+                  className="border-2 border-dashed border-border rounded-xl p-6 sm:p-10 text-center hover:bg-accent/5 hover:border-accent transition-colors cursor-pointer group"
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
@@ -255,7 +255,7 @@ export default function UploadPage() {
                     <div className="bg-primary/10 p-2 rounded text-primary">
                       <File className="h-6 w-6" />
                     </div>
-                    <div className="truncate pr-4">
+                    <div className="truncate pr-2 sm:pr-4 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">
                         {file.name}
                       </p>
@@ -277,11 +277,12 @@ export default function UploadPage() {
               )}
             </div>
 
-            <div className="pt-6 flex justify-end gap-3 border-t border-border">
+            <div className="pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-border">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => window.history.back()}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
@@ -291,6 +292,7 @@ export default function UploadPage() {
                   !file || !title || !category || createMutation.isPending
                 }
                 isLoading={createMutation.isPending}
+                className="w-full sm:w-auto"
               >
                 Upload Document
               </Button>
