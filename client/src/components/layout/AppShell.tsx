@@ -6,7 +6,13 @@ import { useUser } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect } from "wouter";
 
-export function AppShell({ children, requiredRole }: { children: ReactNode, requiredRole?: string }) {
+export function AppShell({
+  children,
+  requiredRole,
+}: {
+  children: ReactNode;
+  requiredRole?: string;
+}) {
   const { data: user, isLoading } = useUser();
 
   if (isLoading) {
@@ -14,7 +20,9 @@ export function AppShell({ children, requiredRole }: { children: ReactNode, requ
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-accent" />
-          <p className="text-muted-foreground font-medium">Loading Institutional Data...</p>
+          <p className="text-muted-foreground font-medium">
+            Loading Institutional Data...
+          </p>
         </div>
       </div>
     );
@@ -24,11 +32,14 @@ export function AppShell({ children, requiredRole }: { children: ReactNode, requ
     return <Redirect to="/login" />;
   }
 
-  if (requiredRole && user.role !== requiredRole && requiredRole !== 'any') {
+  if (requiredRole && user.role !== requiredRole && requiredRole !== "any") {
     // Basic redirect if they try to access wrong dashboard
-    const redirectPath = user.role === 'Administrator' ? '/admin/dashboard' :
-                         user.role === 'Lecturer' ? '/lecturer/dashboard' : 
-                         '/student/dashboard';
+    const redirectPath =
+      user.role === "Administrator"
+        ? "/admin/dashboard"
+        : user.role === "Lecturer"
+          ? "/lecturer/dashboard"
+          : "/student/dashboard";
     return <Redirect to={redirectPath} />;
   }
 
@@ -47,9 +58,7 @@ export function AppShell({ children, requiredRole }: { children: ReactNode, requ
             id="app-scroll-container"
             className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8"
           >
-            <div className="max-w-7xl mx-auto h-full">
-              {children}
-            </div>
+            <div className="max-w-7xl mx-auto h-full">{children}</div>
           </main>
         </div>
       </div>

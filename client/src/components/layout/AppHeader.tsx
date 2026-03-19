@@ -22,12 +22,20 @@ type HeaderNotification = {
   detail: string;
 };
 
+const VIEWED_NOTIFICATION_TTL_MS = 12 * 60 * 60 * 1000;
+
 export function AppHeader() {
   const { data: user } = useUser();
   const logout = useLogout();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isBellOpen, setIsBellOpen] = useState(false);
+  const [viewedNotifications, setViewedNotifications] = useState<
+    Record<string, number>
+  >({});
 
   const isAdmin = user?.role === "Administrator";
+  const isStudent = user?.role === "Student";
+  const isLecturer = user?.role === "Lecturer";
 
   const { data: pendingUsers = [] } = usePendingUsers({
     enabled: !!user && isAdmin,
@@ -36,27 +44,71 @@ export function AppHeader() {
     { status: "Pending Approval" },
     { enabled: !!user && isAdmin },
   );
+  const { data: accessibleDocuments = [] } = useDocuments(undefined, {
+    enabled: !!user && (isStudent || isLecturer),
+  });
 
   if (!user) return null;
+
+  const viewedStorageKey = `viewed_notifications_${user.id}_${user.role}`;
+
+  const sortedAccessibleDocs = [...accessibleDocuments].sort((a, b) => {
+    const aTime = a.date ? new Date(a.date).getTime() : 0;
+    const bTime = b.date ? new Date(b.date).getTime() : 0;
+    return bTime - aTime;
+  });
+
+  const recentStudentDocs = sortedAccessibleDocs.slice(0, 6);
+  const recentLecturerAccessibleDocs = sortedAccessibleDocs
+    .filter((doc) => doc.uploadedBy !== user.id)
+    .slice(0, 4);
+  const recentlyApprovedOwnDocs = sortedAccessibleDocs
+    .filter((doc) => doc.uploadedBy === user.id && doc.status === "Approved")
+    .slice(0, 4);
 
   const notifications: HeaderNotification[] = isAdmin
     ? [
         {
-          id: "pending-users",
+          id: `pending-users-${pendingUsers.length}`,
           title: "Pending Account Approvals",
           detail: `${pendingUsers.length} account request(s) awaiting review`,
         },
         {
-          id: "pending-documents",
+          id: `pending-documents-${pendingDocuments.length}`,
           title: "Pending Document Approvals",
           detail: `${pendingDocuments.length} document(s) awaiting approval`,
         },
       ]
-    : [];
+    : isStudent
+      ? recentStudentDocs.map((doc) => ({
+          id: `student-doc-${doc.id}`,
+          title: "New document available",
+          detail: `${doc.title} • ${doc.date ? format(new Date(doc.date), "MMM d") : "Recently"}`,
+        }))
+      : isLecturer
+        ? [
+            ...recentLecturerAccessibleDocs.map((doc) => ({
+              id: `staff-doc-${doc.id}`,
+              title: "New accessible document",
+              detail: `${doc.title} • ${doc.date ? format(new Date(doc.date), "MMM d") : "Recently"}`,
+            })),
+            ...recentlyApprovedOwnDocs.map((doc) => ({
+              id: `approved-own-${doc.id}`,
+              title: "Your upload was approved",
+              detail: `${doc.title} is now approved by admin`,
+            })),
+          ]
+        : [];
 
-  const unreadCount = isAdmin
-    ? pendingUsers.length + pendingDocuments.length
-    : 0;
+  const activeNotifications = notifications.filter((item) => {
+    const viewedAt = viewedNotifications[item.id];
+    if (!viewedAt) return true;
+    return Date.now() - viewedAt < VIEWED_NOTIFICATION_TTL_MS;
+  });
+
+  const unreadCount = activeNotifications.filter(
+    (item) => !viewedNotifications[item.id],
+  ).length;
 
   const initials = user.name
     .split(" ")
@@ -113,6 +165,45 @@ export function AppHeader() {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const raw = window.localStorage.getItem(viewedStorageKey);
+      const parsed: Record<string, number> = raw ? JSON.parse(raw) : {};
+      setViewedNotifications(parsed);
+    } catch {
+      setViewedNotifications({});
+    }
+  }, [viewedStorageKey]);
+
+  useEffect(() => {
+    if (!isBellOpen || activeNotifications.length === 0) return;
+
+    const now = Date.now();
+    setViewedNotifications((previous) => {
+      const next = { ...previous };
+      let changed = false;
+
+      activeNotifications.forEach((item) => {
+        if (!next[item.id]) {
+          next[item.id] = now;
+          changed = true;
+        }
+      });
+
+      if (!changed) {
+        return previous;
+      }
+
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(viewedStorageKey, JSON.stringify(next));
+      }
+
+      return next;
+    });
+  }, [activeNotifications, isBellOpen, viewedStorageKey]);
+
   return (
     <header
       className={`relative h-16 border-b flex items-center justify-between px-3 sm:px-4 lg:px-6 sticky top-0 z-30 transition-[background-color,backdrop-filter,box-shadow] duration-300 ease-out ${
@@ -140,7 +231,7 @@ export function AppHeader() {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        <DropdownMenu>
+        <DropdownMenu open={isBellOpen} onOpenChange={setIsBellOpen}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -159,12 +250,12 @@ export function AppHeader() {
           <DropdownMenuContent align="end" className="w-[min(20rem,90vw)]">
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {notifications.length === 0 ? (
+            {activeNotifications.length === 0 ? (
               <DropdownMenuItem className="text-muted-foreground">
                 No new notifications
               </DropdownMenuItem>
             ) : (
-              notifications.slice(0, 8).map((item) => (
+              activeNotifications.slice(0, 8).map((item) => (
                 <DropdownMenuItem key={item.id} className="py-2">
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <span className="text-sm font-medium text-foreground truncate">
@@ -206,7 +297,9 @@ export function AppHeader() {
           <DropdownMenuContent align="end" className="w-[min(14rem,90vw)]">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1 min-w-0">
-                <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                <p className="text-sm font-medium leading-none truncate">
+                  {user.name}
+                </p>
                 <p className="text-xs leading-none text-muted-foreground truncate">
                   ID: {user.uniqueId.toUpperCase()}
                 </p>

@@ -22,6 +22,7 @@ import {
 import { ConfirmActionDialog } from "@/components/documents/ConfirmActionDialog";
 import { useToast } from "@/hooks/use-toast";
 import { PageLoader } from "@/components/common/PageLoader";
+import { useUser } from "@/hooks/use-auth";
 
 export default function AdminDocuments() {
   const [search, setSearch] = useState("");
@@ -40,10 +41,13 @@ export default function AdminDocuments() {
   const approveMutation = useApproveDocument();
   const deleteMutation = useDeleteDocument();
   const { toast } = useToast();
+  const { data: user } = useUser();
+
+  const uploadPath = user?.role === "Lecturer" ? "/lecturer/upload" : "/admin/upload";
 
   if (isLoading) {
     return (
-      <AppShell requiredRole="Administrator">
+      <AppShell requiredRole="any">
         <PageLoader message="Loading documents..." />
       </AppShell>
     );
@@ -76,7 +80,7 @@ export default function AdminDocuments() {
   };
 
   return (
-    <AppShell requiredRole="Administrator">
+    <AppShell requiredRole="any">
       <div className="space-y-6 flex flex-col h-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="text-2xl md:text-3xl font-bold text-primary">
@@ -89,7 +93,7 @@ export default function AdminDocuments() {
             <Button variant="secondary" size="icon" className="bg-muted">
               <List className="h-4 w-4 text-foreground" />
             </Button>
-            <Link href="/admin/upload">
+            <Link href={uploadPath}>
               <Button className="ml-2">
                 <Plus className="mr-2 h-4 w-4" /> Upload
               </Button>

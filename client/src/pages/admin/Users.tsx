@@ -205,13 +205,17 @@ export default function AdminUsers() {
             </span>
           </div>
           <div className="bg-card p-4 rounded-lg border border-border shadow-sm flex items-center justify-between">
-            <span className="text-muted-foreground font-medium text-sm sm:text-base">Lecturers</span>
+            <span className="text-muted-foreground font-medium text-sm sm:text-base">
+              Lecturers
+            </span>
             <span className="text-2xl font-bold text-accent">
               {users.filter((u) => u.role === "Lecturer").length}
             </span>
           </div>
           <div className="bg-card p-4 rounded-lg border border-border shadow-sm flex items-center justify-between">
-            <span className="text-muted-foreground font-medium text-sm sm:text-base">Students</span>
+            <span className="text-muted-foreground font-medium text-sm sm:text-base">
+              Students
+            </span>
             <span className="text-2xl font-bold text-primary">
               {users.filter((u) => u.role === "Student").length}
             </span>
@@ -220,86 +224,92 @@ export default function AdminUsers() {
 
         <div className="rounded-md border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px] text-sm text-left">
-            <thead className="bg-muted text-muted-foreground uppercase text-xs font-semibold tracking-wider">
-              <tr>
-                <th className="px-4 py-4 border-b border-border">User</th>
-                <th className="px-4 py-4 border-b border-border">Unique ID</th>
-                <th className="px-4 py-4 border-b border-border">Role</th>
-                <th className="px-4 py-4 border-b border-border">Status</th>
-                <th className="px-4 py-4 border-b border-border text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {users.map((u) => (
-                <tr key={u.id} className="hover:bg-muted/50 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">
-                          {u.name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium text-foreground truncate max-w-[210px]">
-                        {u.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
-                    {u.uniqueId.toUpperCase()}
-                  </td>
-                  <td className="px-4 py-3">
-                    <RoleBadge role={u.role} />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        className={`h-2 w-2 rounded-full ${u.status === "Active" ? "bg-[#1A6B45]" : "bg-destructive"}`}
-                      />
-                      <span className="text-xs font-medium">{u.status}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground"
-                        onClick={() => openEditDialog(u)}
-                        title="Edit user details"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className={`h-8 w-8 ${u.status === "Active" ? "text-destructive hover:bg-destructive/10" : "text-[#1A6B45] hover:bg-[#1A6B45]/10"}`}
-                        onClick={() => handleToggle(u.id, u.status)}
-                        disabled={
-                          currentUser?.id === u.id ||
-                          (pendingToggleId !== null && pendingToggleId !== u.id)
-                        }
-                        isLoading={
-                          pendingToggleId === u.id && toggleMutation.isPending
-                        }
-                        title={
-                          u.status === "Active" ? "Deactivate" : "Activate"
-                        }
-                      >
-                        {u.status === "Active" ? (
-                          <X className="h-4 w-4" />
-                        ) : (
-                          <Check className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </td>
+            <table className="w-full min-w-[700px] text-sm text-left">
+              <thead className="bg-muted text-muted-foreground uppercase text-xs font-semibold tracking-wider">
+                <tr>
+                  <th className="px-4 py-4 border-b border-border">User</th>
+                  <th className="px-4 py-4 border-b border-border">
+                    Unique ID
+                  </th>
+                  <th className="px-4 py-4 border-b border-border">Role</th>
+                  <th className="px-4 py-4 border-b border-border">Status</th>
+                  <th className="px-4 py-4 border-b border-border text-right">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {users.map((u) => (
+                  <tr
+                    key={u.id}
+                    className="hover:bg-muted/50 transition-colors"
+                  >
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">
+                            {u.name.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium text-foreground truncate max-w-[210px]">
+                          {u.name}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
+                      {u.uniqueId.toUpperCase()}
+                    </td>
+                    <td className="px-4 py-3">
+                      <RoleBadge role={u.role} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className={`h-2 w-2 rounded-full ${u.status === "Active" ? "bg-[#1A6B45]" : "bg-destructive"}`}
+                        />
+                        <span className="text-xs font-medium">{u.status}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground"
+                          onClick={() => openEditDialog(u)}
+                          title="Edit user details"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={`h-8 w-8 ${u.status === "Active" ? "text-destructive hover:bg-destructive/10" : "text-[#1A6B45] hover:bg-[#1A6B45]/10"}`}
+                          onClick={() => handleToggle(u.id, u.status)}
+                          disabled={
+                            currentUser?.id === u.id ||
+                            (pendingToggleId !== null &&
+                              pendingToggleId !== u.id)
+                          }
+                          isLoading={
+                            pendingToggleId === u.id && toggleMutation.isPending
+                          }
+                          title={
+                            u.status === "Active" ? "Deactivate" : "Activate"
+                          }
+                        >
+                          {u.status === "Active" ? (
+                            <X className="h-4 w-4" />
+                          ) : (
+                            <Check className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

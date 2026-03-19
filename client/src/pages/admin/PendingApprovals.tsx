@@ -117,7 +117,12 @@ export default function PendingApprovalsPage() {
                       <p className="text-xs uppercase tracking-wide text-muted-foreground">
                         {user.role}
                       </p>
-                      <h3 className="font-bold text-foreground truncate max-w-[220px]" title={user.name}>{user.name}</h3>
+                      <h3
+                        className="font-bold text-foreground truncate max-w-[220px]"
+                        title={user.name}
+                      >
+                        {user.name}
+                      </h3>
                     </div>
                     <span className="px-2 py-1 rounded text-xs font-semibold bg-[#C8A84B]/15 text-[#7a621d]">
                       Pending
@@ -128,7 +133,12 @@ export default function PendingApprovalsPage() {
                     <p>
                       <span className="text-muted-foreground">ID: </span>
                       <span className="font-medium text-foreground">
-                        <span className="block max-w-[210px] truncate" title={user.uniqueId.toUpperCase()}>{user.uniqueId.toUpperCase()}</span>
+                        <span
+                          className="block max-w-[210px] truncate"
+                          title={user.uniqueId.toUpperCase()}
+                        >
+                          {user.uniqueId.toUpperCase()}
+                        </span>
                       </span>
                     </p>
                   </div>

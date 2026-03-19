@@ -24,7 +24,8 @@ function sanitizeFileName(name: string) {
 function canAccessDocument(user: any, doc: any) {
   if (user.role === "Administrator") return true;
   if (user.role === "Lecturer") {
-    return doc.uploadedBy === user.id || doc.allowStaffAccess;
+    if (doc.uploadedBy === user.id) return true;
+    return doc.status === "Approved" && doc.allowStaffAccess;
   }
   if (user.role === "Student") {
     return doc.status === "Approved" && doc.allowStudentAccess;

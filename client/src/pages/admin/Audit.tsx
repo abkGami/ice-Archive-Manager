@@ -70,7 +70,9 @@ export default function AdminAudit() {
           log.documentTitle.toLowerCase().includes(search.toLowerCase()))),
   );
 
-  const actionOptions = Array.from(new Set(sortedLogs.map((log) => log.action)));
+  const actionOptions = Array.from(
+    new Set(sortedLogs.map((log) => log.action)),
+  );
 
   const getExportLogs = () => {
     if (downloadAll) {
@@ -89,17 +91,11 @@ export default function AdminAudit() {
           return false;
         }
 
-        if (
-          timeframe === "30d" &&
-          now - entryTime > 30 * 24 * 60 * 60 * 1000
-        ) {
+        if (timeframe === "30d" && now - entryTime > 30 * 24 * 60 * 60 * 1000) {
           return false;
         }
 
-        if (
-          timeframe === "90d" &&
-          now - entryTime > 90 * 24 * 60 * 60 * 1000
-        ) {
+        if (timeframe === "90d" && now - entryTime > 90 * 24 * 60 * 60 * 1000) {
           return false;
         }
 
@@ -230,70 +226,73 @@ export default function AdminAudit() {
 
         <div className="rounded-md border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px] text-sm text-left">
-            <thead className="bg-muted text-muted-foreground uppercase text-xs font-semibold tracking-wider">
-              <tr>
-                <th className="px-4 py-4 border-b border-border">User</th>
-                <th className="px-4 py-4 border-b border-border">Action</th>
-                <th className="px-4 py-4 border-b border-border">
-                  Document Affected
-                </th>
-                <th className="px-4 py-4 border-b border-border text-right">
-                  Date & Time
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filteredLogs.map((log) => (
-                <tr
-                  key={log.id}
-                  className="hover:bg-muted/30 transition-colors"
-                >
-                  <td className="px-4 py-3 font-medium text-foreground max-w-[180px] truncate" title={log.userName}>
-                    {log.userName}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
-                        log.action === "Upload"
-                          ? "bg-[#1A6BAF]/10 text-[#1A6BAF]"
-                          : log.action === "Download"
-                            ? "bg-primary/10 text-primary"
-                            : log.action === "Approve"
-                              ? "bg-[#1A6B45]/10 text-[#1A6B45]"
-                              : log.action === "Delete"
-                                ? "bg-destructive/10 text-destructive"
-                                : "bg-[#C8A84B]/10 text-[#C8A84B]"
-                      }`}
-                    >
-                      {log.action}
-                    </span>
-                  </td>
-                  <td
-                    className="px-4 py-3 text-muted-foreground max-w-[200px] truncate"
-                    title={log.documentTitle || "-"}
-                  >
-                    {log.documentTitle || "-"}
-                  </td>
-                  <td className="px-4 py-3 text-right text-muted-foreground whitespace-nowrap">
-                    {log.date
-                      ? format(new Date(log.date), "MMM d, yyyy HH:mm:ss")
-                      : "-"}
-                  </td>
-                </tr>
-              ))}
-              {filteredLogs.length === 0 && (
+            <table className="w-full min-w-[700px] text-sm text-left">
+              <thead className="bg-muted text-muted-foreground uppercase text-xs font-semibold tracking-wider">
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="p-8 text-center text-muted-foreground"
-                  >
-                    No audit logs matching criteria.
-                  </td>
+                  <th className="px-4 py-4 border-b border-border">User</th>
+                  <th className="px-4 py-4 border-b border-border">Action</th>
+                  <th className="px-4 py-4 border-b border-border">
+                    Document Affected
+                  </th>
+                  <th className="px-4 py-4 border-b border-border text-right">
+                    Date & Time
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filteredLogs.map((log) => (
+                  <tr
+                    key={log.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
+                    <td
+                      className="px-4 py-3 font-medium text-foreground max-w-[180px] truncate"
+                      title={log.userName}
+                    >
+                      {log.userName}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                          log.action === "Upload"
+                            ? "bg-[#1A6BAF]/10 text-[#1A6BAF]"
+                            : log.action === "Download"
+                              ? "bg-primary/10 text-primary"
+                              : log.action === "Approve"
+                                ? "bg-[#1A6B45]/10 text-[#1A6B45]"
+                                : log.action === "Delete"
+                                  ? "bg-destructive/10 text-destructive"
+                                  : "bg-[#C8A84B]/10 text-[#C8A84B]"
+                        }`}
+                      >
+                        {log.action}
+                      </span>
+                    </td>
+                    <td
+                      className="px-4 py-3 text-muted-foreground max-w-[200px] truncate"
+                      title={log.documentTitle || "-"}
+                    >
+                      {log.documentTitle || "-"}
+                    </td>
+                    <td className="px-4 py-3 text-right text-muted-foreground whitespace-nowrap">
+                      {log.date
+                        ? format(new Date(log.date), "MMM d, yyyy HH:mm:ss")
+                        : "-"}
+                    </td>
+                  </tr>
+                ))}
+                {filteredLogs.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="p-8 text-center text-muted-foreground"
+                    >
+                      No audit logs matching criteria.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
