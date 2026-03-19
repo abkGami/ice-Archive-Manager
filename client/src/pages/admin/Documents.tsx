@@ -42,8 +42,15 @@ export default function AdminDocuments() {
   const deleteMutation = useDeleteDocument();
   const { toast } = useToast();
   const { data: user } = useUser();
+  const mineOnly =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("mine") === "1";
 
-  const uploadPath = user?.role === "Lecturer" ? "/lecturer/upload" : "/admin/upload";
+  const uploadPath =
+    user?.role === "Lecturer" ? "/lecturer/upload" : "/admin/upload";
+  const visibleDocuments = mineOnly && user
+    ? documents.filter((doc) => doc.uploadedBy === user.id)
+    : documents;
 
   if (isLoading) {
     return (
@@ -84,7 +91,7 @@ export default function AdminDocuments() {
       <div className="space-y-6 flex flex-col h-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="text-2xl md:text-3xl font-bold text-primary">
-            Document Management
+            {mineOnly ? "My Uploaded Documents" : "Document Management"}
           </h1>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" className="bg-background">
@@ -148,7 +155,7 @@ export default function AdminDocuments() {
 
         <div className="flex-1 min-h-0">
           <DocumentTable
-            documents={documents}
+            documents={visibleDocuments}
             onRowClick={setSelectedDoc}
             onApprove={handleApprove}
             onDelete={setDocToDelete}
@@ -156,7 +163,8 @@ export default function AdminDocuments() {
         </div>
 
         <div className="text-right text-sm text-muted-foreground">
-          Showing {documents.length} document{documents.length !== 1 ? "s" : ""}
+          Showing {visibleDocuments.length} document
+          {visibleDocuments.length !== 1 ? "s" : ""}
         </div>
       </div>
 

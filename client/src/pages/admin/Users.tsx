@@ -8,7 +8,7 @@ import {
 } from "@/hooks/use-users";
 import { useState } from "react";
 import { Button } from "@/components/common/Button";
-import { UserPlus, Edit, Check, X } from "lucide-react";
+import { UserPlus, Edit, Check, X, Search } from "lucide-react";
 import { RoleBadge } from "@/components/common/Badges";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -45,6 +45,7 @@ export default function AdminUsers() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [pendingToggleId, setPendingToggleId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     uniqueId: "",
@@ -56,6 +57,19 @@ export default function AdminUsers() {
     name: "",
     role: "Student",
     department: "",
+  });
+
+  const filteredUsers = users.filter((u) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+
+    return (
+      u.name.toLowerCase().includes(q) ||
+      u.uniqueId.toLowerCase().includes(q) ||
+      u.role.toLowerCase().includes(q) ||
+      u.department.toLowerCase().includes(q) ||
+      u.status.toLowerCase().includes(q)
+    );
   });
 
   if (isLoading) {
@@ -222,6 +236,16 @@ export default function AdminUsers() {
           </div>
         </div>
 
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, unique ID, role, department..."
+            className="pl-9"
+          />
+        </div>
+
         <div className="rounded-md border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[700px] text-sm text-left">
@@ -239,7 +263,7 @@ export default function AdminUsers() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {users.map((u) => (
+                {filteredUsers.map((u) => (
                   <tr
                     key={u.id}
                     className="hover:bg-muted/50 transition-colors"
@@ -308,6 +332,16 @@ export default function AdminUsers() {
                     </td>
                   </tr>
                 ))}
+                {filteredUsers.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="p-8 text-center text-muted-foreground"
+                    >
+                      No users match your search query.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
