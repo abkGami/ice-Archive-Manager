@@ -10,8 +10,10 @@ import { Document } from "@shared/schema";
 import { useUser } from "@/hooks/use-auth";
 import { StatusBadge } from "@/components/common/Badges";
 import { PageLoader } from "@/components/common/PageLoader";
+import { useLocation } from "wouter";
 
 export default function LecturerDashboard() {
+  const [, setLocation] = useLocation();
   const { data: stats, isLoading: isStatsLoading } = useLecturerStats();
   const { data: documents, isLoading: isDocumentsLoading } = useDocuments(); // All docs
   const { data: user, isLoading: isUserLoading } = useUser();
@@ -27,8 +29,19 @@ export default function LecturerDashboard() {
 
   const myUploads = documents?.filter((d) => d.uploadedBy === user?.id) || [];
 
-  const StatCard = ({ title, value, icon: Icon, colorClass }: any) => (
-    <Card className="border-border shadow-sm hover-lift">
+  const StatCard = ({ title, value, icon: Icon, colorClass, path }: any) => (
+    <Card
+      className="border-border shadow-sm hover-lift cursor-pointer"
+      role="button"
+      tabIndex={0}
+      onClick={() => setLocation(path)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setLocation(path);
+        }
+      }}
+    >
       <CardContent className="p-6 flex items-center gap-4">
         <div className={`p-3 rounded-md ${colorClass}`}>
           <Icon className="h-6 w-6 text-white" />
@@ -59,18 +72,21 @@ export default function LecturerDashboard() {
             value={stats?.myUploads}
             icon={Upload}
             colorClass="bg-[#1A6BAF]"
+            path="/lecturer/documents"
           />
           <StatCard
             title="Approved Documents"
             value={stats?.approvedDocuments}
             icon={CheckCircle}
             colorClass="bg-[#1A6B45]"
+            path="/lecturer/documents?status=Approved"
           />
           <StatCard
             title="Total Archive Size"
             value={stats?.totalDocuments}
             icon={Archive}
             colorClass="bg-primary"
+            path="/lecturer/documents"
           />
         </div>
 

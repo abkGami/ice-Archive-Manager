@@ -10,8 +10,10 @@ import { Document } from "@shared/schema";
 import { format } from "date-fns";
 import { useAuditLogs as useRealAuditLogs } from "@/hooks/use-audit"; // correct hook
 import { PageLoader } from "@/components/common/PageLoader";
+import { useLocation } from "wouter";
 
 export default function AdminDashboard() {
+  const [, setLocation] = useLocation();
   const { data: stats, isLoading: isStatsLoading } = useAdminStats();
   const { data: documents, isLoading: isDocumentsLoading } = useDocuments({
     status: "Pending Approval",
@@ -28,8 +30,19 @@ export default function AdminDashboard() {
     );
   }
 
-  const StatCard = ({ title, value, icon: Icon, colorClass }: any) => (
-    <Card className="border-border shadow-sm hover-lift">
+  const StatCard = ({ title, value, icon: Icon, colorClass, path }: any) => (
+    <Card
+      className="border-border shadow-sm hover-lift cursor-pointer"
+      role="button"
+      tabIndex={0}
+      onClick={() => setLocation(path)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setLocation(path);
+        }
+      }}
+    >
       <CardContent className="p-6 flex items-center gap-4">
         <div className={`p-3 rounded-md ${colorClass}`}>
           <Icon className="h-6 w-6 text-white" />
@@ -60,24 +73,28 @@ export default function AdminDashboard() {
             value={stats?.totalDocuments}
             icon={FileText}
             colorClass="bg-primary"
+            path="/admin/documents"
           />
           <StatCard
             title="Pending Approvals"
             value={stats?.pendingApprovals}
             icon={AlertCircle}
             colorClass="bg-[#D97706]"
+            path="/admin/approvals"
           />
           <StatCard
             title="Total Users"
             value={stats?.totalUsers}
             icon={Users}
             colorClass="bg-[#1A6BAF]"
+            path="/admin/users"
           />
           <StatCard
             title="Recent Uploads (7d)"
             value={stats?.recentUploads}
             icon={Clock}
             colorClass="bg-[#1A6B45]"
+            path="/admin/documents?status=Approved"
           />
         </div>
 

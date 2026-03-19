@@ -12,8 +12,10 @@ import { Link } from "wouter";
 import { useDownloadDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
 import { PageLoader } from "@/components/common/PageLoader";
+import { useLocation } from "wouter";
 
 export default function StudentDashboard() {
+  const [, setLocation] = useLocation();
   const { data: stats, isLoading: isStatsLoading } = useStudentStats();
   // Students only see approved documents
   const { data: documents = [], isLoading: isDocumentsLoading } = useDocuments({
@@ -31,8 +33,19 @@ export default function StudentDashboard() {
     );
   }
 
-  const StatCard = ({ title, value, icon: Icon, colorClass }: any) => (
-    <Card className="border-border shadow-sm hover-lift">
+  const StatCard = ({ title, value, icon: Icon, colorClass, path }: any) => (
+    <Card
+      className="border-border shadow-sm hover-lift cursor-pointer"
+      role="button"
+      tabIndex={0}
+      onClick={() => setLocation(path)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setLocation(path);
+        }
+      }}
+    >
       <CardContent className="p-6 flex items-center gap-4">
         <div className={`p-3 rounded-md ${colorClass}`}>
           <Icon className="h-6 w-6 text-white" />
@@ -87,18 +100,21 @@ export default function StudentDashboard() {
             value={stats?.availableDocuments}
             icon={FileText}
             colorClass="bg-[#1A6BAF]"
+            path="/student/documents"
           />
           <StatCard
             title="Recently Added"
             value={stats?.recentlyAdded}
             icon={Clock}
             colorClass="bg-[#C8A84B]"
+            path="/student/documents"
           />
           <StatCard
             title="My Downloads"
             value={stats?.myDownloads}
             icon={Download}
             colorClass="bg-primary"
+            path="/student/documents"
           />
         </div>
 
