@@ -9,12 +9,21 @@ import { DocumentDrawer } from "@/components/documents/DocumentDrawer";
 import { Document } from "@shared/schema";
 import { useUser } from "@/hooks/use-auth";
 import { StatusBadge } from "@/components/common/Badges";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function LecturerDashboard() {
-  const { data: stats } = useLecturerStats();
-  const { data: documents } = useDocuments(); // All docs
-  const { data: user } = useUser();
+  const { data: stats, isLoading: isStatsLoading } = useLecturerStats();
+  const { data: documents, isLoading: isDocumentsLoading } = useDocuments(); // All docs
+  const { data: user, isLoading: isUserLoading } = useUser();
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
+
+  if (isStatsLoading || isDocumentsLoading || isUserLoading) {
+    return (
+      <AppShell requiredRole="Lecturer">
+        <PageLoader message="Loading lecturer dashboard..." />
+      </AppShell>
+    );
+  }
 
   const myUploads = documents?.filter(d => d.uploadedBy === user?.id) || [];
 

@@ -30,9 +30,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useUser as useCurrentUser } from "@/hooks/use-auth";
 import type { User } from "@shared/schema";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function AdminUsers() {
-  const { data: users = [] } = useUsers();
+  const { data: users = [], isLoading } = useUsers();
   const { data: currentUser } = useCurrentUser();
   const createMutation = useCreateUser();
   const toggleMutation = useToggleUserStatus();
@@ -56,6 +57,14 @@ export default function AdminUsers() {
     role: "Student",
     department: "",
   });
+
+  if (isLoading) {
+    return (
+      <AppShell requiredRole="Administrator">
+        <PageLoader message="Loading user accounts..." />
+      </AppShell>
+    );
+  }
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();

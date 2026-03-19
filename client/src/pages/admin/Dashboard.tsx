@@ -9,13 +9,24 @@ import { DocumentDrawer } from "@/components/documents/DocumentDrawer";
 import { Document } from "@shared/schema";
 import { format } from "date-fns";
 import { useAuditLogs as useRealAuditLogs } from "@/hooks/use-audit"; // correct hook
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function AdminDashboard() {
-  const { data: stats } = useAdminStats();
-  const { data: documents } = useDocuments({ status: "Pending Approval" }); // Show pending first or recent
-  const { data: auditLogs } = useRealAuditLogs();
+  const { data: stats, isLoading: isStatsLoading } = useAdminStats();
+  const { data: documents, isLoading: isDocumentsLoading } = useDocuments({
+    status: "Pending Approval",
+  }); // Show pending first or recent
+  const { data: auditLogs, isLoading: isAuditLoading } = useRealAuditLogs();
 
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
+
+  if (isStatsLoading || isDocumentsLoading || isAuditLoading) {
+    return (
+      <AppShell requiredRole="Administrator">
+        <PageLoader message="Loading dashboard insights..." />
+      </AppShell>
+    );
+  }
 
   const StatCard = ({ title, value, icon: Icon, colorClass }: any) => (
     <Card className="border-border shadow-sm hover-lift">

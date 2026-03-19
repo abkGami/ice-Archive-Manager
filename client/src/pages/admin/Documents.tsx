@@ -11,6 +11,7 @@ import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ConfirmActionDialog } from "@/components/documents/ConfirmActionDialog";
 import { useToast } from "@/hooks/use-toast";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function AdminDocuments() {
   const [search, setSearch] = useState("");
@@ -29,6 +30,14 @@ export default function AdminDocuments() {
   const approveMutation = useApproveDocument();
   const deleteMutation = useDeleteDocument();
   const { toast } = useToast();
+
+  if (isLoading) {
+    return (
+      <AppShell requiredRole="Administrator">
+        <PageLoader message="Loading documents..." />
+      </AppShell>
+    );
+  }
 
   const handleApprove = (doc: Document) => {
     approveMutation.mutate(doc.id, {

@@ -17,6 +17,7 @@ import { Button } from "@/components/common/Button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDownloadDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function StudentDocuments() {
   const [search, setSearch] = useState("");
@@ -31,7 +32,7 @@ export default function StudentDocuments() {
     if (cat) setCategory(cat);
   }, []);
 
-  const { data: documents = [] } = useDocuments({
+  const { data: documents = [], isLoading } = useDocuments({
     search: search || undefined,
     category: category !== "all" ? category : undefined,
     status: "Approved", // Forced constraint for students
@@ -55,6 +56,14 @@ export default function StudentDocuments() {
       });
     }
   };
+
+  if (isLoading) {
+    return (
+      <AppShell requiredRole="Student">
+        <PageLoader message="Loading documents..." />
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell requiredRole="Student">

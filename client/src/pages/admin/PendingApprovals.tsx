@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useApproveUser, usePendingUsers } from "@/hooks/use-users";
 import { useToast } from "@/hooks/use-toast";
 import { api, buildUrl } from "@shared/routes";
-import { Loader2, ShieldAlert } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function PendingApprovalsPage() {
   const { data: pendingUsers = [], isLoading } = usePendingUsers();
@@ -93,9 +94,7 @@ export default function PendingApprovalsPage() {
         </div>
 
         {isLoading ? (
-          <div className="h-48 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-accent" />
-          </div>
+          <PageLoader message="Loading pending approvals..." />
         ) : pendingUsers.length === 0 ? (
           <Card className="border-border">
             <CardContent className="p-10 text-center">

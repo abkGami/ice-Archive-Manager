@@ -11,14 +11,23 @@ import { Button } from "@/components/common/Button";
 import { Link } from "wouter";
 import { useDownloadDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function StudentDashboard() {
-  const { data: stats } = useStudentStats();
+  const { data: stats, isLoading: isStatsLoading } = useStudentStats();
   // Students only see approved documents
-  const { data: documents = [] } = useDocuments({ status: "Approved" });
+  const { data: documents = [], isLoading: isDocumentsLoading } = useDocuments({ status: "Approved" });
   const downloadMutation = useDownloadDocument();
   const { toast } = useToast();
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
+
+  if (isStatsLoading || isDocumentsLoading) {
+    return (
+      <AppShell requiredRole="Student">
+        <PageLoader message="Loading student portal..." />
+      </AppShell>
+    );
+  }
 
   const StatCard = ({ title, value, icon: Icon, colorClass }: any) => (
     <Card className="border-border shadow-sm hover-lift">

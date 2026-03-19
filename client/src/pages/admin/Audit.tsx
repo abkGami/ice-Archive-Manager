@@ -5,6 +5,7 @@ import { Search, Download, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/common/Button";
 import { useState } from "react";
+import { PageLoader } from "@/components/common/PageLoader";
 
 function toCsvCell(value: string) {
   const escaped = value.replace(/"/g, '""');
@@ -12,8 +13,16 @@ function toCsvCell(value: string) {
 }
 
 export default function AdminAudit() {
-  const { data: logs = [] } = useAuditLogs();
+  const { data: logs = [], isLoading } = useAuditLogs();
   const [search, setSearch] = useState("");
+
+  if (isLoading) {
+    return (
+      <AppShell requiredRole="Administrator">
+        <PageLoader message="Loading audit trail..." />
+      </AppShell>
+    );
+  }
 
   const filteredLogs = logs.filter(
     (log) =>
