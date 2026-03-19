@@ -48,9 +48,10 @@ export default function AdminDocuments() {
 
   const uploadPath =
     user?.role === "Lecturer" ? "/lecturer/upload" : "/admin/upload";
-  const visibleDocuments = mineOnly && user
-    ? documents.filter((doc) => doc.uploadedBy === user.id)
-    : documents;
+  const visibleDocuments =
+    mineOnly && user
+      ? documents.filter((doc) => doc.uploadedBy === user.id)
+      : documents;
 
   if (isLoading) {
     return (

@@ -1,8 +1,7 @@
 import { AppShell } from "@/components/layout/AppShell";
-import { useStudentStats } from "@/hooks/use-stats";
 import { useDocuments } from "@/hooks/use-documents";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Clock, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { useState } from "react";
 import { DocumentDrawer } from "@/components/documents/DocumentDrawer";
 import { Document } from "@shared/schema";
@@ -12,11 +11,8 @@ import { Link } from "wouter";
 import { useDownloadDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
 import { PageLoader } from "@/components/common/PageLoader";
-import { useLocation } from "wouter";
 
 export default function StudentDashboard() {
-  const [, setLocation] = useLocation();
-  const { data: stats, isLoading: isStatsLoading } = useStudentStats();
   // Students only see approved documents
   const { data: documents = [], isLoading: isDocumentsLoading } = useDocuments({
     status: "Approved",
@@ -25,38 +21,13 @@ export default function StudentDashboard() {
   const { toast } = useToast();
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
 
-  if (isStatsLoading || isDocumentsLoading) {
+  if (isDocumentsLoading) {
     return (
       <AppShell requiredRole="Student">
         <PageLoader message="Loading student portal..." />
       </AppShell>
     );
   }
-
-  const StatCard = ({ title, value, icon: Icon, colorClass, path }: any) => (
-    <Card
-      className="border-border shadow-sm hover-lift cursor-pointer"
-      role="button"
-      tabIndex={0}
-      onClick={() => setLocation(path)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          setLocation(path);
-        }
-      }}
-    >
-      <CardContent className="p-6 flex items-center gap-4">
-        <div className={`p-3 rounded-md ${colorClass}`}>
-          <Icon className="h-6 w-6 text-white" />
-        </div>
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <h3 className="text-2xl font-bold text-foreground">{value || 0}</h3>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   const categories = [
     {
@@ -92,30 +63,6 @@ export default function StudentDashboard() {
           <p className="text-muted-foreground">
             Browse and download approved departmental resources.
           </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatCard
-            title="Available Documents"
-            value={stats?.availableDocuments}
-            icon={FileText}
-            colorClass="bg-[#1A6BAF]"
-            path="/student/documents"
-          />
-          <StatCard
-            title="Recently Added"
-            value={stats?.recentlyAdded}
-            icon={Clock}
-            colorClass="bg-[#C8A84B]"
-            path="/student/documents"
-          />
-          <StatCard
-            title="My Downloads"
-            value={stats?.myDownloads}
-            icon={Download}
-            colorClass="bg-primary"
-            path="/student/documents"
-          />
         </div>
 
         <div className="space-y-4">

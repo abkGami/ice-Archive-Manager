@@ -206,11 +206,12 @@ export function AppHeader() {
 
   return (
     <header
-      className={`relative h-16 border-b flex items-center justify-between px-3 sm:px-4 lg:px-6 sticky top-0 z-30 transition-[background-color,backdrop-filter,box-shadow] duration-300 ease-out ${
+      className={`relative h-16 border-b flex items-center justify-between px-3 sm:px-4 lg:px-6 z-30 transition-[background-color,backdrop-filter,box-shadow] duration-300 ease-out ${
         isScrolled
           ? "bg-card/85 backdrop-blur-md border-border/80 shadow-[0_8px_30px_-20px_rgba(10,34,64,0.55)]"
           : "bg-card border-border"
       }`}
+      style={{ position: "sticky", top: 0 }}
     >
       {isScrolled && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent animate-header-glow" />

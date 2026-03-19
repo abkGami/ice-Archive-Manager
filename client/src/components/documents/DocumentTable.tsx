@@ -40,7 +40,7 @@ export function DocumentTable({
   if (documents.length === 0) {
     return (
       <EmptyState
-        icon={FolderOpen} // Oops, need to import it. Let's just use generic SVG or pass from parent. Using inline here is fine but wait, better pass it.
+        icon={FolderOpen}
         title="No recent documents found"
         description="No recent uploads"
       />

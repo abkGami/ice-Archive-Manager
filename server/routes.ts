@@ -470,6 +470,21 @@ export async function registerRoutes(
       ]);
       if (!currentUser) return;
 
+      const targetDoc = await storage.getDocument(Number(req.params.id));
+      if (!targetDoc) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+
+      if (
+        currentUser.role === "Lecturer" &&
+        targetDoc.uploadedBy !== currentUser.id
+      ) {
+        return res.status(401).json({
+          message:
+            "You can only update visibility for documents uploaded by your account.",
+        });
+      }
+
       const input = api.documents.update.input.parse(req.body);
       const doc = await storage.updateDocument(Number(req.params.id), input);
       res.status(200).json(doc);

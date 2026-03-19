@@ -120,6 +120,68 @@ export function useDeleteDocument() {
   });
 }
 
+export function useUpdateDocumentVisibility() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      allowStaffAccess,
+      allowStudentAccess,
+    }: {
+      id: number;
+      allowStaffAccess: boolean;
+      allowStudentAccess: boolean;
+    }) => {
+      const url = buildUrl(api.documents.update.path, { id });
+      const res = await fetch(url, {
+        method: api.documents.update.method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          allowStaffAccess,
+          allowStudentAccess,
+        }),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          const payload = await res
+            .json()
+            .catch(() => ({
+              message: "You do not have permission to update visibility.",
+            }));
+          throw new Error(
+            payload?.message ||
+              "You do not have permission to update visibility.",
+          );
+        }
+        if (res.status === 404) {
+          const error = api.documents.update.responses[404].parse(
+            await res.json(),
+          );
+          throw new Error(error.message);
+        }
+        if (res.status === 400) {
+          const error = api.documents.update.responses[400].parse(
+            await res.json(),
+          );
+          throw new Error(error.message);
+        }
+        throw new Error("Failed to update document visibility");
+      }
+
+      return api.documents.update.responses[200].parse(await res.json());
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [api.documents.list.path] });
+      queryClient.invalidateQueries({
+        queryKey: [api.documents.get.path, variables.id],
+      });
+    },
+  });
+}
+
 export function useDownloadDocument() {
   return useMutation({
     mutationFn: async (doc: { id: number; fallbackName?: string }) => {

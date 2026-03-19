@@ -20,8 +20,15 @@ import {
   Tag,
 } from "lucide-react";
 import { useUser } from "@/hooks/use-auth";
-import { useDownloadDocument, useViewDocument } from "@/hooks/use-documents";
+import {
+  useDownloadDocument,
+  useUpdateDocumentVisibility,
+  useViewDocument,
+} from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useEffect, useState } from "react";
 
 function formatDisplaySize(size: string) {
   const match = size.match(/([\d.]+)\s*([a-zA-Z]+)/);
@@ -51,13 +58,55 @@ export function DocumentDrawer({
   const { data: user } = useUser();
   const downloadMutation = useDownloadDocument();
   const viewMutation = useViewDocument();
+  const updateVisibilityMutation = useUpdateDocumentVisibility();
   const { toast } = useToast();
   const isAdmin = user?.role === "Administrator";
+
+  const [allowStaffAccess, setAllowStaffAccess] = useState(
+    document?.allowStaffAccess ?? true,
+  );
+  const [allowStudentAccess, setAllowStudentAccess] = useState(
+    document?.allowStudentAccess ?? true,
+  );
+
+  useEffect(() => {
+    if (!document) return;
+    setAllowStaffAccess(document.allowStaffAccess);
+    setAllowStudentAccess(document.allowStudentAccess);
+  }, [document]);
 
   if (!document) return null;
 
   const canViewDocument =
     document.fileType.replace(".", "").toLowerCase() === "pdf";
+  const canManageVisibility =
+    !!user &&
+    (isAdmin || (user.role === "Lecturer" && document.uploadedBy === user.id));
+
+  const visibilityChanged =
+    allowStaffAccess !== document.allowStaffAccess ||
+    allowStudentAccess !== document.allowStudentAccess;
+
+  const handleSaveVisibility = async () => {
+    try {
+      await updateVisibilityMutation.mutateAsync({
+        id: document.id,
+        allowStaffAccess,
+        allowStudentAccess,
+      });
+
+      toast({
+        title: "Visibility updated",
+        description: "Document visibility settings have been saved.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Update failed",
+        description: error?.message || "Could not update document visibility.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -136,6 +185,56 @@ export function DocumentDrawer({
                   "No description provided for this document."}
               </p>
             </div>
+
+            {canManageVisibility && (
+              <div className="bg-muted/40 rounded-lg p-4 border border-border space-y-4">
+                <h4 className="text-sm font-semibold text-primary uppercase tracking-wider">
+                  Visibility
+                </h4>
+
+                <div className="flex items-center justify-between gap-3">
+                  <Label
+                    htmlFor="allow-staff-access"
+                    className="text-sm text-foreground"
+                  >
+                    Allow other staff to view and download
+                  </Label>
+                  <Switch
+                    id="allow-staff-access"
+                    checked={allowStaffAccess}
+                    onCheckedChange={setAllowStaffAccess}
+                    disabled={updateVisibilityMutation.isPending}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-3">
+                  <Label
+                    htmlFor="allow-student-access"
+                    className="text-sm text-foreground"
+                  >
+                    Allow students to view and download
+                  </Label>
+                  <Switch
+                    id="allow-student-access"
+                    checked={allowStudentAccess}
+                    onCheckedChange={setAllowStudentAccess}
+                    disabled={updateVisibilityMutation.isPending}
+                  />
+                </div>
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  disabled={
+                    !visibilityChanged || updateVisibilityMutation.isPending
+                  }
+                  isLoading={updateVisibilityMutation.isPending}
+                  onClick={handleSaveVisibility}
+                >
+                  Save Visibility
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 

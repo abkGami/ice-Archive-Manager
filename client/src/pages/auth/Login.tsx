@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/common/Button";
-import { Archive, AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { PageLoader } from "@/components/common/PageLoader";
 
 export default function Login() {
@@ -78,8 +78,12 @@ export default function Login() {
 
       <div className="w-full max-w-md bg-card rounded-xl shadow-2xl p-5 sm:p-8 relative z-10 border border-border/50">
         <div className="flex flex-col items-center mb-6 sm:mb-8">
-          <div className="h-16 w-16 bg-[#0A2240] rounded-lg flex items-center justify-center mb-4 shadow-inner">
-            <Archive className="h-8 w-8 text-[#C8A84B]" />
+          <div className="h-16 w-16  rounded-lg flex items-center justify-center mb-4 shadow-inner">
+            <img
+              src="/logo.png"
+              alt="E-Archive Logo"
+              className="h-16 w-16 object-contain"
+            />
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">
             ICT Department E-Archive

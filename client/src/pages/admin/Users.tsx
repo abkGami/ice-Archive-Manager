@@ -241,7 +241,7 @@ export default function AdminUsers() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, unique ID, role, department..."
+            placeholder="Search by name, unique ID, role..."
             className="pl-9"
           />
         </div>

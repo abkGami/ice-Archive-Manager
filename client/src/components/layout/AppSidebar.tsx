@@ -6,7 +6,6 @@ import {
   ClipboardList,
   UserCheck,
   LogOut,
-  Archive,
 } from "lucide-react";
 import {
   Sidebar,
@@ -69,7 +68,11 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-border bg-sidebar">
       <div className="flex h-16 items-center px-6 border-b border-border">
-        <Archive className="h-5 w-5 sm:h-6 sm:w-6 text-accent mr-3 shrink-0" />
+        <img
+          src="/logo.png"
+          alt="E-Archive Logo"
+          className="h-12 w-12 sm:h-12 sm:w-12 object-contain mr-3 shrink-0"
+        />
         <span className="text-lg font-bold text-primary font-display truncate">
           E-Archive
         </span>
