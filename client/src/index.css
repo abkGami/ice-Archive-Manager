@@ -119,6 +119,14 @@
     animation: header-glow 2.8s ease-in-out infinite;
   }
 
+  .animate-soft-sway {
+    animation: soft-sway 0.9s ease-out;
+  }
+
+  .animate-soft-pop {
+    animation: soft-pop 1s ease-out;
+  }
+
   /* File type badge colors */
   .bg-file-pdf {
     @apply bg-destructive text-white;
@@ -159,6 +167,36 @@
     opacity: 0.35;
   }
   50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes soft-sway {
+  0% {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(1px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes soft-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
     opacity: 0.9;
   }
 }

@@ -6,6 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/common/Button";
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { PageLoader } from "@/components/common/PageLoader";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Login() {
   const [uniqueId, setUniqueId] = useState("");
@@ -14,6 +23,7 @@ export default function Login() {
   const login = useLogin();
   const [, setLocation] = useLocation();
   const [error, setError] = useState("");
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [isRouting, setIsRouting] = useState(false);
   const { data: user, isLoading: isAuthLoading } = useUser();
 
@@ -124,12 +134,13 @@ export default function Login() {
               >
                 Password
               </Label>
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={() => setIsForgotPasswordOpen(true)}
                 className="text-xs text-[#1A6BAF] hover:underline font-medium"
               >
                 Forgot password?
-              </a>
+              </button>
             </div>
             <div className="relative">
               <Input
@@ -183,6 +194,26 @@ export default function Login() {
           </p>
         </div>
       </div>
+
+      <AlertDialog
+        open={isForgotPasswordOpen}
+        onOpenChange={setIsForgotPasswordOpen}
+      >
+        <AlertDialogContent className="bg-card">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Forgot Password</AlertDialogTitle>
+            <AlertDialogDescription className="text-base text-muted-foreground">
+              Contact your course-rep to reach out to the admin to restart your
+              account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setIsForgotPasswordOpen(false)}>
+              Okay, got it
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
