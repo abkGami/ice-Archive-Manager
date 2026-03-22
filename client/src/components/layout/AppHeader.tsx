@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { usePendingUsers } from "@/hooks/use-users";
 import { useDocuments } from "@/hooks/use-documents";
 import { useEffect, useState } from "react";
+import { SignOutConfirmDialog } from "@/components/common/SignOutConfirmDialog";
 
 type HeaderNotification = {
   id: string;
@@ -29,6 +30,7 @@ export function AppHeader() {
   const logout = useLogout();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isBellOpen, setIsBellOpen] = useState(false);
+  const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
   const [viewedNotifications, setViewedNotifications] = useState<
     Record<string, number>
   >({});
@@ -314,13 +316,24 @@ export function AppHeader() {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive focus:text-destructive cursor-pointer"
-              onClick={() => logout.mutate()}
+              onClick={() => setIsSignOutDialogOpen(true)}
             >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Sign out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <SignOutConfirmDialog
+          open={isSignOutDialogOpen}
+          onOpenChange={setIsSignOutDialogOpen}
+          isPending={logout.isPending}
+          onConfirm={() => {
+            logout.mutate(undefined, {
+              onSuccess: () => setIsSignOutDialogOpen(false),
+            });
+          }}
+        />
       </div>
     </header>
   );

@@ -7,6 +7,7 @@ import {
   UserCheck,
   LogOut,
 } from "lucide-react";
+import { useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -20,11 +21,13 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser, useLogout } from "@/hooks/use-auth";
 import { Link, useLocation } from "wouter";
+import { SignOutConfirmDialog } from "@/components/common/SignOutConfirmDialog";
 
 export function AppSidebar() {
   const { data: user } = useUser();
   const [location] = useLocation();
   const logout = useLogout();
+  const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
 
   if (!user) return null;
 
@@ -164,7 +167,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={() => logout.mutate()}
+              onClick={() => setIsSignOutDialogOpen(true)}
               className="text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
             >
               <LogOut />
@@ -173,6 +176,17 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+
+      <SignOutConfirmDialog
+        open={isSignOutDialogOpen}
+        onOpenChange={setIsSignOutDialogOpen}
+        isPending={logout.isPending}
+        onConfirm={() => {
+          logout.mutate(undefined, {
+            onSuccess: () => setIsSignOutDialogOpen(false),
+          });
+        }}
+      />
     </Sidebar>
   );
 }
