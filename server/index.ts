@@ -101,11 +101,9 @@ app.use((req, res, next) => {
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     if (err?.type === "entity.too.large") {
-      return res
-        .status(413)
-        .json({
-          message: "Uploaded file is too large. Please choose a smaller image.",
-        });
+      return res.status(413).json({
+        message: "Uploaded file is too large. Please choose a smaller image.",
+      });
     }
 
     const status = err.status || err.statusCode || 500;
