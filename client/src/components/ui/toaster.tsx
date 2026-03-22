@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 import {
   Toast,
   ToastClose,
@@ -6,30 +6,30 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@/components/ui/toast"
+} from "@/components/ui/toast";
 
 function toText(value: unknown): string {
-  if (typeof value === "string") return value
-  if (typeof value === "number") return String(value)
-  return ""
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  return "";
 }
 
 function isInternalServerErrorToast(title: unknown, description: unknown) {
-  const combined = `${toText(title)} ${toText(description)}`.toLowerCase()
+  const combined = `${toText(title)} ${toText(description)}`.toLowerCase();
   return (
     combined.includes("internal server error") ||
     combined.includes("500:") ||
     /^500\b/.test(combined.trim())
-  )
+  );
 }
 
 export function Toaster() {
-  const { toasts } = useToast()
+  const { toasts } = useToast();
 
   return (
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
-        const isServerError = isInternalServerErrorToast(title, description)
+        const isServerError = isInternalServerErrorToast(title, description);
 
         return (
           <Toast
@@ -66,9 +66,9 @@ export function Toaster() {
             {action}
             <ToastClose />
           </Toast>
-        )
+        );
       })}
       <ToastViewport />
     </ToastProvider>
-  )
+  );
 }
