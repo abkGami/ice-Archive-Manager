@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useApproveUser, usePendingUsers } from "@/hooks/use-users";
 import { useToast } from "@/hooks/use-toast";
+import { buildApiUrl } from "@/lib/api";
 import { api, buildUrl } from "@shared/routes";
 import { ShieldAlert } from "lucide-react";
 import { PageLoader } from "@/components/common/PageLoader";
@@ -31,7 +32,7 @@ export default function PendingApprovalsPage() {
 
           try {
             const url = buildUrl(api.users.idCardPreview.path, { id: user.id });
-            const res = await fetch(url, {
+            const res = await fetch(buildApiUrl(url), {
               credentials: "include",
               signal: controller.signal,
             });

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl, type DocumentInput } from "@shared/routes";
+import { buildApiUrl } from "@/lib/api";
 
 export function useDocuments(
   params?: {
@@ -20,7 +21,7 @@ export function useDocuments(
   return useQuery({
     queryKey: [api.documents.list.path, params],
     queryFn: async () => {
-      const res = await fetch(url, { credentials: "include" });
+      const res = await fetch(buildApiUrl(url), { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch documents");
       return api.documents.list.responses[200].parse(await res.json());
     },
@@ -34,7 +35,7 @@ export function useDocument(id: number) {
     queryKey: [api.documents.get.path, id],
     queryFn: async () => {
       const url = buildUrl(api.documents.get.path, { id });
-      const res = await fetch(url, { credentials: "include" });
+      const res = await fetch(buildApiUrl(url), { credentials: "include" });
       if (res.status === 404) return null;
       if (!res.ok) throw new Error("Failed to fetch document");
       return api.documents.get.responses[200].parse(await res.json());
@@ -51,7 +52,7 @@ export function useCreateDocument() {
       // Simulate network delay for realistic feel
       await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      const res = await fetch(api.documents.create.path, {
+      const res = await fetch(buildApiUrl(api.documents.create.path), {
         method: api.documents.create.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -83,7 +84,7 @@ export function useApproveDocument() {
   return useMutation({
     mutationFn: async (id: number) => {
       const url = buildUrl(api.documents.approve.path, { id });
-      const res = await fetch(url, {
+      const res = await fetch(buildApiUrl(url), {
         method: api.documents.approve.method,
         credentials: "include",
       });
@@ -105,7 +106,7 @@ export function useDeleteDocument() {
   return useMutation({
     mutationFn: async (id: number) => {
       const url = buildUrl(api.documents.delete.path, { id });
-      const res = await fetch(url, {
+      const res = await fetch(buildApiUrl(url), {
         method: api.documents.delete.method,
         credentials: "include",
       });
@@ -134,7 +135,7 @@ export function useUpdateDocumentVisibility() {
       allowStudentAccess: boolean;
     }) => {
       const url = buildUrl(api.documents.update.path, { id });
-      const res = await fetch(url, {
+      const res = await fetch(buildApiUrl(url), {
         method: api.documents.update.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -146,11 +147,9 @@ export function useUpdateDocumentVisibility() {
 
       if (!res.ok) {
         if (res.status === 401) {
-          const payload = await res
-            .json()
-            .catch(() => ({
-              message: "You do not have permission to update visibility.",
-            }));
+          const payload = await res.json().catch(() => ({
+            message: "You do not have permission to update visibility.",
+          }));
           throw new Error(
             payload?.message ||
               "You do not have permission to update visibility.",
@@ -186,7 +185,7 @@ export function useDownloadDocument() {
   return useMutation({
     mutationFn: async (doc: { id: number; fallbackName?: string }) => {
       const url = buildUrl(api.documents.downloadUrl.path, { id: doc.id });
-      const res = await fetch(url, { credentials: "include" });
+      const res = await fetch(buildApiUrl(url), { credentials: "include" });
 
       if (res.status === 404) {
         throw new Error("No downloadable file found for this document.");
@@ -216,7 +215,7 @@ export function useViewDocument() {
   return useMutation({
     mutationFn: async (doc: { id: number; fallbackName?: string }) => {
       const url = buildUrl(api.documents.viewUrl.path, { id: doc.id });
-      const res = await fetch(url, { credentials: "include" });
+      const res = await fetch(buildApiUrl(url), { credentials: "include" });
 
       if (res.status === 404) {
         throw new Error("No viewable file found for this document.");

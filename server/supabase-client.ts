@@ -4,6 +4,8 @@ import { env, isProduction } from "./config/env";
 
 const ACCESS_COOKIE = "sb-access-token";
 const REFRESH_COOKIE = "sb-refresh-token";
+const cookieSameSite = env.COOKIE_SAME_SITE;
+const useSecureCookies = cookieSameSite === "none" ? true : isProduction;
 
 export function createAnonSupabaseClient() {
   return createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
@@ -72,24 +74,32 @@ export function setAuthCookies(
 
   res.cookie(ACCESS_COOKIE, session.access_token, {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: "lax",
+    secure: useSecureCookies,
+    sameSite: cookieSameSite,
     path: "/",
     maxAge: maxAgeMs,
   });
 
   res.cookie(REFRESH_COOKIE, session.refresh_token, {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: "lax",
+    secure: useSecureCookies,
+    sameSite: cookieSameSite,
     path: "/",
     maxAge: 1000 * 60 * 60 * 24 * 30,
   });
 }
 
 export function clearAuthCookies(res: Response) {
-  res.clearCookie(ACCESS_COOKIE, { path: "/" });
-  res.clearCookie(REFRESH_COOKIE, { path: "/" });
+  res.clearCookie(ACCESS_COOKIE, {
+    path: "/",
+    secure: useSecureCookies,
+    sameSite: cookieSameSite,
+  });
+  res.clearCookie(REFRESH_COOKIE, {
+    path: "/",
+    secure: useSecureCookies,
+    sameSite: cookieSameSite,
+  });
 }
 
 export function getAccessTokenFromRequest(req: Request) {

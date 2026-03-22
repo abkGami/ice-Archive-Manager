@@ -1,11 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl, type UserInput } from "@shared/routes";
+import { buildApiUrl } from "@/lib/api";
 
 export function useUsers() {
   return useQuery({
     queryKey: [api.users.list.path],
     queryFn: async () => {
-      const res = await fetch(api.users.list.path, { credentials: "include" });
+      const res = await fetch(buildApiUrl(api.users.list.path), {
+        credentials: "include",
+      });
       if (!res.ok) throw new Error("Failed to fetch users");
       return api.users.list.responses[200].parse(await res.json());
     },
@@ -17,7 +20,7 @@ export function useCreateUser() {
 
   return useMutation({
     mutationFn: async (data: UserInput) => {
-      const res = await fetch(api.users.create.path, {
+      const res = await fetch(buildApiUrl(api.users.create.path), {
         method: api.users.create.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -46,7 +49,7 @@ export function useToggleUserStatus() {
   return useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
       const url = buildUrl(api.users.update.path, { id });
-      const res = await fetch(url, {
+      const res = await fetch(buildApiUrl(url), {
         method: api.users.update.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -66,7 +69,7 @@ export function usePendingUsers(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [api.users.pending.path],
     queryFn: async () => {
-      const res = await fetch(api.users.pending.path, {
+      const res = await fetch(buildApiUrl(api.users.pending.path), {
         credentials: "include",
       });
       if (!res.ok) throw new Error("Failed to fetch pending users");
@@ -89,7 +92,7 @@ export function useUpdateUserDetails() {
       updates: Record<string, unknown>;
     }) => {
       const url = buildUrl(api.users.update.path, { id });
-      const res = await fetch(url, {
+      const res = await fetch(buildApiUrl(url), {
         method: api.users.update.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
@@ -123,7 +126,7 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: async (id: number) => {
       const url = buildUrl(api.users.delete.path, { id });
-      const res = await fetch(url, {
+      const res = await fetch(buildApiUrl(url), {
         method: api.users.delete.method,
         credentials: "include",
       });
@@ -151,7 +154,7 @@ export function useApproveUser() {
   return useMutation({
     mutationFn: async (id: number) => {
       const url = buildUrl(api.users.approve.path, { id });
-      const res = await fetch(url, {
+      const res = await fetch(buildApiUrl(url), {
         method: api.users.approve.method,
         credentials: "include",
       });

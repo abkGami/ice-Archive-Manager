@@ -1,11 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type LoginInput, type SignupInput } from "@shared/routes";
+import { buildApiUrl } from "@/lib/api";
 
 export function useUser() {
   return useQuery({
     queryKey: [api.auth.me.path],
     queryFn: async () => {
-      const res = await fetch(api.auth.me.path, { credentials: "include" });
+      const res = await fetch(buildApiUrl(api.auth.me.path), {
+        credentials: "include",
+      });
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to fetch user");
       return api.auth.me.responses[200].parse(await res.json());
@@ -19,7 +22,7 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: async (data: LoginInput) => {
-      const res = await fetch(api.auth.login.path, {
+      const res = await fetch(buildApiUrl(api.auth.login.path), {
         method: api.auth.login.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -50,7 +53,7 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: async () => {
-      const res = await fetch(api.auth.logout.path, {
+      const res = await fetch(buildApiUrl(api.auth.logout.path), {
         method: api.auth.logout.method,
         credentials: "include",
       });
@@ -67,7 +70,7 @@ export function useLogout() {
 export function useSignup() {
   return useMutation({
     mutationFn: async (data: SignupInput) => {
-      const res = await fetch(api.auth.signup.path, {
+      const res = await fetch(buildApiUrl(api.auth.signup.path), {
         method: api.auth.signup.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
