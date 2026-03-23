@@ -9,6 +9,7 @@ This document is intentionally extensive. It is written so you can reuse it as h
 The ICT Department E-Archive Management System digitizes document handling in a department by replacing ad-hoc paper or unmanaged file-sharing workflows with a centralized archive platform.
 
 The system supports:
+
 - secure authentication and session management
 - role-based access control for Administrators, Lecturers, and Students
 - document upload, approval, browsing, and access control
@@ -19,6 +20,7 @@ The system supports:
 ## 2. Problem Context
 
 Many departmental document processes are fragmented:
+
 - files are scattered across personal devices, messaging apps, and email threads
 - there is no clear approval pipeline for official files
 - user access is not consistently controlled by role
@@ -30,9 +32,11 @@ This project solves those problems with a centralized web application and role-a
 ## 3. Project Goals and Objectives
 
 ### 3.1 General Goal
+
 Build a robust departmental digital archive platform for secure document lifecycle management.
 
 ### 3.2 Specific Objectives
+
 - Provide role-based login and protected routes
 - Enable verified user onboarding and approval
 - Support document upload with metadata
@@ -46,6 +50,7 @@ Build a robust departmental digital archive platform for secure document lifecyc
 ## 4. Scope of the System
 
 ### 4.1 In Scope
+
 - Role-based web portal
 - User account creation and admin approval
 - Document CRUD and approval flow
@@ -53,6 +58,7 @@ Build a robust departmental digital archive platform for secure document lifecyc
 - Cloud integration (Supabase + hosted frontend/backend)
 
 ### 4.2 Out of Scope
+
 - Native mobile app
 - Multi-tenant institutional support
 - Offline mode
@@ -61,12 +67,14 @@ Build a robust departmental digital archive platform for secure document lifecyc
 ## 5. High-Level Architecture
 
 The repository follows a monorepo style:
+
 - client: React frontend
 - server: Express backend
 - shared: type-safe contracts and schemas
 - supabase/migrations: SQL schema and policy files
 
 Data flow:
+
 1. Frontend sends API requests with credentials
 2. Backend validates auth and role
 3. Backend performs business logic and storage operations
@@ -76,12 +84,14 @@ Data flow:
 ## 6. Core Features
 
 ### 6.1 Authentication and Session
+
 - Login, signup, logout, current-user session check
 - Supabase auth integration
 - HttpOnly cookie-based token management
 - Role-aware redirects after login
 
 ### 6.2 User Management
+
 - Admin can create users
 - Admin can view all users
 - Admin can approve pending accounts
@@ -89,6 +99,7 @@ Data flow:
 - ID card preview and validation support
 
 ### 6.3 Document Management
+
 - Upload documents with metadata
 - Assign document category and visibility permissions
 - Approve pending documents
@@ -96,12 +107,14 @@ Data flow:
 - Generate signed URLs for download and view
 
 ### 6.4 Dashboards and Reporting
+
 - Admin stats: totals, pending approvals, uploads
 - Lecturer stats: own uploads and approvals
 - Student stats: available/recent documents
 - Activity audit listing
 
 ### 6.5 UX Enhancements
+
 - Sign out confirmation modal
 - Forgot password informational modal
 - Animated internal-server-error toast: "It's not you, It's me!"
@@ -110,6 +123,7 @@ Data flow:
 ## 7. Technology Stack
 
 ### 7.1 Frontend
+
 - React 18
 - TypeScript
 - Vite
@@ -120,6 +134,7 @@ Data flow:
 - Lucide icons
 
 ### 7.2 Backend
+
 - Node.js
 - Express 5
 - TypeScript
@@ -127,11 +142,13 @@ Data flow:
 - Cookie parser
 
 ### 7.3 Data and Storage
+
 - Supabase Postgres (structured data)
 - Supabase Auth (identity/session integration)
 - Supabase Storage (document and ID-card files)
 
 ### 7.4 Build and Tooling
+
 - esbuild (server bundling)
 - tsx (TypeScript execution in scripts/dev)
 - PostCSS + Tailwind
@@ -139,11 +156,13 @@ Data flow:
 ## 8. Data Model Overview
 
 Primary entities in shared schema:
+
 - User
 - Document
 - AuditLog
 
 ### 8.1 User fields
+
 - id
 - authUserId
 - uniqueId
@@ -157,6 +176,7 @@ Primary entities in shared schema:
 - createdAt
 
 ### 8.2 Document fields
+
 - id
 - title
 - category
@@ -173,6 +193,7 @@ Primary entities in shared schema:
 - description
 
 ### 8.3 AuditLog fields
+
 - id
 - userId
 - userName
@@ -185,12 +206,14 @@ Primary entities in shared schema:
 ## 9. API Surface (Summary)
 
 Auth:
+
 - POST /api/auth/login
 - POST /api/auth/signup
 - POST /api/auth/logout
 - GET /api/auth/me
 
 Documents:
+
 - GET /api/documents
 - GET /api/documents/:id
 - POST /api/documents
@@ -201,6 +224,7 @@ Documents:
 - GET /api/documents/:id/view-url
 
 Users:
+
 - GET /api/users
 - POST /api/users
 - GET /api/users/pending
@@ -211,6 +235,7 @@ Users:
 - GET /api/users/:id/id-card-preview
 
 Audit and Stats:
+
 - GET /api/audit-logs
 - GET /api/stats/admin
 - GET /api/stats/lecturer
@@ -219,6 +244,7 @@ Audit and Stats:
 ## 10. Environment Variables
 
 ### 10.1 Server
+
 - NODE_ENV
 - PORT
 - CORS_ALLOWED_ORIGINS
@@ -230,45 +256,58 @@ Audit and Stats:
 - SUPABASE_DOCUMENT_BUCKET
 
 ### 10.2 Frontend
+
 - VITE_API_BASE_URL
 
 Notes:
+
 - Keep VITE_API_BASE_URL empty for same-origin API
 - Set VITE_API_BASE_URL when frontend and backend are hosted separately
 
 ## 11. Local Development
 
 ### 11.1 Prerequisites
+
 - Node.js 20+
 - npm
 - Supabase project configured
 
 ### 11.2 Install
+
 - npm install
 
 ### 11.3 Run in dev
+
 - npm run dev
 
 ### 11.4 Type check
+
 - npm run check
 
 ### 11.5 Build and start
+
 - npm run build
 - npm run start
 
 ## 12. Deployment Notes
 
 ### 12.1 Split deployment pattern
+
 Recommended pattern used in this project:
+
 - Frontend hosted on Vercel
 - Backend hosted on Render
 
 ### 12.2 Render build caveat
+
 If build fails with "tsx: not found", install dev dependencies in build step:
+
 - npm install --include=dev && npm run build
 
 ### 12.3 Cross-domain auth
+
 For frontend-backend on different domains:
+
 - configure CORS_ALLOWED_ORIGINS to include frontend URL
 - set COOKIE_SAME_SITE=none
 - ensure secure cookies in production
@@ -302,11 +341,13 @@ For frontend-backend on different domains:
 ## 16. Testing and Quality Status
 
 Current quality checks include:
+
 - TypeScript validation via npm run check
 - Runtime form/schema validation via Zod
 - React Query cache invalidation patterns on mutations
 
 Recommended additions:
+
 - API integration tests
 - role-access regression tests
 - e2e flows for signup and approval lifecycle
@@ -316,6 +357,7 @@ Recommended additions:
 This section maps each tracked source/config file to its responsibility.
 
 ### 17.1 Root Files
+
 - .env.example: sample env configuration for local and hosted usage
 - .gitignore: ignored files and folders
 - .replit: Replit environment metadata
@@ -328,9 +370,11 @@ This section maps each tracked source/config file to its responsibility.
 - vite.config.ts: Vite app config, aliases, and output location
 
 ### 17.2 attached_assets
+
 - attached_assets/Pasted--REPLIT-PROMPT-AFIT-DEPARTMENTAL-E-ARCHIVE-MANAGEMENT-S_1772647409839.txt: original product/design prompt reference
 
 ### 17.3 client root
+
 - client/index.html: SPA HTML template
 - client/requirements.md: design/requirements note for UI
 - client/public/favicon.png: browser favicon
@@ -338,16 +382,19 @@ This section maps each tracked source/config file to its responsibility.
 - client/public/assets/.gitkeep: keeps empty assets folder in git
 
 ### 17.4 client/src core
+
 - client/src/main.tsx: React bootstrap entry
 - client/src/App.tsx: route definitions and providers
 - client/src/index.css: global styles, theme variables, and animations
 
 ### 17.5 client/src/lib
+
 - client/src/lib/api.ts: absolute/same-origin API URL builder
 - client/src/lib/queryClient.ts: React Query default configuration and request helpers
 - client/src/lib/utils.ts: utility helpers (cn and similar)
 
 ### 17.6 client/src/hooks
+
 - client/src/hooks/use-audit.ts: audit log data hook
 - client/src/hooks/use-auth.ts: auth/session hooks
 - client/src/hooks/use-documents.ts: document CRUD and actions hooks
@@ -357,6 +404,7 @@ This section maps each tracked source/config file to its responsibility.
 - client/src/hooks/use-users.ts: user management hooks
 
 ### 17.7 client/src/components/common
+
 - client/src/components/common/Badges.tsx: reusable status/role/category badges
 - client/src/components/common/Button.tsx: app-level button wrapper
 - client/src/components/common/EmptyState.tsx: reusable empty-state UI block
@@ -364,16 +412,19 @@ This section maps each tracked source/config file to its responsibility.
 - client/src/components/common/SignOutConfirmDialog.tsx: signout confirmation modal
 
 ### 17.8 client/src/components/layout
+
 - client/src/components/layout/AppHeader.tsx: top nav/header and user controls
 - client/src/components/layout/AppShell.tsx: authenticated layout and route guard
 - client/src/components/layout/AppSidebar.tsx: side navigation and signout trigger
 
 ### 17.9 client/src/components/documents
+
 - client/src/components/documents/ConfirmActionDialog.tsx: generic destructive-action confirmation
 - client/src/components/documents/DocumentDrawer.tsx: document detail side panel
 - client/src/components/documents/DocumentTable.tsx: document listing table with actions
 
 ### 17.10 client/src/components/ui
+
 - client/src/components/ui/accordion.tsx: accordion primitive wrapper
 - client/src/components/ui/alert-dialog.tsx: alert dialog primitive wrapper
 - client/src/components/ui/alert.tsx: alert UI wrapper
@@ -423,13 +474,16 @@ This section maps each tracked source/config file to its responsibility.
 - client/src/components/ui/tooltip.tsx: tooltip wrapper
 
 ### 17.11 client/src/pages
+
 - client/src/pages/not-found.tsx: 404 fallback page
 
 ### 17.12 client/src/pages/auth
+
 - client/src/pages/auth/Login.tsx: login view with forgot-password modal and redirect logic
 - client/src/pages/auth/Signup.tsx: signup view with account type and ID-card flow
 
 ### 17.13 client/src/pages/admin
+
 - client/src/pages/admin/Audit.tsx: audit log interface
 - client/src/pages/admin/Dashboard.tsx: admin dashboard and metrics
 - client/src/pages/admin/Documents.tsx: admin documents page with controls
@@ -438,13 +492,16 @@ This section maps each tracked source/config file to its responsibility.
 - client/src/pages/admin/Users.tsx: user management CRUD and status actions
 
 ### 17.14 client/src/pages/lecturer
+
 - client/src/pages/lecturer/Dashboard.tsx: lecturer dashboard
 
 ### 17.15 client/src/pages/student
+
 - client/src/pages/student/Dashboard.tsx: student dashboard
 - client/src/pages/student/Documents.tsx: student document browsing page
 
 ### 17.16 server
+
 - server/index.ts: express app bootstrap, middleware, CORS, startup
 - server/mock-db.ts: optional mock db utilities
 - server/mock-storage.ts: optional mock storage implementation
@@ -455,16 +512,20 @@ This section maps each tracked source/config file to its responsibility.
 - server/vite.ts: Vite middleware integration for development
 
 ### 17.17 server/config
+
 - server/config/env.ts: env schema parsing and typed exports
 
 ### 17.18 shared
+
 - shared/routes.ts: shared API contract declarations and typed route helpers
 - shared/schema.ts: shared domain schemas and inferred TypeScript types
 
 ### 17.19 script
+
 - script/build.ts: combined build orchestration for client and server outputs
 
 ### 17.20 supabase/migrations
+
 - supabase/migrations/0001_initial.sql: base relational schema setup
 - supabase/migrations/0002_policies.sql: RLS/policy setup
 
@@ -473,21 +534,27 @@ This section maps each tracked source/config file to its responsibility.
 The sections above can be mapped directly into academic chapters.
 
 ### Chapter 1 (Introduction)
+
 Use:
+
 - Section 1 (Project Summary)
 - Section 2 (Problem Context)
 - Section 3 (Goals and Objectives)
 - Section 4 (Scope)
 
 ### Chapter 2 (Literature Review)
+
 Use this project context to compare:
+
 - digital archive systems
 - role-based document management platforms
 - cloud-native authentication approaches
 - audit/compliance logging in information systems
 
 ### Chapter 3 (Methodology and System Design)
+
 Use:
+
 - Section 5 (Architecture)
 - Section 7 (Technology Stack)
 - Section 8 (Data Model)
@@ -495,13 +562,17 @@ Use:
 - Section 17 (file-level implementation map)
 
 ### Chapter 4 (Implementation and Results)
+
 Use:
+
 - Sections 6, 11, 12, 16, and 17
 - Include screenshots for each role dashboard and key workflows
 - Include deployment observations and hosted behavior
 
 ### Chapter 5 (Conclusion and Recommendations)
+
 Use:
+
 - Section 14 (Limitations)
 - Section 15 (Future Improvements)
 - practical lessons from deployment and cross-origin auth integration

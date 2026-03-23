@@ -5,6 +5,7 @@
 This document is a chapter-ready source pack you can feed into an AI writing assistant to generate your final year project report (Chapter 1 to Chapter 5).
 
 Use this document as:
+
 - an academic narrative base
 - a structured implementation reference
 - a methodology and analysis source
@@ -66,6 +67,7 @@ This study presents the design and implementation of the ICT Department E-Archiv
 ### 1.2 Statement of the Problem
 
 The core problems addressed by this project are:
+
 - Document fragmentation across multiple unofficial channels.
 - Absence of a controlled and transparent approval workflow.
 - Limited role-based access enforcement for sensitive records.
@@ -76,9 +78,11 @@ The core problems addressed by this project are:
 ### 1.3 Aim and Objectives of the Study
 
 #### Aim
+
 To develop a robust, role-based web application for centralized document archive management in an academic department.
 
 #### Objectives
+
 - To design a centralized repository for departmental documents.
 - To implement secure authentication and session management.
 - To enforce role-based access for administrators, lecturers, and students.
@@ -98,6 +102,7 @@ To develop a robust, role-based web application for centralized document archive
 ### 1.5 Significance of the Study
 
 The study is significant to:
+
 - Departmental administrators: through improved control, transparency, and faster decision support.
 - Lecturers/staff: through streamlined upload and retrieval workflows.
 - Students: through consistent access to approved academic materials.
@@ -107,6 +112,7 @@ The study is significant to:
 ### 1.6 Scope of the Study
 
 #### Covered Scope
+
 - Multi-role authentication and authorization.
 - User onboarding and admin approval.
 - Document upload, update, approval, view, download, and deletion.
@@ -114,6 +120,7 @@ The study is significant to:
 - Web deployment architecture (frontend and backend cloud hosting).
 
 #### Delimitations
+
 - No native mobile app.
 - No OCR or full-text semantic search.
 - No advanced document version branching.
@@ -134,6 +141,7 @@ The study is significant to:
 ### 2.1 Conceptual Review
 
 This project intersects the following conceptual areas:
+
 - Document Management Systems (DMS)
 - Role-Based Access Control in web systems
 - Educational information management platforms
@@ -143,6 +151,7 @@ This project intersects the following conceptual areas:
 ### 2.2 Document Management in Academic Environments
 
 Academic departments generate high-frequency, multi-format records. Effective document management must support:
+
 - indexing and categorization
 - reliable access controls
 - status and approval workflows
@@ -153,6 +162,7 @@ Without these, institutions face delays, duplication, and governance risks.
 ### 2.3 Role-Based Access Control (RBAC)
 
 RBAC is a proven model in enterprise and educational systems for reducing unauthorized access and simplifying permission administration. In this project, three core roles are implemented:
+
 - Administrator: full management and approval authority.
 - Lecturer: content contribution and controlled management of own uploads.
 - Student: constrained read access to approved and allowed documents.
@@ -160,6 +170,7 @@ RBAC is a proven model in enterprise and educational systems for reducing unauth
 ### 2.4 Workflow Governance and Audit Trails
 
 Approval gates prevent the publication of unverified records. Audit logging supports:
+
 - accountability
 - incident tracing
 - institutional compliance
@@ -168,6 +179,7 @@ Approval gates prevent the publication of unverified records. Audit logging supp
 ### 2.5 Cloud-Native Academic Systems
 
 Cloud-backed systems offer:
+
 - better availability
 - easier deployment and updates
 - centralized storage and access
@@ -178,6 +190,7 @@ This project leverages cloud services (Supabase + hosted frontend/backend) to re
 ### 2.6 Theoretical Framework (Suggested)
 
 You can frame this project with:
+
 - Information Systems Success Model (quality, use, user satisfaction)
 - Access Control Theory (least privilege, role assignment)
 - Socio-Technical Systems perspective (people + process + technology)
@@ -185,12 +198,14 @@ You can frame this project with:
 ### 2.7 Empirical Review Guidance
 
 For your final draft, include 8-20 relevant sources on:
+
 - digital archives in higher institutions
 - web-based DMS implementation studies
 - RBAC effectiveness studies
 - cloud adoption in educational systems
 
 Then identify the gap your project closes:
+
 - practical, deployable departmental-level archive with approval and audit features.
 
 ### 2.8 Summary of Literature Gap
@@ -208,6 +223,7 @@ This work follows a design-and-implementation methodology (applied software engi
 ### 3.2 Requirements Elicitation Summary
 
 Functional requirements implemented:
+
 - User signup/login/logout
 - Role-based route protection
 - Admin user approval workflow
@@ -217,6 +233,7 @@ Functional requirements implemented:
 - Audit logging and dashboard stats
 
 Non-functional requirements addressed:
+
 - Security (role checks, cookie auth, env-based secrets)
 - Maintainability (shared schemas/contracts)
 - Usability (modals, loaders, toasts, clear flows)
@@ -225,17 +242,20 @@ Non-functional requirements addressed:
 ### 3.3 System Architecture
 
 #### Frontend Layer
+
 - React + TypeScript SPA
 - Wouter-based routing
 - TanStack Query for server-state
 - Tailwind + Radix UI component system
 
 #### Backend Layer
+
 - Express + TypeScript API server
 - Route handlers for auth, documents, users, logs, stats
 - Middleware for JSON parsing, cookie parsing, CORS, error handling
 
 #### Data and Storage Layer
+
 - Supabase Postgres for entity persistence
 - Supabase Auth for identity/session operations
 - Supabase Storage for file objects
@@ -260,15 +280,18 @@ Non-functional requirements addressed:
 ### 3.6 Database Design Summary
 
 Core tables:
+
 - users
 - documents
 - audit_logs
 
 Relational behavior:
+
 - documents linked to uploader users
 - audit logs linked to acting users and optional documents
 
 Policy layer:
+
 - RLS/policy migration file provided in supabase/migrations/0002_policies.sql
 
 ### 3.7 Implementation Tools
@@ -281,6 +304,7 @@ Policy layer:
 ### 3.8 Deployment Method
 
 Observed practical deployment model:
+
 - Frontend hosted on Vercel
 - Backend hosted on Render
 - Cross-domain auth resolved via CORS and cookie policies
@@ -302,24 +326,28 @@ The system was implemented as a full-stack web application with a shared contrac
 ### 4.2 Implemented Modules
 
 #### Authentication Module
+
 - Login and logout endpoints
 - Session check endpoint
 - Signup flow with pending approval
 - Modal-based forgot password guidance
 
 #### User Administration Module
+
 - User list and management interface
 - Pending user approval page
 - ID card preview workflow
 - Account status updates and deletion controls
 
 #### Document Module
+
 - Upload interface and metadata capture
 - List and detail view (drawer)
 - Approval flow for pending documents
 - Signed URL generation for view/download
 
 #### Audit and Analytics Module
+
 - Audit log retrieval endpoint and admin view
 - Stats endpoints for each role dashboard
 
@@ -333,6 +361,7 @@ The system was implemented as a full-stack web application with a shared contrac
 ### 4.4 Testing Notes
 
 Functional flow tests performed:
+
 - login and redirect by role
 - signup and pending approval behavior
 - document upload and approval
@@ -341,11 +370,13 @@ Functional flow tests performed:
 - signout confirmation behavior
 
 Build and type checks:
+
 - npm run check passed after feature changes.
 
 ### 4.5 Deployment Outcome
 
 Key outcomes from deployment process:
+
 - Split-hosting architecture successfully configured.
 - API base URL externalization resolved frontend-backend decoupling.
 - Render build issue (tsx not found) diagnosed and fixed via dev dependency install strategy.
@@ -398,6 +429,7 @@ The implementation demonstrates that modern web technologies, combined with clou
 ### 5.5 Future Work
 
 Future research and development can explore:
+
 - AI-assisted document classification and tagging.
 - Role-adaptive recommendation of relevant documents.
 - Workflow notifications (email/SMS/in-app).
@@ -448,6 +480,7 @@ Use this section to prepare for oral defense:
 ## J. Appendix Pointers
 
 For your final submission package, append:
+
 - API screenshots / Postman collection
 - database table screenshots from Supabase
 - key UI screenshots by role
