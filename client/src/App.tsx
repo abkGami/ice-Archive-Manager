@@ -38,9 +38,11 @@ function HomePage() {
   // If user is authenticated, redirect to their dashboard
   if (user) {
     const dashboardPath =
-      user.role === "Administrator" ? "/admin/dashboard" :
-      user.role === "Lecturer" ? "/lecturer/dashboard" :
-      "/student/dashboard";
+      user.role === "Administrator"
+        ? "/admin/dashboard"
+        : user.role === "Lecturer"
+          ? "/lecturer/dashboard"
+          : "/student/dashboard";
     return <Redirect to={dashboardPath} />;
   }
 
@@ -91,10 +93,7 @@ function Router() {
       <Route
         path="/admin/users"
         component={() => (
-          <ProtectedRoute
-            component={AdminUsers}
-            requiredRole="Administrator"
-          />
+          <ProtectedRoute component={AdminUsers} requiredRole="Administrator" />
         )}
       />
       <Route
@@ -109,10 +108,7 @@ function Router() {
       <Route
         path="/admin/audit"
         component={() => (
-          <ProtectedRoute
-            component={AdminAudit}
-            requiredRole="Administrator"
-          />
+          <ProtectedRoute component={AdminAudit} requiredRole="Administrator" />
         )}
       />
 
@@ -129,19 +125,13 @@ function Router() {
       <Route
         path="/lecturer/documents"
         component={() => (
-          <ProtectedRoute
-            component={AdminDocuments}
-            requiredRole="Lecturer"
-          />
+          <ProtectedRoute component={AdminDocuments} requiredRole="Lecturer" />
         )}
       />
       <Route
         path="/lecturer/upload"
         component={() => (
-          <ProtectedRoute
-            component={AdminUpload}
-            requiredRole="Lecturer"
-          />
+          <ProtectedRoute component={AdminUpload} requiredRole="Lecturer" />
         )}
       />
 
@@ -149,28 +139,18 @@ function Router() {
       <Route
         path="/student/dashboard"
         component={() => (
-          <ProtectedRoute
-            component={StudentDashboard}
-            requiredRole="Student"
-          />
+          <ProtectedRoute component={StudentDashboard} requiredRole="Student" />
         )}
       />
       <Route
         path="/student/documents"
         component={() => (
-          <ProtectedRoute
-            component={StudentDocuments}
-            requiredRole="Student"
-          />
+          <ProtectedRoute component={StudentDocuments} requiredRole="Student" />
         )}
       />
 
       {/* Fallback for any unmatched routes */}
-      <Route
-        component={() => (
-          <ProtectedRoute component={NotFound} />
-        )}
-      />
+      <Route component={() => <ProtectedRoute component={NotFound} />} />
     </Switch>
   );
 }

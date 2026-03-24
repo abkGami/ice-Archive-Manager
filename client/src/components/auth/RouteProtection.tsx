@@ -75,7 +75,7 @@ function getUserDashboardPath(role: string): string {
 // Higher-order component for pages that require authentication
 export function withAuth<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  requiredRole?: string
+  requiredRole?: string,
 ) {
   return function AuthenticatedComponent(props: P) {
     return (
