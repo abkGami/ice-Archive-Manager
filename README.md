@@ -377,7 +377,6 @@ This section maps each tracked source/config file to its responsibility.
 
 - client/index.html: SPA HTML template
 - client/requirements.md: design/requirements note for UI
-- client/public/favicon.png: browser favicon
 - client/public/logo.png: app logo used in auth/layout views
 - client/public/assets/.gitkeep: keeps empty assets folder in git
 
@@ -503,8 +502,6 @@ This section maps each tracked source/config file to its responsibility.
 ### 17.16 server
 
 - server/index.ts: express app bootstrap, middleware, CORS, startup
-- server/mock-db.ts: optional mock db utilities
-- server/mock-storage.ts: optional mock storage implementation
 - server/routes.ts: full API route handlers and business logic
 - server/static.ts: static build serving for production
 - server/storage.ts: storage abstraction and Supabase-backed implementation

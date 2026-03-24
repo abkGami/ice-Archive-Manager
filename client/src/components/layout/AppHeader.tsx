@@ -2,6 +2,7 @@ import { useUser, useLogout } from "@/hooks/use-auth";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Bell, LogOut, User as UserIcon } from "lucide-react";
 import { Button } from "../common/Button";
+import { useLocation } from "wouter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +29,7 @@ const VIEWED_NOTIFICATION_TTL_MS = 12 * 60 * 60 * 1000;
 export function AppHeader() {
   const { data: user } = useUser();
   const logout = useLogout();
+  const [, setLocation] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isBellOpen, setIsBellOpen] = useState(false);
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
@@ -330,7 +332,10 @@ export function AppHeader() {
           isPending={logout.isPending}
           onConfirm={() => {
             logout.mutate(undefined, {
-              onSuccess: () => setIsSignOutDialogOpen(false),
+              onSuccess: () => {
+                setIsSignOutDialogOpen(false);
+                setLocation("/");
+              },
             });
           }}
         />

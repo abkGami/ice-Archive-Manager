@@ -54,13 +54,8 @@ export default function Login() {
       { uniqueId, password },
       {
         onSuccess: (user) => {
-          if (user.role === "Administrator") {
-            navigateWithLoader("/admin/dashboard");
-          } else if (user.role === "Lecturer") {
-            navigateWithLoader("/lecturer/dashboard");
-          } else {
-            navigateWithLoader("/student/dashboard");
-          }
+          // Redirect to home page, which will then redirect to appropriate dashboard
+          navigateWithLoader("/");
         },
         onError: (err) => {
           setError(err.message);

@@ -25,7 +25,7 @@ import { SignOutConfirmDialog } from "@/components/common/SignOutConfirmDialog";
 
 export function AppSidebar() {
   const { data: user } = useUser();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const logout = useLogout();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
 
@@ -183,7 +183,10 @@ export function AppSidebar() {
         isPending={logout.isPending}
         onConfirm={() => {
           logout.mutate(undefined, {
-            onSuccess: () => setIsSignOutDialogOpen(false),
+            onSuccess: () => {
+              setIsSignOutDialogOpen(false);
+              setLocation("/");
+            },
           });
         }}
       />

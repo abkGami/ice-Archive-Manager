@@ -204,9 +204,9 @@ export default function AdminUsers() {
           <h1 className="text-2xl md:text-3xl font-bold text-primary">
             User Management
           </h1>
-          <Button onClick={() => setIsAddOpen(true)}>
+          {/* <Button onClick={() => setIsAddOpen(true)}>
             <UserPlus className="mr-2 h-4 w-4" /> Add New User
-          </Button>
+          </Button> */}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
