@@ -3,6 +3,7 @@
 ## 🔐 What's Been Implemented
 
 Your application now has **complete session-based authentication** using:
+
 - **JWT tokens** stored in HTTP-only cookies (secure, protected from XSS attacks)
 - **Automatic redirect** to login for unauthenticated users
 - **Token refresh** mechanism via Supabase
@@ -14,35 +15,42 @@ Your application now has **complete session-based authentication** using:
 ## ✅ Changes Made
 
 ### 1. **Fixed Route Protection** (`client/src/components/auth/RouteProtection.tsx`)
-   - Changed default redirect from `/` to `/login` for unauthenticated users
-   - Direct redirect to login page without unnecessary intermediate redirects
+
+- Changed default redirect from `/` to `/login` for unauthenticated users
+- Direct redirect to login page without unnecessary intermediate redirects
 
 ### 2. **Enhanced User Session Hook** (`client/src/hooks/use-auth.ts`)
-   - Now handles 401 AND 403 status codes
-   - Automatic cleanup of stale localStorage data
-   - Added `refetchOnMount` and `refetchOnWindowFocus` for better session validation
+
+- Now handles 401 AND 403 status codes
+- Automatic cleanup of stale localStorage data
+- Added `refetchOnMount` and `refetchOnWindowFocus` for better session validation
 
 ### 3. **Created Global Auth Context** (`client/src/contexts/AuthContext.tsx`)
-   - Manages authentication state across the entire app
-   - Automatically redirects unauthenticated users to login
-   - Prevents access to protected routes
+
+- Manages authentication state across the entire app
+- Automatically redirects unauthenticated users to login
+- Prevents access to protected routes
 
 ### 4. **Created Fetch Wrapper** (`client/src/lib/fetch.ts`)
-   - Centralized authentication error handling
-   - Automatic logout and redirect on 401 errors
-   - Prevents redirect loops
+
+- Centralized authentication error handling
+- Automatic logout and redirect on 401 errors
+- Prevents redirect loops
 
 ### 5. **Updated App.tsx**
-   - Wrapped the app with `AuthProvider` for global auth state management
+
+- Wrapped the app with `AuthProvider` for global auth state management
 
 ### 6. **Fixed TypeScript Error**
-   - Fixed type error in `AppHeader.tsx`
+
+- Fixed type error in `AppHeader.tsx`
 
 ---
 
 ## 🚀 Deployment Instructions
 
 ### **Prerequisites**
+
 1. Active Supabase project
 2. Hosting platforms ready (e.g., Vercel, Netlify, Railway, Render)
 
@@ -66,6 +74,7 @@ Your application now has **complete session-based authentication** using:
      ```
 
 3. **Add Environment Variables** in Render Dashboard:
+
    ```bash
    NODE_ENV=production
    PORT=5000
@@ -116,6 +125,7 @@ Your application now has **complete session-based authentication** using:
    - Import from GitHub: `ice-Archive-Manager`
 
 3. **Configure Build Settings**:
+
    ```
    Framework Preset: Vite
    Build Command: npm run build
@@ -125,6 +135,7 @@ Your application now has **complete session-based authentication** using:
    ```
 
 4. **Add Environment Variable**:
+
    ```bash
    # Replace with your actual backend URL from Render/Railway
    VITE_API_BASE_URL=https://ice-archive-backend.onrender.com
@@ -158,6 +169,7 @@ Your application now has **complete session-based authentication** using:
    - `documents` (for uploaded documents)
 
 2. **Storage Policies** - Set public read access for authenticated users:
+
    ```sql
    -- For id-card-images bucket
    CREATE POLICY "Allow authenticated users to read"
@@ -184,6 +196,7 @@ Your application now has **complete session-based authentication** using:
 ### **Local Testing**
 
 1. **Create `.env` file** in project root:
+
    ```bash
    NODE_ENV=development
    PORT=5000
@@ -200,6 +213,7 @@ Your application now has **complete session-based authentication** using:
    ```
 
 2. **Start development server**:
+
    ```bash
    npm run dev
    ```
@@ -217,6 +231,7 @@ Your application now has **complete session-based authentication** using:
 ### **Production Testing**
 
 After deployment, test:
+
 1. **Login** on your production site
 2. **Check browser cookies** (DevTools → Application → Cookies):
    - Should see `sb-access-token`
@@ -234,6 +249,7 @@ After deployment, test:
 **Cause**: CORS or cookie settings misconfigured
 
 **Solution**:
+
 1. Verify `CORS_ALLOWED_ORIGINS` includes your frontend URL (no trailing slash)
 2. Check `COOKIE_SAME_SITE` is set to `none` in production
 3. Ensure frontend URL uses HTTPS (required for SameSite=none cookies)
@@ -245,6 +261,7 @@ After deployment, test:
 **Cause**: Browser blocking third-party cookies
 
 **Solution**:
+
 1. **For production**:
    - Use `COOKIE_SAME_SITE=none`
    - Ensure both frontend and backend use HTTPS
@@ -259,6 +276,7 @@ After deployment, test:
 **Cause**: JWT expiry is too short
 
 **Solution**:
+
 1. Go to Supabase Dashboard → Authentication → Settings
 2. Increase "JWT expiry" to 3600 seconds (1 hour)
 3. Keep "Refresh token expiry" at 2592000 seconds (30 days)
@@ -270,6 +288,7 @@ After deployment, test:
 **Cause**: Auth state not updating properly
 
 **Solution**:
+
 1. Clear browser cache and cookies
 2. Clear localStorage: Open DevTools → Application → Local Storage → Clear
 3. Force refresh (Ctrl + Shift + R)
@@ -322,6 +341,7 @@ After deployment, test:
 ## 📝 **Summary**
 
 Your authentication system now:
+
 - ✅ Stores sessions securely in HTTP-only cookies
 - ✅ Persists user sessions across browser restarts
 - ✅ Automatically redirects unauthenticated users to login
@@ -334,6 +354,7 @@ Your authentication system now:
 ## 🆘 **Need Help?**
 
 If you encounter issues:
+
 1. Check browser console for errors
 2. Check network tab for API responses
 3. Verify environment variables are set correctly

@@ -3,6 +3,7 @@
 ## Quick Start (Local Testing)
 
 1. **Start the development server**:
+
    ```bash
    npm run dev
    ```
@@ -14,12 +15,14 @@
 ## ✅ Test Scenarios
 
 ### 1. **Unauthenticated Access Protection**
+
 - [ ] Try to open `http://localhost:5173/admin/dashboard` directly
 - [ ] Expected: Should redirect to `/login`
 - [ ] Try to open `http://localhost:5173/student/documents`
 - [ ] Expected: Should redirect to `/login`
 
 ### 2. **Login Flow**
+
 - [ ] Go to `/login`
 - [ ] Enter credentials (use seed data):
   - Admin: `ADMIN-001` / `Admin@2024`
@@ -29,6 +32,7 @@
 - [ ] Expected: Should redirect to appropriate dashboard based on role
 
 ### 3. **Session Persistence**
+
 - [ ] After logging in, check browser DevTools → Application → Cookies
 - [ ] Expected cookies:
   - `sb-access-token` (HttpOnly: true, Secure: false in dev)
@@ -40,16 +44,19 @@
 - [ ] Expected: Should still be logged in
 
 ### 4. **LocalStorage Cache**
+
 - [ ] After logging in, open DevTools → Application → Local Storage
 - [ ] Find key: `ice-archive-user`
 - [ ] Expected: Contains user profile data (name, role, etc.)
 
 ### 5. **Multi-Tab Sync**
+
 - [ ] Login in one tab
 - [ ] Open a new tab and go to the same site
 - [ ] Expected: Should already be logged in
 
 ### 6. **Logout**
+
 - [ ] Click on your profile avatar (top right)
 - [ ] Click "Sign Out"
 - [ ] Expected:
@@ -60,6 +67,7 @@
 - [ ] Expected: Should redirect to `/login`
 
 ### 7. **Role-Based Access**
+
 - [ ] Login as Student
 - [ ] Try to access `/admin/dashboard` directly
 - [ ] Expected: Should redirect to `/student/dashboard`
@@ -68,6 +76,7 @@
 - [ ] Expected: Should stay on or redirect to `/admin/dashboard`
 
 ### 8. **API Authentication**
+
 - [ ] Login to the application
 - [ ] Open DevTools → Network tab
 - [ ] Navigate to different pages
@@ -76,6 +85,7 @@
 - [ ] Expected: Should see `Cookie: sb-access-token=...` automatically
 
 ### 9. **Token Expiration Handling** (Manual Test)
+
 - [ ] Login to the application
 - [ ] Open DevTools → Application → Cookies
 - [ ] Delete the `sb-access-token` cookie manually
@@ -87,22 +97,26 @@
 ## 🔍 Debugging Tips
 
 ### Check Authentication State
+
 Open browser console and run:
+
 ```javascript
 // Check localStorage
-console.log('User:', localStorage.getItem('ice-archive-user'));
+console.log("User:", localStorage.getItem("ice-archive-user"));
 
 // Check cookies (won't show httpOnly cookies)
-console.log('Cookies:', document.cookie);
+console.log("Cookies:", document.cookie);
 ```
 
 ### Check API Calls
+
 1. Open DevTools → Network tab
 2. Filter by "Fetch/XHR"
 3. Click on `/api/auth/me` request
 4. Check Response - should show user object if authenticated
 
 ### Clear Everything (Reset State)
+
 ```javascript
 // Clear localStorage
 localStorage.clear();
@@ -118,25 +132,33 @@ sessionStorage.clear();
 ## 🐛 Common Issues & Solutions
 
 ### Issue: "Not Authenticated" after login
+
 **Solution**:
+
 1. Check browser console for errors
 2. Verify `.env` file has correct Supabase credentials
 3. Check that Supabase Auth is enabled
 
 ### Issue: Redirect loop between login and dashboard
+
 **Solution**:
+
 1. Clear browser cache: Ctrl + Shift + Delete
 2. Clear localStorage: DevTools → Application → Local Storage → Delete
 3. Hard refresh: Ctrl + Shift + R
 
 ### Issue: Session not persisting across tabs
+
 **Solution**:
+
 1. Check that cookies are being set (DevTools → Application → Cookies)
 2. Verify `credentials: "include"` is in all fetch calls
 3. Check CORS_ALLOWED_ORIGINS in `.env`
 
 ### Issue: Can access protected routes without login (in dev)
+
 **Solution**:
+
 1. Stop the dev server
 2. Run `npm run check` to ensure no TypeScript errors
 3. Clear browser cache and cookies
@@ -161,6 +183,7 @@ sessionStorage.clear();
 ## 📝 Quick Reference
 
 ### Test User Credentials (from seed data)
+
 ```
 Administrator:
   ID: ADMIN-001
@@ -176,12 +199,14 @@ Student:
 ```
 
 ### Important URLs (Local Development)
+
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:5000
 - Login: http://localhost:5173/login
 - Admin Dashboard: http://localhost:5173/admin/dashboard
 
 ### Environment Files
+
 - `.env` - Backend and general environment variables
 - Make sure CORS_ALLOWED_ORIGINS includes "http://localhost:5173"
 

@@ -175,6 +175,7 @@ Browser                Frontend                Backend
 ## 🔑 Key Components
 
 ### Browser Storage
+
 ```
 ┌──────────────────────────────────────┐
 │           BROWSER STORAGE            │
@@ -191,6 +192,7 @@ Browser                Frontend                Backend
 ```
 
 ### Authentication Route Protection
+
 ```
 User tries to access protected route
          │
