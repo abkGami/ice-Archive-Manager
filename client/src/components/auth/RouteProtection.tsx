@@ -12,7 +12,7 @@ export interface RouteProtectionProps {
 export function RouteProtection({
   children,
   requiredRole,
-  redirectTo = "/",
+  redirectTo = "/login",
 }: RouteProtectionProps) {
   const { data: user, isLoading } = useUser();
   const isAuthenticated = useIsAuthenticated();
@@ -26,7 +26,7 @@ export function RouteProtection({
     );
   }
 
-  // Redirect to home page if not authenticated
+  // Redirect to login page if not authenticated
   if (!isAuthenticated || !user) {
     return <Redirect to={redirectTo} />;
   }

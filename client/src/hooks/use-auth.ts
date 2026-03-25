@@ -38,12 +38,16 @@ export function useUser() {
       const res = await fetch(buildApiUrl(api.auth.me.path), {
         credentials: "include",
       });
-      if (res.status === 401) {
+      if (res.status === 401 || res.status === 403) {
         // Clear stored user if server says unauthorized
         clearUserFromStorage();
         return null;
       }
-      if (!res.ok) throw new Error("Failed to fetch user");
+      if (!res.ok) {
+        // On any error, clear stale data and return null
+        clearUserFromStorage();
+        throw new Error("Failed to fetch user");
+      }
       const user = api.auth.me.responses[200].parse(await res.json());
 
       // Save user to localStorage
@@ -54,6 +58,8 @@ export function useUser() {
     // Initialize with stored user data if available
     initialData: getUserFromStorage,
     staleTime: 1000 * 60 * 5, // Consider data stale after 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
