@@ -112,6 +112,8 @@ export async function registerRoutes(
     try {
       const input = api.auth.login.input.parse(req.body);
       const normalizedUniqueId = input.uniqueId.trim();
+
+      // Check if user exists first (fast DB query)
       const user = await storage.getUserByUniqueId(normalizedUniqueId);
 
       if (!user) {
@@ -120,6 +122,15 @@ export async function registerRoutes(
           .json({ message: "Invalid identifier or password." });
       }
 
+      // Check user status before expensive Supabase auth
+      if (user.status !== "Active") {
+        return res.status(403).json({
+          message:
+            "Your account creation is pending admin approval. You will be able to sign in once approved.",
+        });
+      }
+
+      // Now perform Supabase authentication (slowest operation)
       const supabaseEmail = uniqueIdToSupabaseEmail(normalizedUniqueId);
       const supabase = createAnonSupabaseClient();
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -133,23 +144,18 @@ export async function registerRoutes(
           .json({ message: "Invalid identifier or password." });
       }
 
-      if (user.status !== "Active") {
-        await supabase.auth.signOut();
-        clearAuthCookies(res);
-        return res.status(403).json({
-          message:
-            "Your account creation is pending admin approval. You will be able to sign in once approved.",
-        });
-      }
-
       setAuthCookies(res, data.session);
 
-      await storage.createAuditLog({
+      // Create audit log asynchronously (don't block the response)
+      storage.createAuditLog({
         userId: user.id,
         userName: user.name,
         action: "Login",
+      }).catch((err) => {
+        console.error("Failed to create login audit log:", err);
       });
 
+      // Return response immediately without waiting for audit log
       res.status(200).json(user);
     } catch (err) {
       if (err instanceof z.ZodError) {
