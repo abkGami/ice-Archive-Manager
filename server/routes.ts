@@ -147,13 +147,15 @@ export async function registerRoutes(
       setAuthCookies(res, data.session);
 
       // Create audit log asynchronously (don't block the response)
-      storage.createAuditLog({
-        userId: user.id,
-        userName: user.name,
-        action: "Login",
-      }).catch((err) => {
-        console.error("Failed to create login audit log:", err);
-      });
+      storage
+        .createAuditLog({
+          userId: user.id,
+          userName: user.name,
+          action: "Login",
+        })
+        .catch((err) => {
+          console.error("Failed to create login audit log:", err);
+        });
 
       // Return response immediately without waiting for audit log
       res.status(200).json(user);
