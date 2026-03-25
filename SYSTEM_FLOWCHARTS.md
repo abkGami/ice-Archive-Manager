@@ -5,6 +5,7 @@ Visual representation of critical system flows for authentication, authorization
 ---
 
 ## Table of Contents
+
 1. [Authentication Flow](#1-authentication-flow)
 2. [Authorization Flow](#2-authorization-flow)
 3. [Document Access Flow](#3-document-access-flow)
@@ -17,9 +18,11 @@ Visual representation of critical system flows for authentication, authorization
 ## 1. Authentication Flow
 
 ### Overview
+
 This flow shows how users authenticate with the system, from initial page load to successful login.
 
 ### Key Points
+
 - **Session persistence** via HTTP-only cookies
 - **Automatic token refresh** when access token expires
 - **Case-insensitive** unique ID matching
@@ -84,22 +87,24 @@ flowchart TD
 
 ### Technical Details
 
-| Step | Technology | Time |
-|------|-----------|------|
-| Session check | React Query + localStorage | ~5ms |
-| Token validation | Supabase Auth SDK | ~100ms |
-| Password hashing | bcrypt (cost 10-12) | ~1-2s |
-| Cookie setting | Express cookie-parser | ~1ms |
-| Audit logging | Supabase insert (async) | ~0ms (non-blocking) |
+| Step             | Technology                 | Time                |
+| ---------------- | -------------------------- | ------------------- |
+| Session check    | React Query + localStorage | ~5ms                |
+| Token validation | Supabase Auth SDK          | ~100ms              |
+| Password hashing | bcrypt (cost 10-12)        | ~1-2s               |
+| Cookie setting   | Express cookie-parser      | ~1ms                |
+| Audit logging    | Supabase insert (async)    | ~0ms (non-blocking) |
 
 ---
 
 ## 2. Authorization Flow
 
 ### Overview
+
 This flow demonstrates how the system validates user permissions for protected resources and actions.
 
 ### Key Points
+
 - **JWT token validation** on every request
 - **Automatic token refresh** mechanism
 - **Role-based access control** (Administrator, Lecturer, Student)
@@ -160,25 +165,27 @@ flowchart TD
 
 ### Role-Permission Matrix
 
-| Action | Administrator | Lecturer | Student |
-|--------|--------------|----------|---------|
-| View All Documents | ✅ | ✅ (Approved only) | ✅ (Approved + Student Access) |
-| Upload Documents | ✅ | ✅ | ❌ |
-| Approve Documents | ✅ | ❌ | ❌ |
-| Delete Any Document | ✅ | ❌ | ❌ |
-| Delete Own Document | ✅ | ✅ | ❌ |
-| Manage Users | ✅ | ❌ | ❌ |
-| View Audit Logs | ✅ | ❌ | ❌ |
-| Approve Users | ✅ | ❌ | ❌ |
+| Action              | Administrator | Lecturer           | Student                        |
+| ------------------- | ------------- | ------------------ | ------------------------------ |
+| View All Documents  | ✅            | ✅ (Approved only) | ✅ (Approved + Student Access) |
+| Upload Documents    | ✅            | ✅                 | ❌                             |
+| Approve Documents   | ✅            | ❌                 | ❌                             |
+| Delete Any Document | ✅            | ❌                 | ❌                             |
+| Delete Own Document | ✅            | ✅                 | ❌                             |
+| Manage Users        | ✅            | ❌                 | ❌                             |
+| View Audit Logs     | ✅            | ❌                 | ❌                             |
+| Approve Users       | ✅            | ❌                 | ❌                             |
 
 ---
 
 ## 3. Document Access Flow
 
 ### Overview
+
 This flow illustrates how the system determines whether a user can access a specific document based on their role and document settings.
 
 ### Key Points
+
 - **Multi-level access control** (role + ownership + document settings)
 - **Status-based visibility** (approved vs pending)
 - **Granular permissions** (staff-only vs student-accessible)
@@ -264,9 +271,11 @@ STUDENT:
 ## 4. Document Download Flow
 
 ### Overview
+
 This flow details the entire process from clicking download to the file being saved on the user's device.
 
 ### Key Points
+
 - **Signed URL generation** for secure, time-limited access
 - **Automatic file naming** with original filename
 - **Browser-native download** (no custom handlers needed)
@@ -345,19 +354,20 @@ https://project.supabase.co/storage/v1/object/sign/documents/file.pdf
 
 ### Download Statistics
 
-| Metric | Tracked | Location |
-|--------|---------|----------|
-| **Download count** | Yes | Document metadata |
-| **Download timestamp** | Yes | Audit logs |
-| **User who downloaded** | Yes | Audit logs |
-| **IP address** | Optional | Audit logs |
-| **File size** | Yes | Document metadata |
+| Metric                  | Tracked  | Location          |
+| ----------------------- | -------- | ----------------- |
+| **Download count**      | Yes      | Document metadata |
+| **Download timestamp**  | Yes      | Audit logs        |
+| **User who downloaded** | Yes      | Audit logs        |
+| **IP address**          | Optional | Audit logs        |
+| **File size**           | Yes      | Document metadata |
 
 ---
 
 ## 5. User Registration Flow (Bonus)
 
 ### Overview
+
 Step-by-step process for new users to create an account and get approved.
 
 ### Flowchart
@@ -417,6 +427,7 @@ flowchart TD
 ## 6. Document Upload Flow (Bonus)
 
 ### Overview
+
 Process for lecturers and administrators to upload new documents to the system.
 
 ### Flowchart
@@ -492,6 +503,7 @@ flowchart TD
 ### Common Patterns
 
 #### Authentication Check
+
 ```
 User Action → Auth Check → {Authenticated?}
   ├─ No → Redirect to Login
@@ -499,6 +511,7 @@ User Action → Auth Check → {Authenticated?}
 ```
 
 #### Permission Check
+
 ```
 Auth Check → Get User Role → {Has Permission?}
   ├─ No → Return 403 Forbidden
@@ -506,6 +519,7 @@ Auth Check → Get User Role → {Has Permission?}
 ```
 
 #### Error Handling
+
 ```
 Operation → {Success?}
   ├─ No → Show Error → Retry/Cancel
@@ -517,16 +531,19 @@ Operation → {Success?}
 ## Integration Points
 
 ### Frontend → Backend
+
 - REST API calls with JWT cookies
 - Automatic error handling and retries
 - Optimistic updates with React Query
 
 ### Backend → Supabase
+
 - SQL queries via Supabase client
 - Storage operations for files
 - Auth operations for sessions
 
 ### Backend → Client
+
 - JSON responses
 - HTTP status codes
 - Set-Cookie headers for tokens
@@ -535,25 +552,25 @@ Operation → {Success?}
 
 ## Performance Metrics
 
-| Operation | Average Time | Notes |
-|-----------|-------------|-------|
-| **Login** | 1-2 seconds | Mostly bcrypt hashing |
-| **Token validation** | 50-100ms | JWT verification |
-| **Document list** | 100-200ms | Database query |
-| **File download** | 200-500ms | Signed URL generation |
-| **Upload (5MB)** | 2-5 seconds | Network dependent |
+| Operation            | Average Time | Notes                 |
+| -------------------- | ------------ | --------------------- |
+| **Login**            | 1-2 seconds  | Mostly bcrypt hashing |
+| **Token validation** | 50-100ms     | JWT verification      |
+| **Document list**    | 100-200ms    | Database query        |
+| **File download**    | 200-500ms    | Signed URL generation |
+| **Upload (5MB)**     | 2-5 seconds  | Network dependent     |
 
 ---
 
 ## Error Codes Reference
 
-| Code | Meaning | Common Cause |
-|------|---------|--------------|
-| **401** | Unauthorized | Missing/invalid token |
-| **403** | Forbidden | Insufficient permissions |
-| **404** | Not Found | Resource doesn't exist |
-| **409** | Conflict | Duplicate unique ID |
-| **500** | Server Error | Internal server issue |
+| Code    | Meaning      | Common Cause             |
+| ------- | ------------ | ------------------------ |
+| **401** | Unauthorized | Missing/invalid token    |
+| **403** | Forbidden    | Insufficient permissions |
+| **404** | Not Found    | Resource doesn't exist   |
+| **409** | Conflict     | Duplicate unique ID      |
+| **500** | Server Error | Internal server issue    |
 
 ---
 

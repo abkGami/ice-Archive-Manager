@@ -36,6 +36,7 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 ## ✨ Features
 
 ### 🔐 **Authentication & Security**
+
 - **Secure JWT-based authentication** with HTTP-only cookies
 - **Case-insensitive login** for better user experience
 - **Session persistence** across browser restarts (30-day refresh tokens)
@@ -44,6 +45,7 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 - **Multi-factor security layers** with bcrypt password hashing
 
 ### 📄 **Document Management**
+
 - **Upload & categorize** documents with metadata
 - **Approval workflow** with status tracking
 - **Visibility controls** (staff-only, student-accessible)
@@ -52,6 +54,7 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 - **Document search and filtering** by category and status
 
 ### 👥 **User Management**
+
 - **Self-registration** with admin approval workflow
 - **ID card verification** during signup
 - **User dashboard** based on role (Admin, Lecturer, Student)
@@ -59,6 +62,7 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 - **Bulk user operations** for administrators
 
 ### 📊 **Analytics & Reporting**
+
 - **Real-time dashboards** with key metrics
 - **Audit trail logging** for all critical actions
 - **Document statistics** (uploads, downloads, views)
@@ -66,6 +70,7 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 - **Export capabilities** for reports
 
 ### 🎨 **User Experience**
+
 - **Modern, responsive UI** with Tailwind CSS
 - **Dark mode support** (coming soon)
 - **Loading states** and skeleton screens
@@ -381,42 +386,46 @@ flowchart TD
 ## 🛠️ Technology Stack
 
 ### Frontend
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **React** | 18.3.1 | UI library |
-| **TypeScript** | 5.6.3 | Type safety |
-| **Vite** | 7.3.0 | Build tool & dev server |
-| **Wouter** | 3.3.5 | Lightweight routing |
-| **TanStack Query** | 5.60.5 | Server state management |
-| **Tailwind CSS** | 3.4.17 | Utility-first CSS |
-| **Radix UI** | Latest | Accessible component primitives |
-| **Lucide React** | 0.453.0 | Icon library |
-| **Zod** | 3.24.2 | Schema validation |
+
+| Technology         | Version | Purpose                         |
+| ------------------ | ------- | ------------------------------- |
+| **React**          | 18.3.1  | UI library                      |
+| **TypeScript**     | 5.6.3   | Type safety                     |
+| **Vite**           | 7.3.0   | Build tool & dev server         |
+| **Wouter**         | 3.3.5   | Lightweight routing             |
+| **TanStack Query** | 5.60.5  | Server state management         |
+| **Tailwind CSS**   | 3.4.17  | Utility-first CSS               |
+| **Radix UI**       | Latest  | Accessible component primitives |
+| **Lucide React**   | 0.453.0 | Icon library                    |
+| **Zod**            | 3.24.2  | Schema validation               |
 
 ### Backend
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **Node.js** | 20+ | Runtime environment |
-| **Express** | 5.0.1 | Web framework |
-| **TypeScript** | 5.6.3 | Type safety |
-| **Supabase JS** | 2.99.1 | Database & auth client |
-| **Cookie Parser** | 1.4.7 | Cookie middleware |
-| **Zod** | 3.24.2 | Input validation |
-| **dotenv** | 17.3.1 | Environment variables |
+
+| Technology        | Version | Purpose                |
+| ----------------- | ------- | ---------------------- |
+| **Node.js**       | 20+     | Runtime environment    |
+| **Express**       | 5.0.1   | Web framework          |
+| **TypeScript**    | 5.6.3   | Type safety            |
+| **Supabase JS**   | 2.99.1  | Database & auth client |
+| **Cookie Parser** | 1.4.7   | Cookie middleware      |
+| **Zod**           | 3.24.2  | Input validation       |
+| **dotenv**        | 17.3.1  | Environment variables  |
 
 ### Database & Storage
-| Service | Purpose |
-|---------|---------|
-| **Supabase PostgreSQL** | Relational database |
-| **Supabase Auth** | JWT-based authentication |
-| **Supabase Storage** | Object storage for files |
+
+| Service                 | Purpose                  |
+| ----------------------- | ------------------------ |
+| **Supabase PostgreSQL** | Relational database      |
+| **Supabase Auth**       | JWT-based authentication |
+| **Supabase Storage**    | Object storage for files |
 
 ### Development Tools
-| Tool | Purpose |
-|------|---------|
-| **tsx** | TypeScript execution |
-| **esbuild** | Fast bundling |
-| **PostCSS** | CSS processing |
+
+| Tool        | Purpose              |
+| ----------- | -------------------- |
+| **tsx**     | TypeScript execution |
+| **esbuild** | Fast bundling        |
+| **PostCSS** | CSS processing       |
 
 ---
 
@@ -432,12 +441,14 @@ flowchart TD
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/ice-archive-manager.git
    cd ice-archive-manager
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -445,6 +456,7 @@ flowchart TD
 3. **Set up environment variables**
 
    Create a `.env` file in the root directory:
+
    ```env
    # Server Configuration
    NODE_ENV=development
@@ -466,6 +478,7 @@ flowchart TD
 4. **Set up Supabase database**
 
    Run the SQL migrations in Supabase SQL Editor:
+
    ```bash
    # In order:
    supabase/migrations/0001_initial.sql
@@ -480,6 +493,7 @@ flowchart TD
    - Create bucket: `documents` (private)
 
 6. **Start the development server**
+
    ```bash
    npm run dev
    ```
@@ -492,11 +506,11 @@ flowchart TD
 
 After running the seed data (when `ENABLE_SEED_DATA=true`):
 
-| Role | Unique ID | Password |
-|------|-----------|----------|
-| **Administrator** | ADMIN-001 | Admin@2024 |
-| **Lecturer** | SS/CE/0042 | Staff@2024 |
-| **Student** | U21ICT1014 | Student@2026 |
+| Role              | Unique ID  | Password     |
+| ----------------- | ---------- | ------------ |
+| **Administrator** | ADMIN-001  | Admin@2024   |
+| **Lecturer**      | SS/CE/0042 | Staff@2024   |
+| **Student**       | U21ICT1014 | Student@2026 |
 
 ---
 
@@ -582,15 +596,19 @@ CREATE TABLE public.audit_logs (
 ### Authentication Endpoints
 
 #### POST `/api/auth/login`
+
 **Description:** Authenticates user and creates session
 **Request Body:**
+
 ```json
 {
   "uniqueId": "ADMIN-001",
   "password": "Admin@2024"
 }
 ```
+
 **Response:** `200 OK`
+
 ```json
 {
   "id": 1,
@@ -603,8 +621,10 @@ CREATE TABLE public.audit_logs (
 ```
 
 #### POST `/api/auth/signup`
+
 **Description:** Registers new user account
 **Request Body:**
+
 ```json
 {
   "uniqueId": "U23CE1001",
@@ -618,10 +638,12 @@ CREATE TABLE public.audit_logs (
 ```
 
 #### POST `/api/auth/logout`
+
 **Description:** Destroys user session
 **Response:** `200 OK`
 
 #### GET `/api/auth/me`
+
 **Description:** Returns current authenticated user
 **Response:** `200 OK` or `401 Unauthorized`
 
@@ -630,16 +652,20 @@ CREATE TABLE public.audit_logs (
 ### Document Endpoints
 
 #### GET `/api/documents`
+
 **Description:** List all accessible documents
 **Query Parameters:**
+
 - `category` (optional): Filter by category
 - `status` (optional): Filter by status
-**Response:** Array of documents
+  **Response:** Array of documents
 
 #### POST `/api/documents`
+
 **Description:** Upload new document
 **Permissions:** Administrator, Lecturer
 **Request Body:**
+
 ```json
 {
   "title": "Final Year Project Guidelines",
@@ -658,8 +684,10 @@ CREATE TABLE public.audit_logs (
 ```
 
 #### GET `/api/documents/:id/download-url`
+
 **Description:** Generates signed download URL
 **Response:**
+
 ```json
 {
   "url": "https://...signed-url...",
@@ -668,6 +696,7 @@ CREATE TABLE public.audit_logs (
 ```
 
 #### POST `/api/documents/:id/approve`
+
 **Description:** Approve pending document
 **Permissions:** Administrator only
 **Response:** Updated document object
@@ -677,18 +706,22 @@ CREATE TABLE public.audit_logs (
 ### User Management Endpoints
 
 #### GET `/api/users`
+
 **Description:** List all users
 **Permissions:** Administrator only
 
 #### GET `/api/users/pending`
+
 **Description:** List pending approval accounts
 **Permissions:** Administrator only
 
 #### POST `/api/users/:id/approve`
+
 **Description:** Approve pending user account
 **Permissions:** Administrator only
 
 #### DELETE `/api/users/:id`
+
 **Description:** Delete user account
 **Permissions:** Administrator only
 
@@ -697,9 +730,11 @@ CREATE TABLE public.audit_logs (
 ### Statistics Endpoints
 
 #### GET `/api/stats/admin`
+
 **Description:** Admin dashboard statistics
 **Permissions:** Administrator
 **Response:**
+
 ```json
 {
   "totalDocuments": 150,
@@ -710,10 +745,12 @@ CREATE TABLE public.audit_logs (
 ```
 
 #### GET `/api/stats/lecturer`
+
 **Description:** Lecturer dashboard statistics
 **Permissions:** Lecturer, Administrator
 
 #### GET `/api/stats/student`
+
 **Description:** Student dashboard statistics
 **Permissions:** Student, Lecturer, Administrator
 
@@ -756,6 +793,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
 **Security Checklist:**
+
 - [ ] Rotate keys if accidentally exposed
 - [ ] Use HTTPS in production
 - [ ] Set COOKIE_SAME_SITE=none for cross-domain
@@ -811,6 +849,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 #### Update CORS (Critical!)
 
 After frontend deployment, update backend `CORS_ALLOWED_ORIGINS`:
+
 ```env
 CORS_ALLOWED_ORIGINS=https://your-actual-frontend.vercel.app
 ```
@@ -986,6 +1025,7 @@ Contributions are welcome! Please follow these steps:
 ## 🎯 Roadmap
 
 ### Version 2.0
+
 - [ ] Email notifications system
 - [ ] Advanced search with filters
 - [ ] Document version control
@@ -993,6 +1033,7 @@ Contributions are welcome! Please follow these steps:
 - [ ] Mobile app (React Native)
 
 ### Version 3.0
+
 - [ ] Multi-tenant support
 - [ ] Advanced analytics dashboard
 - [ ] Automated backup system
@@ -1014,6 +1055,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 **Academic Year:** 2024/2025
 
 ### Special Thanks
+
 - **Supabase** for the backend infrastructure
 - **Vercel** for hosting capabilities
 - **Radix UI** for accessible components

@@ -46,6 +46,7 @@ npm install
 ### 2.2 Get API Keys
 
 Once project is ready:
+
 1. Go to **Settings** → **API**
 2. Copy these values:
    - **Project URL**: `https://xxxxx.supabase.co`
@@ -59,16 +60,19 @@ Once project is ready:
 3. Copy and run each migration file in order:
 
 **Migration 1:** `supabase/migrations/0001_initial.sql`
+
 ```sql
 -- Copy entire contents and run
 ```
 
 **Migration 2:** `supabase/migrations/0002_policies.sql`
+
 ```sql
 -- Copy entire contents and run
 ```
 
 **Migration 3:** `supabase/migrations/0003_optimize_login.sql`
+
 ```sql
 -- Copy entire contents and run
 ```
@@ -128,6 +132,7 @@ npm run dev
 ```
 
 **Expected output:**
+
 ```
 > ice-archive-manager@1.0.0 dev
 > cross-env NODE_ENV=development tsx server/index.ts
@@ -144,6 +149,7 @@ npm run dev
 2. **You should see** the login page
 
 3. **Enable seed data** (optional, for testing):
+
    ```env
    # Add to .env
    ENABLE_SEED_DATA=true
@@ -153,11 +159,11 @@ npm run dev
 
 5. **Test login** with these accounts:
 
-   | Role | Unique ID | Password |
-   |------|-----------|----------|
-   | **Administrator** | ADMIN-001 | Admin@2024 |
-   | **Lecturer** | SS/CE/0042 | Staff@2024 |
-   | **Student** | U21ICT1014 | Student@2026 |
+   | Role              | Unique ID  | Password     |
+   | ----------------- | ---------- | ------------ |
+   | **Administrator** | ADMIN-001  | Admin@2024   |
+   | **Lecturer**      | SS/CE/0042 | Staff@2024   |
+   | **Student**       | U21ICT1014 | Student@2026 |
 
 ---
 
@@ -166,21 +172,25 @@ npm run dev
 Test these to confirm everything works:
 
 ### Authentication
+
 - [ ] Login with admin account (ADMIN-001)
 - [ ] See admin dashboard
 - [ ] Logout
 - [ ] Login with different account
 
 ### Documents
+
 - [ ] Navigate to Documents page
 - [ ] See list of documents (if seed data enabled)
 - [ ] Click on a document to view details
 
 ### Authorization
+
 - [ ] Try accessing `/admin/dashboard` as student → Should redirect
 - [ ] Try accessing admin features as student → Should show "Access Denied"
 
 ### Session Persistence
+
 - [ ] Login
 - [ ] Refresh page (F5) → Should stay logged in
 - [ ] Close browser
@@ -193,6 +203,7 @@ Test these to confirm everything works:
 ### Issue: "Connection refused" or "Cannot connect"
 
 **Solution:**
+
 ```bash
 # Check if port 5000 is already in use
 netstat -ano | findstr :5000    # Windows
@@ -209,11 +220,13 @@ npm run dev
 ### Issue: "Not authenticated" after login
 
 **Possible causes:**
+
 1. **Wrong Supabase credentials** - Double-check `.env` file
 2. **Database not set up** - Run migrations again
 3. **Browser blocking cookies** - Check browser settings
 
 **Solution:**
+
 ```bash
 # Verify environment variables are loaded
 node -e "console.log(process.env.SUPABASE_URL)"
@@ -224,6 +237,7 @@ node -e "console.log(process.env.SUPABASE_URL)"
 ### Issue: "Table users does not exist"
 
 **Solution:**
+
 ```bash
 # You forgot to run database migrations!
 # Go to Supabase Dashboard → SQL Editor
@@ -233,6 +247,7 @@ node -e "console.log(process.env.SUPABASE_URL)"
 ### Issue: "Unable to upload file"
 
 **Solution:**
+
 1. Check storage buckets exist in Supabase
 2. Verify bucket names match `.env` configuration
 3. Check browser console for specific error
@@ -322,18 +337,21 @@ npm install
 ## 🆘 Get Help
 
 ### Documentation
+
 - **Full README**: [README.md](./README.md)
 - **Flowcharts**: [SYSTEM_FLOWCHARTS.md](./SYSTEM_FLOWCHARTS.md)
 - **Authentication**: [AUTHENTICATION_FLOW.md](./AUTHENTICATION_FLOW.md)
 - **Deployment**: [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
 
 ### External Resources
+
 - [Supabase Docs](https://supabase.com/docs)
 - [React Docs](https://react.dev)
 - [Vite Docs](https://vitejs.dev)
 - [TypeScript Docs](https://www.typescriptlang.org/docs)
 
 ### Common Issues
+
 - [TESTING_CHECKLIST.md](./TESTING_CHECKLIST.md) - Test scenarios
 - [LOGIN_PERFORMANCE.md](./LOGIN_PERFORMANCE.md) - Performance guide
 
