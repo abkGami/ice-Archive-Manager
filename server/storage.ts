@@ -155,10 +155,11 @@ export class SupabaseStorage implements IStorage {
   }
 
   async getUserByUniqueId(uniqueId: string): Promise<User | undefined> {
+    // Use ilike for case-insensitive matching
     const { data, error } = await supabaseAdmin
       .from("users")
       .select("*")
-      .eq("unique_id", uniqueId)
+      .ilike("unique_id", uniqueId)
       .maybeSingle<DbUserRow>();
 
     if (error) {
