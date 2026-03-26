@@ -43,6 +43,7 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 - **Automatic token refresh** and session management
 - **Role-based access control** (Administrator, Lecturer, Student)
 - **Multi-factor security layers** with bcrypt password hashing
+- **8-character minimum password** requirement with three-layer validation
 
 ### 📄 **Document Management**
 
@@ -766,6 +767,7 @@ CREATE TABLE public.audit_logs (
 - ✅ **bcrypt password hashing** (cost factor 10-12)
 - ✅ **Case-insensitive login** with secure normalization
 - ✅ **Automatic session refresh** (1-hour access token, 30-day refresh)
+- ✅ **Password validation** (8-character minimum) with HTML5, client-side, and server-side enforcement
 
 ### Authorization Security
 
@@ -831,6 +833,8 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
    SUPABASE_DOCUMENT_BUCKET=documents
    ```
 
+**Note:** Render's free tier spins down after 15 minutes of inactivity, causing 30-60 second cold starts. Consider using [cron-job.org](https://cron-job.org) to ping your backend every 10 minutes to keep it alive, or upgrade to a paid plan for consistent performance.
+
 #### Deploy Frontend to Vercel
 
 1. **Create Vercel account**: https://vercel.com
@@ -845,6 +849,10 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
    ```env
    VITE_API_BASE_URL=https://ice-archive-backend.onrender.com
    ```
+5. **SPA Routing Fix:**
+   - The project includes a `vercel.json` file for proper client-side routing
+   - This prevents 404 errors when refreshing pages or accessing routes directly
+   - Configuration automatically rewrites all routes to `/index.html`
 
 #### Update CORS (Critical!)
 
@@ -872,10 +880,12 @@ CORS_ALLOWED_ORIGINS=https://your-actual-frontend.vercel.app
 - [ ] Database migrations applied
 - [ ] Backend deployed with correct env vars
 - [ ] Frontend deployed with `VITE_API_BASE_URL`
+- [ ] `vercel.json` configuration verified for SPA routing
 - [ ] CORS updated with actual frontend URL
 - [ ] HTTPS enabled for both frontend and backend
 - [ ] Test login and document upload
 - [ ] Test authentication across tabs
+- [ ] Verify page refreshes don't cause 404 errors
 
 ---
 
@@ -905,6 +915,9 @@ ice-archive-manager/
 │       │   │   ├── AppHeader.tsx
 │       │   │   ├── AppShell.tsx
 │       │   │   └── AppSidebar.tsx
+│       │   ├── theme/               # Theme components
+│       │   │   ├── ThemeProvider.tsx
+│       │   │   └── ThemeToggle.tsx
 │       │   └── ui/                  # Radix UI primitives
 │       ├── hooks/                   # Custom React hooks
 │       │   ├── use-auth.ts
@@ -967,6 +980,7 @@ ice-archive-manager/
 ├── tsconfig.json
 ├── vite.config.ts
 ├── tailwind.config.ts
+├── vercel.json                      # Vercel SPA routing config
 └── README.md
 ```
 
@@ -980,6 +994,9 @@ ice-archive-manager/
 - **[AUTHENTICATION_FLOW.md](./AUTHENTICATION_FLOW.md)** - Visual auth diagrams
 - **[LOGIN_PERFORMANCE.md](./LOGIN_PERFORMANCE.md)** - Performance optimization guide
 - **[CASE_INSENSITIVE_LOGIN.md](./CASE_INSENSITIVE_LOGIN.md)** - Case-insensitive login feature
+- **[DARK_MODE_GUIDE.md](./DARK_MODE_GUIDE.md)** - Theme system implementation
+- **[PASSWORD_VALIDATION.md](./PASSWORD_VALIDATION.md)** - Password security enhancement
+- **[VERCEL_404_FIX.md](./VERCEL_404_FIX.md)** - SPA routing configuration
 
 ---
 
@@ -1018,6 +1035,13 @@ Contributions are welcome! Please follow these steps:
 - ⚠️ No advanced full-text search (basic filtering only)
 - ⚠️ No document versioning/rollback (single version only)
 - ⚠️ No email notifications for approvals/rejections
+- ⚠️ Render free tier has 30-60 second cold starts after 15 minutes of inactivity
+
+### Performance Notes
+
+- **Login times:** 1-2 seconds is normal due to bcrypt hashing (intentional security feature)
+- **Audit logs:** Non-blocking operations to improve signup/login performance
+- **Cold starts:** Consider using a cron job service to keep Render instances warm on free tier
 
 ---
 
