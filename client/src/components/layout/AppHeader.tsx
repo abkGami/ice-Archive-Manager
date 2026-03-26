@@ -17,6 +17,7 @@ import { usePendingUsers } from "@/hooks/use-users";
 import { useDocuments } from "@/hooks/use-documents";
 import { useEffect, useState } from "react";
 import { SignOutConfirmDialog } from "@/components/common/SignOutConfirmDialog";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 type HeaderNotification = {
   id: string;
@@ -275,6 +276,8 @@ export function AppHeader() {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <ThemeToggle />
 
         <div className="h-8 w-px bg-border mx-1"></div>
 

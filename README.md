@@ -72,7 +72,7 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 ### 🎨 **User Experience**
 
 - **Modern, responsive UI** with Tailwind CSS
-- **Dark mode support** (coming soon)
+- **Dark & Light mode** with system preference support
 - **Loading states** and skeleton screens
 - **Toast notifications** with custom animations
 - **Empty states** with helpful guidance
@@ -1018,7 +1018,6 @@ Contributions are welcome! Please follow these steps:
 - ⚠️ No advanced full-text search (basic filtering only)
 - ⚠️ No document versioning/rollback (single version only)
 - ⚠️ No email notifications for approvals/rejections
-- ⚠️ No dark mode (coming soon)
 
 ---
 
@@ -1029,7 +1028,7 @@ Contributions are welcome! Please follow these steps:
 - [ ] Email notifications system
 - [ ] Advanced search with filters
 - [ ] Document version control
-- [ ] Dark mode support
+- [x] **Dark mode support** ✅ (Completed!)
 - [ ] Mobile app (React Native)
 
 ### Version 3.0

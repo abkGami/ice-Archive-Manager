@@ -69,6 +69,63 @@
     --sidebar-ring: 207 74% 39%;
   }
 
+  .dark {
+    /* Dark Theme Colors */
+    --background: 222 47% 11%; /* #0B1120 - Deep Navy */
+    --foreground: 210 40% 96%; /* #F1F5F9 - Light Text */
+
+    --card: 217 32% 17%; /* #1E293B - Dark Card */
+    --card-foreground: 210 40% 96%;
+
+    --popover: 217 32% 17%;
+    --popover-foreground: 210 40% 96%;
+
+    /* Primary remains similar but adjusted for dark */
+    --primary: 210 100% 56%; /* #0EA5E9 - Bright Sky Blue */
+    --primary-foreground: 222 47% 11%;
+
+    /* Secondary adjusted for dark mode */
+    --secondary: 217 32% 26%; /* #334155 - Slate */
+    --secondary-foreground: 210 40% 96%;
+
+    /* Muted for dark backgrounds */
+    --muted: 217 32% 17%; /* #1E293B */
+    --muted-foreground: 215 20% 65%; /* #94A3B8 */
+
+    /* Accent for dark */
+    --accent: 199 89% 48%; /* #0EA5E9 - Bright Blue */
+    --accent-foreground: 210 40% 96%;
+
+    /* Destructive stays strong */
+    --destructive: 0 72% 51%; /* #DC2626 */
+    --destructive-foreground: 210 40% 96%;
+
+    /* Success adjusted */
+    --success: 142 71% 45%; /* #10B981 */
+    --success-foreground: 222 47% 11%;
+
+    /* Warning adjusted */
+    --warning: 38 92% 50%; /* #F59E0B */
+    --warning-foreground: 222 47% 11%;
+
+    /* Gold adjusted */
+    --gold: 45 93% 58%; /* #FCD34D */
+
+    --border: 217 32% 26%; /* #334155 */
+    --input: 217 32% 26%;
+    --ring: 199 89% 48%; /* Bright Blue ring */
+
+    /* Sidebar in dark mode */
+    --sidebar-background: 217 32% 17%; /* #1E293B */
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 210 100% 56%; /* Bright Blue */
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 32% 26%; /* Slate hover */
+    --sidebar-accent-foreground: 199 89% 48%; /* Bright Blue text */
+    --sidebar-border: 217 32% 26%;
+    --sidebar-ring: 199 89% 48%;
+  }
+
   * {
     @apply border-border;
   }
