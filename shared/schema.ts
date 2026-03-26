@@ -45,7 +45,7 @@ export const auditLogSchema = z.object({
 export const insertUserSchema = z.object({
   authUserId: z.string().nullable().optional(),
   uniqueId: z.string(),
-  password: z.string(),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
   name: z.string(),
   role: z.string(),
   department: z.string(),

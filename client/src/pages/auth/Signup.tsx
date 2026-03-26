@@ -99,6 +99,12 @@ export default function Signup() {
       return;
     }
 
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      triggerPasswordMismatchAnimation();
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match. Please confirm your password.");
       triggerPasswordMismatchAnimation();
@@ -243,6 +249,7 @@ export default function Signup() {
                     : "border-border focus-visible:ring-[#1A6BAF]"
                 } ${shakePasswordInputs ? "animate-input-shake" : ""}`}
                 required
+                minLength={8}
               />
               <button
                 type="button"
@@ -257,6 +264,9 @@ export default function Signup() {
                 )}
               </button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Must be at least 8 characters long
+            </p>
           </div>
 
           <div className="space-y-2">

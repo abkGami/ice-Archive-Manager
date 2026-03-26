@@ -230,10 +230,13 @@ export async function registerRoutes(
         status: "Pending Approval",
       });
 
-      await storage.createAuditLog({
+      // Create audit log asynchronously (don't block the response)
+      storage.createAuditLog({
         userId: user.id,
         userName: user.name,
         action: "Account Created",
+      }).catch((err) => {
+        console.error("Failed to create signup audit log:", err);
       });
 
       res.status(201).json(user);

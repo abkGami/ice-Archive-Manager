@@ -44,7 +44,9 @@ export const api = {
       path: "/api/auth/signup" as const,
       input: z.object({
         uniqueId: z.string().min(1, "Staff ID or matric number is required"),
-        password: z.string().min(1, "Preferred password is required"),
+        password: z
+          .string()
+          .min(8, "Password must be at least 8 characters long"),
         name: z.string().min(1, "Full name is required"),
         accountType: z.enum(["Student", "Staff"]),
         idCardImage: z.string().min(1, "ID card image is required"),
