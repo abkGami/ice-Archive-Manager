@@ -464,6 +464,7 @@ flowchart TD
    PORT=5000
    CORS_ALLOWED_ORIGINS=http://localhost:5173
    COOKIE_SAME_SITE=lax
+   APP_RUNTIME=web
 
    # Frontend Configuration
    VITE_API_BASE_URL=
@@ -502,6 +503,24 @@ flowchart TD
 7. **Access the application**
 
    Open your browser to: `http://localhost:5173`
+
+### Desktop (Electron)
+
+The desktop app uses the same UI and runs the Express backend locally against your existing Supabase database.
+
+1. **Run the desktop app in development**
+
+   ```bash
+   npm run desktop:dev
+   ```
+
+2. **Build desktop installers**
+
+   ```bash
+   npm run desktop:build
+   ```
+
+> The desktop app starts the backend on the port in `PORT` (default `5000`). Make sure your `.env` Supabase keys are configured before running or packaging.
 
 ### Default Test Accounts
 

@@ -5,7 +5,10 @@ import { env, isProduction } from "./config/env";
 const ACCESS_COOKIE = "sb-access-token";
 const REFRESH_COOKIE = "sb-refresh-token";
 const cookieSameSite = env.COOKIE_SAME_SITE;
-const useSecureCookies = cookieSameSite === "none" ? true : isProduction;
+const useSecureCookies =
+  cookieSameSite === "none"
+    ? true
+    : isProduction && env.APP_RUNTIME !== "desktop";
 
 export function createAnonSupabaseClient() {
   return createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
