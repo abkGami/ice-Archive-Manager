@@ -89,7 +89,7 @@ export default function AdminDocuments() {
 
   return (
     <AppShell requiredRole="any">
-      <div className="space-y-6 flex flex-col h-full">
+      <div className="space-y-6 flex flex-col min-h-0">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="text-2xl md:text-3xl font-bold text-primary">
             {mineOnly ? "My Uploaded Documents" : "Document Management"}

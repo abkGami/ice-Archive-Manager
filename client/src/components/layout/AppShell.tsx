@@ -56,9 +56,9 @@ export function AppShell({
           <AppHeader />
           <main
             id="app-scroll-container"
-            className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8"
+            className="flex-1 overflow-y-auto overflow-x-hidden p-3 md:p-4 lg:p-6"
           >
-            <div className="max-w-7xl mx-auto h-full">{children}</div>
+            <div className="max-w-7xl mx-auto">{children}</div>
           </main>
         </div>
       </div>

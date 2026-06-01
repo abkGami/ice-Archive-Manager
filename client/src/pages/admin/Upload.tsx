@@ -119,9 +119,9 @@ export default function UploadPage() {
     <AppShell requiredRole="any">
       {" "}
       {/* Both admin and lecturer use this */}
-      <div className="max-w-2xl mx-auto py-4 sm:py-8">
-        <div className="bg-card border border-border shadow-sm rounded-xl p-4 sm:p-8">
-          <div className="flex items-center gap-3 mb-6 sm:mb-8 pb-4 border-b border-border min-w-0">
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-card border border-border shadow-sm rounded-xl p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6 pb-3 border-b border-border min-w-0">
             <div className="bg-accent/10 p-2 rounded-lg">
               <UploadCloud className="h-6 w-6 text-accent" />
             </div>
@@ -130,7 +130,7 @@ export default function UploadPage() {
             </h1>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm font-semibold text-foreground">
                 Document Title <span className="text-destructive">*</span>
@@ -277,7 +277,7 @@ export default function UploadPage() {
               )}
             </div>
 
-            <div className="pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-border">
+            <div className="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-border">
               <Button
                 type="button"
                 variant="outline"
