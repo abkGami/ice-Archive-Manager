@@ -4,11 +4,18 @@
 
 A modern, secure, and scalable e-archive platform for managing academic and administrative documents with role-based access control, approval workflows, and comprehensive audit trails.
 
+**🚀 Production Status:** Fully deployed and operational
+- **Backend:** Hosted on Render
+- **Database:** Supabase PostgreSQL (Real-time)
+- **Storage:** Supabase Object Storage
+- **Desktop App:** Available for Windows
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express.js-404D59?style=flat)](https://expressjs.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Render](https://img.shields.io/badge/Render-46E3B7?style=flat&logo=render&logoColor=white)](https://render.com/)
 
 ---
 
@@ -74,6 +81,9 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 
 - **Modern, responsive UI** with Tailwind CSS
 - **Dark & Light mode** with system preference support
+- **Optimized for laptop screens** with efficient spacing
+- **Custom styled scrollbars** (thin, subtle, 8px width)
+- **Single scrollbar design** - no double scrollbar issues
 - **Loading states** and skeleton screens
 - **Toast notifications** with custom animations
 - **Empty states** with helpful guidance
@@ -82,6 +92,37 @@ A modern, secure, and scalable e-archive platform for managing academic and admi
 ---
 
 ## 🏗️ System Architecture
+
+### Production Deployment Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    DESKTOP APPLICATION                           │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  Electron + React (Windows .exe)                         │  │
+│  │  • Local Express Backend                                 │  │
+│  │  • Connects to Supabase                                  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+                              ↕ HTTPS
+┌─────────────────────────────────────────────────────────────────┐
+│                    PRODUCTION BACKEND (RENDER)                   │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  Express 5 + TypeScript                                  │  │
+│  │  • REST API with Zod validation                          │  │
+│  │  • JWT Authentication (HTTP-only cookies)                │  │
+│  │  • Role-based access control                             │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+                              ↕ Supabase SDK
+┌─────────────────────────────────────────────────────────────────┐
+│                    SUPABASE (DATABASE & STORAGE)                 │
+│  ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐  │
+│  │   PostgreSQL   │  │  Supabase Auth │  │ Object Storage  │  │
+│  │  (Real-time)   │  │ (JWT Tokens)   │  │ (Documents)     │  │
+│  └────────────────┘  └────────────────┘  └─────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ### High-Level Architecture
 
@@ -502,11 +543,11 @@ flowchart TD
 
 7. **Access the application**
 
-   Open your browser to: `http://localhost:5173`
+   Open your browser to: `http://localhost:5000`
 
 ### Desktop (Electron)
 
-The desktop app uses the same UI and runs the Express backend locally against your existing Supabase database.
+The desktop app uses the same UI and runs the Express backend locally against your Supabase database.
 
 1. **Run the desktop app in development**
 
@@ -520,7 +561,11 @@ The desktop app uses the same UI and runs the Express backend locally against yo
    npm run desktop:build
    ```
 
-> The desktop app starts the backend on the port in `PORT` (default `5000`). Make sure your `.env` Supabase keys are configured before running or packaging.
+   This creates:
+   - **Windows:** `dist/ICE Archive Manager Setup 1.0.0.exe` (~178 MB)
+   - **Unpacked:** `dist/win-unpacked/` (portable version)
+
+> **Note:** The desktop app connects to your Supabase database. Ensure your `.env` file is properly configured with Supabase credentials before running or building.
 
 ### Default Test Accounts
 
@@ -825,6 +870,13 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ---
 
 ## 🌐 Deployment
+
+> **✅ This project is already deployed and fully operational!**
+> - Backend hosted on **Render**
+> - Database on **Supabase** (PostgreSQL + Storage)
+> - Desktop app available for **Windows**
+
+The following instructions are for reference if you want to deploy your own instance:
 
 ### Option 1: Vercel (Frontend) + Render (Backend)
 
