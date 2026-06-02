@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl, type DocumentInput } from "@shared/routes";
 import { buildApiUrl } from "@/lib/api";
+import { OfflineStorage } from "@/lib/offline-storage";
+import { useNetworkStatus } from "./use-network-status";
 
 export function useDocuments(
   params?: {
@@ -10,6 +12,7 @@ export function useDocuments(
   },
   options?: { enabled?: boolean },
 ) {
+  const { isOnline } = useNetworkStatus();
   const queryParams = new URLSearchParams();
   if (params?.category) queryParams.set("category", params.category);
   if (params?.status) queryParams.set("status", params.status);
@@ -21,12 +24,38 @@ export function useDocuments(
   return useQuery({
     queryKey: [api.documents.list.path, params],
     queryFn: async () => {
-      const res = await fetch(buildApiUrl(url), { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch documents");
-      return api.documents.list.responses[200].parse(await res.json());
+      // Try to fetch from network
+      try {
+        const res = await fetch(buildApiUrl(url), { 
+          credentials: "include",
+          signal: AbortSignal.timeout(10000), // 10 second timeout
+        });
+        
+        if (!res.ok) throw new Error("Failed to fetch documents");
+        
+        const data = api.documents.list.responses[200].parse(await res.json());
+        
+        // Cache the data for offline use
+        OfflineStorage.saveDocuments(data);
+        
+        return data;
+      } catch (error) {
+        // If offline or network error, try to load from cache
+        console.log("Loading documents from cache due to network error");
+        const cachedData = OfflineStorage.getDocuments();
+        
+        if (cachedData) {
+          return cachedData;
+        }
+        
+        // If no cache available, throw the error
+        throw error;
+      }
     },
     enabled: options?.enabled ?? true,
-    refetchInterval: 30000,
+    refetchInterval: isOnline ? 30000 : false, // Only refetch when online
+    retry: isOnline ? 3 : 0, // Only retry when online
+    staleTime: isOnline ? 0 : Infinity, // Data never becomes stale when offline
   });
 }
 

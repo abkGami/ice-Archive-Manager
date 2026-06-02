@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { useUser } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect } from "wouter";
+import { OfflineIndicator } from "@/components/common/OfflineIndicator";
 
 export function AppShell({
   children,
@@ -62,6 +63,7 @@ export function AppShell({
           </main>
         </div>
       </div>
+      <OfflineIndicator />
     </SidebarProvider>
   );
 }

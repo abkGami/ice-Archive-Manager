@@ -62,10 +62,10 @@ export default function UploadPage() {
     e.preventDefault();
     if (!file || !title || !category) return;
 
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 150 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Please upload a file smaller than 10MB.",
+        description: "Please upload a file smaller than 150MB.",
         variant: "destructive",
       });
       return;
@@ -246,7 +246,7 @@ export default function UploadPage() {
                     or click to browse from your computer
                   </p>
                   <p className="text-xs text-muted-foreground mt-4">
-                    Accepted: PDF, DOCX, XLSX (Max 10MB)
+                    Accepted: PDF, DOCX, XLSX (Max 150MB)
                   </p>
                 </div>
               ) : (

@@ -1,6 +1,6 @@
 import { useUser, useLogout } from "@/hooks/use-auth";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, LogOut, User as UserIcon } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import { Button } from "../common/Button";
 import { useLocation } from "wouter";
 import {
@@ -313,11 +313,6 @@ export function AppHeader() {
                 </p>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
-              <UserIcon className="mr-2 h-4 w-4" />
-              <span>Profile Settings</span>
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive focus:text-destructive cursor-pointer"

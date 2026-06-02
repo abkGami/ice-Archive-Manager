@@ -1,17 +1,41 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl, type UserInput } from "@shared/routes";
 import { buildApiUrl } from "@/lib/api";
+import { OfflineStorage } from "@/lib/offline-storage";
+import { useNetworkStatus } from "./use-network-status";
 
 export function useUsers() {
+  const { isOnline } = useNetworkStatus();
+  
   return useQuery({
     queryKey: [api.users.list.path],
     queryFn: async () => {
-      const res = await fetch(buildApiUrl(api.users.list.path), {
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Failed to fetch users");
-      return api.users.list.responses[200].parse(await res.json());
+      try {
+        const res = await fetch(buildApiUrl(api.users.list.path), {
+          credentials: "include",
+          signal: AbortSignal.timeout(10000),
+        });
+        
+        if (!res.ok) throw new Error("Failed to fetch users");
+        
+        const data = api.users.list.responses[200].parse(await res.json());
+        OfflineStorage.saveUsers(data);
+        
+        return data;
+      } catch (error) {
+        console.log("Loading users from cache due to network error");
+        const cachedData = OfflineStorage.getUsers();
+        
+        if (cachedData) {
+          return cachedData;
+        }
+        
+        throw error;
+      }
     },
+    refetchInterval: isOnline ? 30000 : false,
+    retry: isOnline ? 3 : 0,
+    staleTime: isOnline ? 0 : Infinity,
   });
 }
 
