@@ -783,8 +783,11 @@ export async function registerRoutes(
 
     res.json({
       totalDocuments: docs.length,
-      pendingApprovals: docs.filter((d) => d.status === "Pending Approval")
-        .length,
+      pendingApprovals: users.filter(
+        (u) =>
+          u.status === "Pending Approval" &&
+          (u.role === "Student" || u.role === "Lecturer"),
+      ).length,
       totalUsers: users.length,
       recentUploads,
     });
