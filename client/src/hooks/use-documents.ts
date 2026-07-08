@@ -31,7 +31,9 @@ export function useDocuments(
           signal: AbortSignal.timeout(10000), // 10 second timeout
         });
         
-        if (!res.ok) throw new Error("Failed to fetch documents");
+        if (!res.ok) {
+          throw new Error("Failed to fetch documents");
+        }
         
         const data = api.documents.list.responses[200].parse(await res.json());
         
@@ -39,17 +41,26 @@ export function useDocuments(
         OfflineStorage.saveDocuments(data);
         
         return data;
-      } catch (error) {
+      } catch (error: any) {
         // If offline or network error, try to load from cache
-        console.log("Loading documents from cache due to network error");
+        console.log("Loading documents from cache due to network error:", error.message);
         const cachedData = OfflineStorage.getDocuments();
         
         if (cachedData) {
           return cachedData;
         }
         
+        // Provide user-friendly error messages
+        if (error.name === 'TimeoutError' || error.message.includes('timeout')) {
+          throw new Error("Network is slow. Please check your internet connection and try again.");
+        }
+        
+        if (error.message.includes('Failed to fetch') || !navigator.onLine) {
+          throw new Error("No internet connection. Please check your network and try again.");
+        }
+        
         // If no cache available, throw the error
-        throw error;
+        throw new Error("Unable to load documents. Please check your network connection.");
       }
     },
     enabled: options?.enabled ?? true,

@@ -11,14 +11,17 @@ import { format } from "date-fns";
 import { useAuditLogs as useRealAuditLogs } from "@/hooks/use-audit"; // correct hook
 import { PageLoader } from "@/components/common/PageLoader";
 import { useLocation } from "wouter";
+import { NetworkErrorState } from "@/components/common/NetworkErrorState";
+import { useNetworkStatus } from "@/hooks/use-network-status";
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
-  const { data: stats, isLoading: isStatsLoading } = useAdminStats();
-  const { data: documents, isLoading: isDocumentsLoading } = useDocuments({
+  const { data: stats, isLoading: isStatsLoading, error: statsError, refetch: refetchStats } = useAdminStats();
+  const { data: documents, isLoading: isDocumentsLoading, error: docsError, refetch: refetchDocs } = useDocuments({
     status: "Pending Approval",
   }); // Show pending first or recent
-  const { data: auditLogs, isLoading: isAuditLoading } = useRealAuditLogs();
+  const { data: auditLogs, isLoading: isAuditLoading, error: auditError, refetch: refetchAudit } = useRealAuditLogs();
+  const { isOnline } = useNetworkStatus();
 
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
 
@@ -26,6 +29,23 @@ export default function AdminDashboard() {
     return (
       <AppShell requiredRole="Administrator">
         <PageLoader message="Loading dashboard insights..." />
+      </AppShell>
+    );
+  }
+
+  // Show network error state if there's a critical error and no data
+  if ((statsError || docsError || auditError) && !stats && !documents && !auditLogs) {
+    return (
+      <AppShell requiredRole="Administrator">
+        <NetworkErrorState
+          onRetry={() => {
+            refetchStats();
+            refetchDocs();
+            refetchAudit();
+          }}
+          message="Unable to load dashboard data. Please check your network connection."
+          type={isOnline ? "slow" : "offline"}
+        />
       </AppShell>
     );
   }

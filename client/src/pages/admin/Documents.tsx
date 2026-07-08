@@ -23,13 +23,15 @@ import { ConfirmActionDialog } from "@/components/documents/ConfirmActionDialog"
 import { useToast } from "@/hooks/use-toast";
 import { PageLoader } from "@/components/common/PageLoader";
 import { useUser } from "@/hooks/use-auth";
+import { NetworkErrorState } from "@/components/common/NetworkErrorState";
+import { useNetworkStatus } from "@/hooks/use-network-status";
 
 export default function AdminDocuments() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
 
-  const { data: documents = [], isLoading } = useDocuments({
+  const { data: documents = [], isLoading, error, refetch } = useDocuments({
     search: search || undefined,
     category: category !== "all" ? category : undefined,
     status: status !== "all" ? status : undefined,
@@ -42,6 +44,7 @@ export default function AdminDocuments() {
   const deleteMutation = useDeleteDocument();
   const { toast } = useToast();
   const { data: user } = useUser();
+  const { isOnline } = useNetworkStatus();
   const mineOnly =
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("mine") === "1";
@@ -57,6 +60,19 @@ export default function AdminDocuments() {
     return (
       <AppShell requiredRole="any">
         <PageLoader message="Loading documents..." />
+      </AppShell>
+    );
+  }
+
+  // Show network error state if there's an error and no cached data
+  if (error && documents.length === 0) {
+    return (
+      <AppShell requiredRole="any">
+        <NetworkErrorState
+          onRetry={() => refetch()}
+          message={error.message}
+          type={isOnline ? "slow" : "offline"}
+        />
       </AppShell>
     );
   }

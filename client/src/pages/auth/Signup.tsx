@@ -145,7 +145,7 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A2240] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0A2240] flex items-start justify-center overflow-y-auto overflow-x-hidden p-4 py-6 sm:items-center sm:py-8 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
         <div className="absolute top-[-8%] left-[-18%] w-[65vw] h-[65vw] sm:w-1/2 sm:h-1/2 rounded-full bg-[#1A6BAF] blur-[70px] sm:blur-[100px]"></div>
         <div className="absolute bottom-[-12%] right-[-18%] w-[68vw] h-[68vw] sm:w-1/2 sm:h-1/2 rounded-full bg-[#C8A84B] blur-[80px] sm:blur-[120px]"></div>

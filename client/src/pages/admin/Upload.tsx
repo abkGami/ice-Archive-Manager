@@ -10,13 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UploadCloud, File, X } from "lucide-react";
+import { UploadCloud, File, X, WifiOff, AlertTriangle } from "lucide-react";
 import { useState, useRef } from "react";
 import { useCreateDocument } from "@/hooks/use-documents";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { useUser } from "@/hooks/use-auth";
 import { Switch } from "@/components/ui/switch";
+import { useNetworkStatus } from "@/hooks/use-network-status";
 
 async function fileToDataUrl(file: File): Promise<string> {
   return await new Promise((resolve, reject) => {
@@ -40,6 +41,7 @@ export default function UploadPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const { data: user } = useUser();
+  const { isOnline, isSlowNetwork } = useNetworkStatus();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -61,6 +63,24 @@ export default function UploadPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title || !category) return;
+
+    // Check network status before upload
+    if (!isOnline) {
+      toast({
+        title: "No Internet Connection",
+        description: "Please check your network connection before uploading documents.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isSlowNetwork) {
+      toast({
+        title: "Slow Network Detected",
+        description: "Upload may take longer than usual due to slow network speed.",
+        className: "bg-[#D97706] text-white border-transparent",
+      });
+    }
 
     if (file.size > 150 * 1024 * 1024) {
       toast({
@@ -104,10 +124,19 @@ export default function UploadPage() {
             user?.role === "Administrator" ? "/admin" : "/lecturer";
           setLocation(`${basePath}/documents`);
         },
-        onError: (error) => {
+        onError: (error: any) => {
+          // Provide user-friendly network error messages
+          let errorMessage = error.message;
+          
+          if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+            errorMessage = "Upload failed due to network issues. Please check your connection and try again.";
+          } else if (error.message.includes('timeout')) {
+            errorMessage = "Upload timed out. Your network may be too slow. Please try again with a better connection.";
+          }
+          
           toast({
-            title: "Error",
-            description: error.message,
+            title: "Upload Failed",
+            description: errorMessage,
             variant: "destructive",
           });
         },
@@ -129,6 +158,31 @@ export default function UploadPage() {
               Upload New Document
             </h1>
           </div>
+
+          {/* Network Status Warnings */}
+          {!isOnline && (
+            <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-3">
+              <WifiOff className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm text-destructive">No Internet Connection</p>
+                <p className="text-xs text-destructive/80 mt-1">
+                  You cannot upload documents while offline. Please check your network connection.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {isOnline && isSlowNetwork && (
+            <div className="mb-4 p-4 bg-[#D97706]/10 border border-[#D97706]/20 rounded-lg flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-[#D97706] flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm text-[#D97706]">Slow Network Detected</p>
+                <p className="text-xs text-[#D97706]/80 mt-1">
+                  Your upload may take longer than usual due to slow network speed.
+                </p>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
